@@ -1,0 +1,6 @@
+set time = 5
+set cache = true
+set cachepath = /var/cache
+set infofile = /pub/www/data/watch.txt
+#file /pub/share/network/smb.conf                            85 /bin/bash /pub/share/bin/netupd.sh smb
+#file /pub/share/network/hosts                               60 /bin/bash /pub/share/bin/netupd.sh hosts

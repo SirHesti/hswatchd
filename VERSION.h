@@ -3,16 +3,24 @@
 #ifndef I_VERSION_H
 #define I_VERSION_H
 
-#define I_MAJOR 1
-#define I_MINOR 4
-#define I_BUILD 53
-#define I_BETA "Linux"
+//Standard Version Type Software Status
+#define I_MAJOR 2
+#define I_MINOR 12
+#define I_BUILD 5
+#define I_BETA "Beta"
 
-#define I_BuildCount 254
-#define I_BDate "2022-11-06 12:37:46"
-#define I_FullVersion "1.4.53 Linux"
-#define I_Version 1.4.53
-#define I_Version_Number 104053
+//Miscellaneous Version Types
+#define I_BuildCount 492
+#define I_BDate "2024-04-21 17:10:03"
+#define I_FullVersion "2.12.5 Beta"
+#define I_Version 2.12.5
+#define I_Version_Number 212005
+
+//Extra Infos these values are to keep track of your versioning state
+#define I_SRCDIR "hswatchd"
+#define I_PRG "hswatchd"
+#define I_HSWATCHD_VERSION "2.12.5"
+#define I_HSWATCHD_VERSION_NUMBER 212005
 
 #endif // I_VERSION_H
 

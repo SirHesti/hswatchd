@@ -1,15 +1,19 @@
-/*___________________________________________________________________________
+/**
+ @file tools.h
+ @brief Header-File des Tools.c Projekts
+*//*_________________________________________________________________________
 
- Tools.c Projektübergreifende Funktionen
+ Tools.c Projektuebergreifende Funktionen
 
 ___[ Revision ]______________________________________________________________
 
- 02.04.2006 HS RE_Create
+ 02.04.06 HS RE_Create
 _____________________________________________________________________________
 
- Für Doxygen. Ein Verzeichnis in dieser Reihenfolge
+ Fuer Doxygen. Ein Verzeichnis in dieser Reihenfolge
 _____________________________________________________________________________*/
 
+/** @addtogroup c_base_history         HStools Historie*//** @{ @} */
 /** @addtogroup c_tools_globalvars     Globale Variablen*//** @{ @} */
 /** @addtogroup c_init_tools           Aufruf der InitTools*//** @{ @} */
 /** @addtogroup c_args                 Argumente an Main()*//** @{ @} */
@@ -47,21 +51,96 @@ _____________________________________________________________________________*/
 #ifndef __TOOLSC__
 #define __TOOLSC__
 
-/// Betriebssystem für das compiliert wird
+/* --------------------------------------------------------------------------------------------------------------------
+
+Operating System 	        Macro present 	    Notes
+Windows 32 bit + 64 bit 	_WIN32 	            for all Windows OS
+Windows 64 bit 	            _WIN64 	            Only for 64 bit Windows
+Apple 	                    __APPLE__ 	        for all Apple OS
+Apple 	                    __MACH__ 	        alternative to above
+iOS embedded 	            TARGET_OS_EMBEDDED 	include TargetConditionals.h
+iOS stimulator 	            TARGET_IPHONE_SIMULATOR include TargetConditionals.h
+iPhone 	                    TARGET_OS_IPHONE 	include TargetConditionals.h
+MacOS 	                    TARGET_OS_MAC 	    include TargetConditionals.h
+Unix based OS 	            __unix__            other unix OS
+Linux 	                    __linux__ 	        subset of unix
+Android 	                __ANDROID__ 	    subset of linux
+POSIX based 	            _POSIX_VERSION 	    Windows with Cygwin
+Solaris     	            __sun
+HP UX 	                    __hpux
+BSD 	                    BSD 	            all BSD flavors
+DragonFly                   BSD 	__          DragonFly__
+FreeBSD 	                __FreeBSD__
+NetBSD 	                    __NetBSD__
+OpenBSD 	                __OpenBSD__
+
+#include <stdio.h>
+
+int main()
+{
+	#if __APPLE__
+	    // apple specific code
+        #include "TargetConditionals.h"
+	#elif _WIN32
+	    // windows specific code
+	#elif __LINUX__
+	    // linux specific code
+	#elif BSD
+	    // BSD specific code
+	#else
+	    // general code or warning
+	#endif
+	// general code
+	return 0;
+}
+            Windows  Linux
+Pfade       Drive    Path
+includes    TypeA    TypeB
+usw.
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------- */
+
+
+/// Betriebssystem "entdecken" fÃ¼r das compiliert wird
 //______________________________________________________________________________
 
-#ifdef _WIN32
-#define OS_WINS
-#endif // _WIN32
+//** Gedankenspiele **
+#if _WIN32
 
-#ifdef _WIN32
-#define OS_WINDOWS
-#define OS_VERSION "Windows"
+#define HS_OS_WINDOWS 1
+#define HS_FSYS_DRIVE 1
+#define HS_OS_VERSION "Windows"
+
 #elif __linux__
-#define OS_LINUX
-#define OS_VERSION "Linux"
+
+#define HS_OS_LINUX 1
+#define HS_FSYS_PATH 1
+#define HS_OS_VERSION "Linux"
+
+#elif __this_new_OS__
+#define HS_OS_NEWONE 1
+#define HS_FSYS_DRIVE 1
+#define HS_OS_VERSION "The new OS"
+
 #else
 #error "Unknown OS used"
+#endif
+
+//-------[ OLD STYLE ]-------
+
+#if _WIN32
+    #define OS_WINDOWS 1
+    #define OS_VERSION "Windows"
+    #define OS_FSYS_DRIVE 1
+#elif __linux__
+    #define OS_LINUX 1
+    #define OS_VERSION "Linux"
+    #define OS_FSYS_PATH 1
+#else
+    #error "Unknown OS used"
 #endif
 
 /// Compiler der verwendet wird
@@ -89,14 +168,22 @@ _____________________________________________________________________________*/
 #define __COMPILER__ "GnuCC"
 
 #if __GNUC__ >= 10
-#define GNU10
+ #if __GNUC__ >= 13
+  #define GNU13
+ #else
+  #define GNU10
+ #endif
 #endif
+
 
 #endif // __GNUC__
 
+/// Includes
+//_____________________________________________________________________________
+
 #include <limits.h>
 #include <stdio.h>
-// nur stdlib.h führt dazu das auch aus include/c++/stdlib.h included wird im Präerkennungsmode für Codeblocks durchlaufen wird
+// nur stdlib.h fÃ¼hrt dazu das auch aus include/c++/stdlib.h included wird im PrÃ¤erkennungsmode fÃ¼r Codeblocks durchlaufen wird
 #ifndef _MSC_VER
 #include <../include/stdlib.h>
 #else
@@ -143,6 +230,23 @@ _____________________________________________________________________________*/
 //#include <inttypes.h>
 
 
+//#ifdef OS_LINUX
+#ifdef OS_FSYS_PATH
+#define DIR_SEP "/"
+#define cDIR_SEP '/'
+#define OTHER_OS_cDIR_SEP '\\'
+#define OS_CRLF "\n"
+#endif
+
+//#ifdef OS_WINDOWS
+#ifdef OS_FSYS_DRIVE
+#define DIR_SEP "\\"
+#define cDIR_SEP '\\'
+#define OTHER_OS_cDIR_SEP '/'
+#define OS_CRLF "\r\n"
+#endif // OS_WINDOWS
+
+
 #ifdef OS_LINUX
 #include <dirent.h>
 #include <sys/types.h>
@@ -152,19 +256,8 @@ _____________________________________________________________________________*/
 #include <unistd.h>
 #include <utime.h>
 #include <syslog.h>
-
-#define DIR_SEP "/"
-#define cDIR_SEP '/'
-#define OTHER_OS_cDIR_SEP '\\'
-#define OS_CRLF "\n"
-
-#ifndef _USE_64BIT_TIME_T
-#ifndef _USE_32BIT_TIME_T
-#define _USE_32BIT_TIME_T
-#endif
-#endif
-
 #endif // OS_LINUX
+
 
 #ifdef OS_WINDOWS
 // Solange ich nix besseres weiss ist das minimum windows 7
@@ -182,17 +275,22 @@ _____________________________________________________________________________*/
 #include <dir.h>
 #endif // _MSC_VER
 
-
 //#include <dos.h> // removed 05.07.20 HS
 #include <process.h>
+//27.08.23 HS added winsock2 vor windows!!
+#include <winsock2.h>
 #include <windows.h>
 
-#define DIR_SEP "\\"
-#define cDIR_SEP '\\'
-#define OTHER_OS_cDIR_SEP '/'
-#define OS_CRLF "\r\n"
-
 #endif // OS_WINDOWS
+
+
+#ifdef OS_LINUX
+#ifndef _USE_64BIT_TIME_T
+#ifndef _USE_32BIT_TIME_T
+#define _USE_32BIT_TIME_T
+#endif
+#endif
+#endif
 
 #ifdef HS_DEBUG
 #define HS_DEBUG_TRUE 1
@@ -203,8 +301,17 @@ _____________________________________________________________________________*/
 #define EXEC_SUCCEEDED(Status) ((int)(Status) == EXIT_SUCCESS )
 #define EXEC_FAILED(Status)    ((int)(Status) != EXIT_SUCCESS )
 
+//besser die oben nehmen
+#ifndef SUCCEEDED
+#define SUCCEEDED(Status) ((int)(Status) >= 0)
+#endif
+
+#ifndef FAILED
+#define FAILED(Status) ((int)(Status) < 0)
+#endif
+
 //  _WIN64 nur windows 64bit
-// _M_X64 Dieser Wert wird für Kompilierungen, die x64 - Prozessoren als Ziel verwenden, als literale ganze Zahl 100 definiert.Andernfalls wird der Wert nicht definiert.
+// _M_X64 Dieser Wert wird fÃ¼r Kompilierungen, die x64 - Prozessoren als Ziel verwenden, als literale ganze Zahl 100 definiert.Andernfalls wird der Wert nicht definiert.
 #if (!defined IS64BIT) && ( (defined _M_X64) || (defined _WIN64) )
 #define IS64BIT
 #endif
@@ -220,7 +327,7 @@ extern "C" {
 //==============================================================================
 // normal wird true/false in stdbool.h definiert
 // true and false define !!
-// 21.12.2016 HS Rewritten True / False
+// 21.12.16 HS Rewritten True / False
 
 #ifndef __cplusplus
 #ifndef false
@@ -255,6 +362,14 @@ extern "C" {
 
 // end of true/false
 //==============================================================================
+
+// 11.11.22 HS unter windows nur 260 Bytes
+// 03.05.23 HS fÃ¼r Mys
+#ifdef OS_WINDOWS
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
+#endif
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -293,6 +408,7 @@ extern "C" {
 #define _TIMEZONE_DEFINED
 #endif
 
+/// struct timezone wird verwendet, um min. Informationen ueber die eine Zeitzone zu speichern
 #ifndef _TIMEZONE_DEFINED
 struct timezone
 {
@@ -307,14 +423,16 @@ struct timezone
 
 
 
-
 // ********************************************************************************************************************
 
-// 23.01.19 HS GNUC kann den üblichen %lld bis in die 8.er Version, die in C99 definiert ist leider nicht interpretieren ....
+// 23.01.19 HS GNUC kann den Ã¼blichen %lld bis in der 8.er Version, die in C99 definiert ist leider nicht interpretieren ....
 // 03.08.20 HS nur unter TINYC nicht
 // 23.07.22 HS GNU10
+// 03.05.23 HS fÃ¼r Mys
+
 #ifdef OS_WINDOWS
 #ifndef __TINYC__
+#ifndef GNU13
 
 #ifdef GNU10
 #define LLD_STR "%I64lld"
@@ -328,11 +446,12 @@ struct timezone
 
 #endif
 #endif
+#endif
 
 #ifdef __MINGW32_VERSION
 #endif // __MINGW32_VERSION
 
-// GNUC + Windows alle anderen können das hier was in C99 definiert ist
+// GNUC + Windows alle anderen kÃ¶nnen das hier was in C99 definiert ist
 // 23.01.19 HS
 #ifndef LLD_STR
   #define LLD_STR "%lld"
@@ -353,15 +472,23 @@ struct timezone
 #define TIME_STR_LD LLD_STR
 #define TIME_STR_LU LLU_STR
 #define TIME_STR_LX LLX_STR
-#ifdef OS_WINDOWS
-// change 13.06.2022 HS / 19.07.22 HS GNU10
-#ifdef GNU10
-#define TIME_STR_5LU "%I64llu"
-#else
-#define TIME_STR_5LU "%I64u"
-#endif
-//#define TIME_STR_5LU "%5.5llu"
-#endif
+
+#ifdef __OS_WINDOWS
+// change 13.06.22 HS / 19.07.22 HS GNU10 / 29.08.23 HS GNU13
+
+ #ifndef TIME_STR_5LU
+   #ifdef GNU13
+     #define TIME_STR_5LU "%5.5lu"
+   #endif
+ #endif
+
+ #ifndef TIME_STR_5LU
+   #ifdef GNU10
+     #define TIME_STR_5LU "%I64llu"
+   #endif
+ #endif
+#endif // __OS_WINDOWS
+
 #ifndef TIME_STR_5LU
 #define TIME_STR_5LU "%5.5lu"
 #endif // TIME_STR_5LU
@@ -378,7 +505,6 @@ struct timezone
 #ifndef _countof
 #define _countof(array) (sizeof(array) / sizeof(array[0]))
 #endif
-
 
 // Sicherstellen das stat64 greift  || IS32BIT OS_LINUX?
 //#ifndef _WIN64
@@ -408,9 +534,9 @@ struct timezone
  @{
 */
 
-tools_xtrn char    LogType;                     ///< Ausgabe wohin ? Siehe @ref LOG_Ausgabekanäle
-tools_xtrn char*   LogFileName;                 ///< Vollständiger Filename zB: "C:\\HS\\Log\\tooltest-2020-03-23.log" * Ist ein Zeiger der, wenn unverändert, auf @ref m_Workfile zeigt
-tools_xtrn char*   LogExtra;                    ///< Wenn nicht NULL, dann wird das als Logbeschreibung gewählt zB: "tooltest"
+tools_xtrn char    LogType;                     ///< Ausgabe wohin ? Siehe @ref LOG_Ausgabekanaele
+tools_xtrn char*   LogFileName;                 ///< VollstÃ¤ndiger Filename zB: "C:\\HS\\Log\\tooltest-2020-03-23.log" * Ist ein Zeiger der, wenn unverÃ¤ndert, auf @ref m_Workfile zeigt
+tools_xtrn char*   LogExtra;                    ///< Wenn nicht NULL, dann wird das als Logbeschreibung gewÃ¤hlt zB: "tooltest"
 tools_xtrn bool    LogAtExitFlush;              ///< true/false zeigt das atexit bereits festgelegt wurde
 tools_xtrn char    LogDir[PATH_MAX];            ///< zB: "C:\\HS\\Log
 
@@ -419,10 +545,10 @@ tools_xtrn unsigned int m_MINOR;                ///< Nebenversion
 tools_xtrn unsigned int m_BUILD;                ///< Aktuelles Build dieser Version (Hauptversion.Nebenversion)
 tools_xtrn char*   m_BETA;                      ///< String Betastatus
 
-tools_xtrn bool    lprintfConvertCRLF;          ///< lprintf löst (CR/)LF in 2 Zeilen auf. Auf false setzen um das zu verhindern
+tools_xtrn bool    lprintfConvertCRLF;          ///< lprintf lÃ¶st (CR/)LF in 2 Zeilen auf. Auf false setzen um das zu verhindern
 tools_xtrn bool    LogFileWithExtra;            ///< LogExtra (String) auch ins Logfile/Bildschirm schreiben
-tools_xtrn char*   LogDateFormat;               ///< Format für das Datum im Logfile
-tools_xtrn char*   SyslogDateFormat;            ///< Format für das Datum im Syslog -- nur unter Windows; wenn vorhanden wird die funktion syslog aufgerufen
+tools_xtrn char*   LogDateFormat;               ///< Format fÃ¼r das Datum im Logfile
+tools_xtrn char*   SyslogDateFormat;            ///< Format fÃ¼r das Datum im Syslog -- nur unter Windows; wenn vorhanden wird die funktion syslog aufgerufen
 
 tools_xtrn char    m_Workfile[PATH_MAX];        ///< zB: "C:\\HS\\Log\\tooltest-2020-03-23.log"
 tools_xtrn char    HSDIR[PATH_MAX];             ///< Hauptverzeichnis zB: "C:\\HS"
@@ -430,6 +556,7 @@ tools_xtrn char    HSDIR[PATH_MAX];             ///< Hauptverzeichnis zB: "C:\\H
 tools_xtrn char    SYSLOGFILE[PATH_MAX];        ///< zB: "C:\\Users\\Hesti\\AppData\\Local\\SYSLOG.log"
 #endif
 tools_xtrn void*   RConfig;                     ///< Start der RC-Tabelle von /etc/hsrc; kann NULL sein, wenn keine Datei gefunden wird etc.
+tools_xtrn char    RCFullName[PATH_MAX];        ///< Letzer benutzter Filename, wenn RCRead->RCFileNameCreate speichert den letzten erfolgreich benutzen Namen
 
 tools_xtrn char    m_PRGNAME[FILENAME_MAX];     ///< zB: "tooltest"
 tools_xtrn char    m_PRG_INFO[FILENAME_MAX+128];///< zB: "tooltest V10.19.752 Beta" kann im @ref InitTools mit %c erweitert werden
@@ -441,7 +568,7 @@ tools_xtrn char   **m_PRG_arguv;                ///< Liste der Argumente
  @{
 */
 
-/// LOGGING INFORMATION -- Nach stdout / Nach stderr @see @ref LOG_Ausgabekanäle
+/// LOGGING INFORMATION -- Nach stdout / Nach stderr @see @ref LOG_Ausgabekanaele
 // 08.07.20 HS nicht mehr #define, sondern enum's
 enum LOG_ENUM {
     LOG_STDOUT = (1<<0),        ///< normal Bildschirm
@@ -449,40 +576,77 @@ enum LOG_ENUM {
     LOG_LOGFILE = (1<<2),       ///< LogFile
     LOG_SYSLLOG = (1<<3),       ///< syslog (Linux) oder wenn Spezielles Files (Windows)
 //    LOG_SIGNAL (1<<4),
-    LOG_CACHE   = (1<<5),       ///< Nachrichten werden temporär zwischengespeichert
+    LOG_CACHE   = (1<<5),       ///< Nachrichten werden temporÃ¤r zwischengespeichert
     LOG_WINMSG  = (1<<6)        ///< nur Windows (Windows eigenes Systemfehler-Log bedienen)
 };
+///unsigned int myLOG = 0;
+/// myLOG |= LOG_LOGFILE;  // setze bit
+/// myLOG &= ~LOG_LOGFILE; // lÃ¶sche bit
 
 /// Die einzelnen Stufen der Lognachrichten
 enum LMSG_ENUM {
     LMSG_SILENT=0,              ///< no Extra Logfile, no MSG [ beim Final / im Debug ausgeben, wie es definiert ist ]
-    LMSG_CRITICAL,              ///< Programm Fehler, ua. auf jeden Fall welche die zum Programmabbruch führen
-    LMSG_ERROR,                 ///< Minimales Fehler logging, dh. nur Fehler die unbedingt ins Logfile gehöhren, Wenn Programmteile übersprungen werden ect.
-    LMSG_WARN,                  ///< Einfache Fehler, die übergangen werden können
-    LMSG_EVERY,                 ///< (default) Auch Nachrichten, die über geglückten Programmteil informieren
+    LMSG_CRITICAL,              ///< Programm Fehler, ua. auf jeden Fall welche die zum Programmabbruch fÃ¼hren
+    LMSG_ERROR,                 ///< Minimales Fehler logging, dh. nur Fehler die unbedingt ins Logfile gehÃ¶hren, Wenn Programmteile Ã¼bersprungen werden ect.
+    LMSG_WARN,                  ///< Einfache Fehler, die Ã¼bergangen werden kÃ¶nnen
+    LMSG_EVERY,                 ///< (default) Auch Nachrichten, die Ã¼ber geglÃ¼ckten Programmteil informieren
     LMSG_MOST,                  ///< Im Detail informieren
     LMSG_MAX                    ///< Debug-Artiges ausgeben, jedoch kein Debug
 };
 
 /// struct zum Speichern einer einzelner Stufen (Lognachrichten) Siehe: @ref LMSG_ENUM
 typedef struct lmsg_s {
-    int     out;                ///< Ausgabe wohin, da über lprintf ausgegeben wird, als LOG_xxx angaben
-    char*   str;                ///< Wie die Ausgabe heißt, als nutzbaren string
+    int     out;                ///< Ausgabe wohin, da Ã¼ber lprintf ausgegeben wird, als LOG_xxx angaben
+    char*   str;                ///< Wie die Ausgabe heiÃŸt, als nutzbaren string
 }lmsg_t;
 
 tools_xtrn lmsg_t lmsg_def[LMSG_MAX+1]; ///< Array mit den Definitionen der einzelenen Messageleveln, siehe @ref lmsg_init
-tools_xtrn int lmsg_level;      ///< Aktuell gültiger LogLevel Siehe @ref LOG_ENUM
-tools_xtrn int lmsg_format;     ///< 0-2 default: 0 - legt fest, ob zusätzlich das LogLevel der Nachricht mit erfasst werden soll. \n 0=NEIN \n 1=in [] den numerischen Wert \n 2=in [] den Wert als Text
+tools_xtrn int lmsg_level;      ///< Aktuell gÃ¼ltiger LogLevel Siehe @ref LOG_ENUM
+tools_xtrn int lmsg_format;     ///< 0-2 default: 0 - legt fest, ob zusÃ¤tzlich das LogLevel der Nachricht mit erfasst werden soll. \n 0=NEIN \n 1=in [] den numerischen Wert \n 2=in [] den Wert als Text
 
 /** @} *//**
  @addtogroup c_args
  @{
 */
-tools_xtrn char     *ARG;                       ///< Pointer auf ein Argument wenn angegeben; sonst NULL
+tools_xtrn char     *ARG;       ///< Pointer auf ein Argument wenn angegeben; sonst NULL
+tools_xtrn int      PNUM;       ///< wenn "0-9" angegeben wurde, dann die passende Nummber , wie -16 = "sechzehn"  wird PNUM=16 ARG=sechzehn
+
+/** @} *//**
+ @addtogroup c_iofunc
+ @{
+*/
+
+/// Optionen zum Aufruf an RCread
+enum RCdir_ENUM { // Bits von 1 - 15 (31 duerfen es sein )
+    opt_RCdir_silence   = (1<<0 ),  ///< silence ist ohne LogOutput
+    opt_RCdir_Sections  = (1<<1 ),  ///< Beim Lesen sind [Section] erlaubt
+    opt_RCdir_nodflt    = (1<<2 ),  ///< keine defaults
+    opt_RCdir_must_exist= (1<<3 ),  ///< File muss beim suchen existieren
+    opt_RCdir_isrc      = (1<<5 ),  ///< Filename um .rc erweitern
+    opt_RCdir_imSections= (1<<6 ),  ///< Sections werden Teil Filename um .rc erweitern
+    opt_RCdir_isExpVars = (1<<7 ),  ///< Variablen durfen mehr als nur Buchstaben und Zahlen haben
+    //opt_RCdir_ignoEqual = (1<<- ),  ///< Auch Zeilen einlesen ohne '=' Zeichen
+    //opt_RCdir_done      = (1<<8 ),  // intern maxnum
+    opt_RCdir_start     = (1<<9 ),  ///< Verzeichnisse ab hier (intern benutzt)
+                                    // Linux                     Windows
+                                    //------------------------|---------------
+    opt_RCdir_PathFile  = (1<<10),  ///< Pfad und Filename in filename uebergeben
+    opt_RCdir_PRG       = (1<<11),  ///< notAllowed             | ./.**
+    opt_RCdir_CFGDIR    = (1<<12 ),  ///< from /etc/hsrc         | from %HSDIR%/etc/hsrc or %APPDATA%/hs/hsrc
+    opt_RCdir_root_etc  = (1<<13),  ///<               /etc/.** | %APPDATA%/hs/.**
+    opt_RCdir_root_etcd = (1<<14),  ///<   /etc/%prgname%.d/.** | %APPDATA%/hs/%prgname%/.**
+    opt_RCdir_user_cfg  = (1<<15),  ///<             %HOME%/.** | %APPDATA%/hs/.**
+    opt_RCdir_uconfig_cfg=(1<<16),  ///<     %HOME%/.config/.** | %APPDATA%/hs/.** (same user_cfg)
+                                    ///<                        |
+    opt_RCdir_HSDIR_etc = (1<<28),  ///<             beide: %HSDIR%/etc/.**
+    opt_RCdir_HSDIR_var = (1<<29),  ///<             beide: %HSDIR%/var/.**
+    opt_RCdir_root_var  = (1<<30),  ///<     /var/%prgname%/.** | %APPDATA%/hs/.**
+};
+
 ///@}
 
 //#include "t_diskstate.h"
-//definied in linux HS 27.11.17
+//definied in linux HS 27.11.17 any time used?
 #ifdef OS_WINDOWS
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
 #endif
@@ -507,7 +671,7 @@ int aChkARGlong(char *Find);
 
 // die LogPrint-Version
 int lprintf(char *fmt, ...);  // der (interne) Lognachrichten Aufruf
-void exitlprintfflush(void);  // für atexit();
+void exitlprintfflush(void);  // fÃ¼r atexit();
 int lprintfflush(void);       // flushing LogFile Informationen
 
 int lmsg_init(void);
@@ -518,10 +682,13 @@ int lmsg (int behavior, char *fmt, ...);
  @{
 */
 // uname gibt es unter Windows nicht...
-// unter Linux wird dafür sys/utsname eingebunden
-// 07.02.2019
+// unter Linux wird dafÃ¼r sys/utsname eingebunden
+// 07.02.19
+// 03.05.23 HS fÃ¼r Mys
+
 #ifdef OS_WINDOWS
 #define __NEW_UTS_LEN 256
+/// uname Nachbildung fuer Windows
 struct utsname {
     char sysname[__NEW_UTS_LEN + 1];
     char nodename[__NEW_UTS_LEN + 1];
@@ -532,7 +699,7 @@ struct utsname {
 };
 int uname(struct utsname *name);
 int readWindowsRegistery(HKEY keyParent, char *keyName, char *keyValName, char *buffer, int bufsize);
-#endif // OS_WINDOWS
+#endif
 ///@}
 
 size_t strftimeR(char *s,int maxsize, const char *format, const struct tm *t);
@@ -543,10 +710,10 @@ int strftime_fmt(const char *format, const struct tm *t, char **in_out_pt, int *
 // Stringmanipulationen
 //_____________________________________________________________________________
 //
-// 02.04.2000 HS ReCreate
+// 02.04.20 HS ReCreate
 //_____________________________________________________________________________
 
-//müssen für Linux defniert werden 27.11.17 HS
+//mÃ¼ssen fÃ¼r Linux defniert werden 27.11.17 HS
 #ifdef OS_LINUX
 char *strlwr( char *Kette );    // Konvertiert Kette zu lowercase
 char *strupr( char *Kette );    // Konvertiert Kette zu uppercase
@@ -558,23 +725,26 @@ char *strupr( char *Kette );    // Konvertiert Kette zu uppercase
 
 int strcount(char *STRING,char FOUND);                                          // Wie oft ein Zeichen in einem String ist
 char *strdel(char *STRING, int pos, int len);                                   // Strings loeschen
-void strins(char *STRING, char *INS, int pos);                                  // und einfügen
-int strstradd (char *start_ptr, char **end_ptr, char *str, int *size_cnt);      // Ähnlich wie strcat, Rückgabe ist Anzahl Zeichen und es wird ein Pointer zurückgegeben
-char *strstrcat(char *STRING, char *AddStr);                                    // Ähnlich wie strcat, nur wird mit einem malloc/realloc gearbeitet
+void strins(char *STRING, char *INS, int pos);                                  // und einfÃ¼gen
+void strappend (char *STRING, char *INS);                                       // uns anhÃ¤ngen
+int strstradd (char *start_ptr, char **end_ptr, char *str, int *size_cnt);      // Ã„hnlich wie strcat, RÃ¼ckgabe ist Anzahl Zeichen und es wird ein Pointer zurÃ¼ckgegeben
+char *strstrcat(char *STRING, char *AddStr);                                    // Ã„hnlich wie strcat, nur wird mit einem malloc/realloc gearbeitet
 void strReplace(char *C, char FROM, char DEST);                                 // Bestimmte Zeichen austauschen
-int strright(char *C, char Findchar);                                           // Prüft das letzte Zeichen im String=Findchar ist,
-                                                                                // gibt -1 oder Position zurück
-void strsetto(char *dest, char filler, int counter);                            // String beliebig mit einem Zeichen füllen
-char* strfiller (char filler, int counter);                                     // gibt einen temp. Struing wie oben zurück
-char *strNotNULL(char *C);                                                      // Gibt definitiv einen String zurück bei NULL ""
-char *LeftStr (char *STRING, int len);                                          // x linke Zeichen von einem String zurückgeben
-char *RightStr (char *STRING, int len);                                         // x rechte Zeichen von einem String zurückgeben
+int strright(char *C, char Findchar);                                           // PrÃ¼ft das letzte Zeichen im String=Findchar ist,
+                                                                                // gibt -1 oder Position zurÃ¼ck
+int strunquote(char *Kette);                                                    // String ohne AnfÃ¼hrungszeichen oder Hochkommas
+int strquote (char *Kette);                                                     // gleiches nur jetzt, wenn nÃ¶tig, mit Hochkommas - AnfÃ¼hrungszeichen
+void strsetto(char *dest, char filler, int counter);                            // String beliebig mit einem Zeichen fÃ¼llen
+char *strfiller (char filler, int counter);                                     // gibt einen temp. Struing wie oben zurÃ¼ck
+char *strNotNULL(char *C);                                                      // Gibt definitiv einen String zurÃ¼ck bei NULL ""
+char *LeftStr (char *STRING, int len);                                          // x linke Zeichen von einem String zurÃ¼ckgeben
+char *RightStr (char *STRING, int len);                                         // x rechte Zeichen von einem String zurÃ¼ckgeben
 
-void strltrim(char *C);                                                         // Linke Spaces löschen
-void strrtrim(char *C);                                                         // Rechte Spaces löschen
-void strCL   (char *C);                                                         // Linke und Rechte Spaces löschen
-void strclean (char *SRC, char *RemoveAnyChar);                                 // Jeden Char aus RemoveAnyChar aus einen String löschen
-void strdelchar (char *SRC, char rm);                                           // Einzelnes Zeichen aus einem String löschen
+void strltrim(char *C);                                                         // Linke Spaces lÃ¶schen
+void strrtrim(char *C);                                                         // Rechte Spaces lÃ¶schen
+void strCL   (char *C);                                                         // Linke und Rechte Spaces lÃ¶schen
+void strclean (char *SRC, char *RemoveAnyChar);                                 // Jeden Char aus RemoveAnyChar aus einen String lÃ¶schen
+void strdelchar (char *SRC, char rm);                                           // Einzelnes Zeichen aus einem String lÃ¶schen
 char *strnum(int num);                                                          // Eine Zeichenkette aus einem INT machen
 char *strnumformated(int num, char pad, int sized);                             // Dasselbe nur um 2 Parameter erweitert
 void Long2IStr ( char *Kette, unsigned long Wert);
@@ -586,15 +756,20 @@ int strstrpos(char *STRING,char *FIND, int from);                               
 int strchrpos(char *STRING,char FIND, int from);                                // Position der Zeichenkette FIND im gegebenen Char ab Position from
 char *strstrreplace (char *STRING,char *FIND, char *REPL);                      // in STRING Zeichenkette (FIND) austauschen gegeb REPL
 char *strstrarg (char *STRING, int arg, char STRARG_DEL);                       // In der Zeichenkette nach STRARG_DEL getrennter Argumente durchsuchen
-int isOneString(char *STRING);                                                  // gibt EXIT_SUCCESS im Erfolgsfall zurück.
+int isOneString(char *STRING);                                                  // gibt EXIT_SUCCESS im Erfolgsfall zurÃ¼ck.
 int strsplit(char *Src, char delimiter, char **DLeft, char **DRight);           // Src aufteilen; Bei Erfolg=0 DLeft und DRight werden mit malloc geholt.
+
 int sprintf_ex (char *DST, char *fmt, ...);                                     // macht das Gleiche wie sprintf, nur dass der GCC nicht meckert
 char *strcpy_ex(char *dst, const char *src);                                    // siehe oben
 char *strncpy_ex(char *dst, const char *src, int len);                          // siehe oben
 char *strcat_ex(char *dst, const char *src);                                    // siehe oben
-
+char *strdup_ex(const char *src);                                               // auch hier gabs ein Problem
 void *memset_ex(void *dst, int val, size_t len);                                // macht das Gleiche wie memset, nur dass der GCC nicht meckert
 void *memcpy_ex(void *dst, const char *src, size_t len);                        // siehe oben
+#ifndef OS_WINDOWS
+void ZeroMemory(void *Destination, size_t Length);                              // aus kompatiblitÃ¤t
+#endif
+
 
 /**
  @addtogroup c_strchr_strstr
@@ -609,8 +784,8 @@ void *memcpy_ex(void *dst, const char *src, size_t len);                        
 
 typedef struct t_ty{
     char *buffer; ///< Datenbuffer ( __NICHT__ Null terminiert )
-    int maxsize;  ///< Speichergrösse, die bisher angefordert wurde
-    int pntr;     ///< zeigt hinter das zuletzt geschriebene Zeichen, bzw auf nächste zu schreibende Zeichen
+    int maxsize;  ///< SpeichergrÃ¶sse, die bisher angefordert wurde
+    int pntr;     ///< zeigt hinter das zuletzt geschriebene Zeichen, bzw auf nÃ¤chste zu schreibende Zeichen
 }ty;
 ///@}
 
@@ -618,7 +793,7 @@ typedef struct t_ty{
 void y_dump (ty *y);                                                            // Debugfunktion nur aktiv, wenn HS_DEBUG gesetzt ist
 void y_init (ty *y, char *b);                                                   // Buffer vom Typ ty initialisieren
 void y_free (ty *y);                                                            // Buffer vom Typ ty freigeben; kann direkt wieder verwendet werden
-void y_end  (ty *y);                                                            // Ein Bufferende markieren ohne den Zeichenpointer zu ändern
+void y_end  (ty *y);                                                            // Ein Bufferende markieren ohne den Zeichenpointer zu Ã¤ndern
 void y_charadd (ty *y, char c);                                                 // Zeichen dynamisch in einen Buffer vom Typ ty schreiben
 void y_multicharadd (ty *y, char c, int nsize);                                 // Ein Zeichen mehrfach dynamisch in einen Buffer vom Typ ty schreiben
 void y_stringadd (ty *y, char *s);                                              // Einen String an eine dynamischen Buffer vom Typ ty schreiben
@@ -652,30 +827,40 @@ char *strprintf(const char *fmt, ...);                                          
 #define STRSTRSPLIT_DEFAULT ( STRSTRSPLIT_SPACE_DELIMITTER | STRSTRSPLIT_TAB_DELIMITTER | STRSTRSPLIT_LF_DELIMITTER | STRSTRSPLIT_SINGLE_QUOTES | STRSTRSPLIT_DOUBLE_QUOTES )
 ///@}
 
-int strmtch (const char *pat, const char *str, int flags);                      // Zeichenkette Matching prüft ob str mit dem Muster in pat übereinstimmt
+int strmtch (const char *pat, const char *str, int flags);                      // Zeichenkette Matching prÃ¼ft ob str mit dem Muster in pat Ã¼bereinstimmt
 
-char **strlst(char *strin);                                                     // String Argumente aufteilen. Es wir eine Liste der Argumente zurückgegeben
-char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags);   // Aus einem String ein Argumente lesen und zurückgeben. Kann NULL sein.
+char **strlst(char *strin);                                                     // String Argumente aufteilen. Es wir eine Liste der Argumente zurÃ¼ckgegeben
+char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags);   // Aus einem String ein Argumente lesen und zurÃ¼ckgeben. Kann NULL sein.
+char **strlstadd(char** listin, char *newitem);                                 // Neues Item zur Liste hinzufÃ¼gen
+char **strlstfree(char **listin);                                               // komplette Liste freigeben
 
 char *strEsc(char *Kette);                                                      // Text Ende mit NULL konvertieren
-char *strDeEsc(char *Kette);                                                    // Text Ende mit NULL zurück konvertieren
-// Beide Ergebnisse sind die Folge von malloc und müssen nachher freigegeben werden
+char *strDeEsc(char *Kette);                                                    // Text Ende mit NULL zurÃ¼ck konvertieren
+// Beide Ergebnisse sind die Folge von malloc und mÃ¼ssen nachher freigegeben werden
 
-// ????? 05.07.2020 HS wozudas, gibt keine Funktion mehr...
+// ????? 05.07.20 HS wozudas, gibt keine Funktion mehr...
 //unsigned long atoul(char *STRING);
 
-char *CleanNumberAfterDot(char *Kette);                                         // Unterroutine von Num2Human * Löscht unerwünschte Nullen
+char *CleanNumberAfterDot(char *Kette);                                         // Unterroutine von Num2Human * LÃ¶scht unerwÃ¼nschte Nullen
 double simple_round(double num, int perc);                                      // double Zahl runden, auf 'perc' nachkommastellen
 double Human2Num(char *Kette);                                                  // 10KB nach double wandeln
 char *Num2Human(double num, int perc);                                          // Zahl in lesbare Form bringen
 double strexpr(char* expr);                                                     // double zahl von einer expression
-double strexpr_r(char* expr, char** end_ptr);                                   // das Gleiche nochmal, aber mit einem Rückgabewert
+double strexpr_r(char* expr, char** end_ptr);                                   // das Gleiche nochmal, aber mit einem RÃ¼ckgabewert
 
 int fromHex(char *start_p, char **end_p, int len, long long* rslt);
 long hextol(char *STRING);
 //unsigned long hextoul(char *STRING);
-char *strtohexstr(char *from, int format);                                      // String von einem String in HexDump erzeugen
+//char *strtohexstr(char *from, int format);                                      // String von einem String in HexDump erzeugen
+enum STRHEX{
+    STRHEX_INDEX  = 1,
+    STRHEX_ASC    = 2,
+    STRHEX_NOZERO = 4,
+};
+char *strtohexstr(char* from, size_t size, size_t bytes_per_line, int format );
 
+typedef uint32_t ipv4_t;                                                        // string in ipv4 umrechnen
+ipv4_t getipv4(char *src);
 char *binstr( unsigned int num );
 void revstr (char *str);
 
@@ -686,7 +871,7 @@ int GetIntTrueFalsefromString(char *STRING);
 
 long long randomnumber(long long maxrand);
 //int randomnumber(int maxrand);                                                  // Liefert eine Zahl im Bereich von 0-32767 ( bzw. von maxrand ) begrenzt
-char *tempdir(void);                                                            // Liefert eine Zeichenkette in Abhängigkeit vom Betriebssystem zurück
+char *tempdir(void);                                                            // Liefert eine Zeichenkette in AbhÃ¤ngigkeit vom Betriebssystem zurÃ¼ck
 char *tempfilename(char *ins);                                                  // Liefert einen Filenamen ... wobei ins auch NULL sein kann
 
 
@@ -694,6 +879,19 @@ char *tempfilename(char *ins);                                                  
 void *malloc0(size_t size);
 //#endif
 void* free0(void *Kette);
+
+//#ifdef HS_DEBUG
+#define MALLOC_ROTATE_SIZE 48
+//#else
+//#define MALLOC_ROTATE_SIZE 48
+//#endif
+//48 * 8 = 192 Byte
+void malloc_temp_init(void);                                                    // FÃ¼r temporÃ¤re Buffer
+void malloc_temp_free(void);
+void *malloc_temp(size_t sz);
+char *malloc_temp_strcpy(char *Kette);
+char *malloc_temp_string(char *Kette);
+
 
 /* Unixtime Funktionen */
 time_t unixtime(void);                                                          // Unter Unixservern typisch; call time time(NULL);
@@ -718,7 +916,13 @@ time_t ParseFmtTime(const char *fmt,const char *str, int *len);
  @addtogroup c_timerfunc
  @{
 */
+/// marco zum parsen eines Datum
 #define PARSEANYDATE_ERROR ((time_t)(-1))
+/**
+@brief struct fuer Monatsnamen/Monat
+
+struct der Monatsnamen und dazu passenden Monat in eine Tabelle zu speichern wird verwendet in @ref ParseFmtTime
+*/
 struct TYPE_MONNAMES
 {
     int mon;
@@ -736,7 +940,7 @@ char *miltaryToHumanDate(char *String);                                         
  @{
 */
 
-// Dump Strings bytes und buffer meistens für debugging
+// Dump Strings bytes und buffer meistens fÃ¼r debugging
 //___________________________________________________________________________
 
 #define MAXDUMP 16
@@ -751,7 +955,7 @@ tools_xtrn int dumpbyte;
 tools_xtrn int dumpcount;
 tools_xtrn int dumpmode;
 tools_xtrn char dumpstring[MAXDUMP];
-tools_xtrn void *NODE_HEAD; // gehöhrt zum DUMP Irreführende Variable
+tools_xtrn void *NODE_HEAD; // gehÃ¶hrt zum DUMP IrrefÃ¼hrende Variable
 ///@}
 
 void DumpInit       ( int DUMPMODE );
@@ -769,7 +973,7 @@ char *DumpFullString(void);
 
 int mgetline ( FILE *Stream, char *Dest, int MaxLen );
 
-// Prüft auf realles vorhandensein
+// PrÃ¼ft auf realles vorhandensein
 int DirOK   (char *name);
 int FileOK  (char *name);
 
@@ -780,7 +984,7 @@ int IsSystem (char *name);
 int IsLink(char *name);                                 // Also eine Verlinkte Datei Winows.lnk Dateien gelten nicht als Links!!
 int IsSoftLink(char *name);                             // Softlinks "ln -s Soft.link datai.txt"
 int IsHardLink(char *name);                             // Hardlinks "mklink /J HARDLINK directory"
-//int IsSymbolicLink(char*name); //testweise für windows
+//int IsSymbolicLink(char*name); //testweise fÃ¼r windows
 
 long long filesize64(char *name);
 long    filesize(char *name);
@@ -798,26 +1002,33 @@ char *Cbasename (char *Kette);                          // Filename ohne Pfad
 char *CfilenameExt(char *filename);                     // Extension eines Files ermitteln oder leeren String
 char *CfilenameName(char *filename);                    // Nur der Name. Keine Extension oder Pfad eines Files ermitteln, wenn nicht vorhanden -> leeren String
 char *Cdirname (char *path);                            // Directory ohne den vollen Pfad
-char *Cdirvault (char *path);                           // wie Cdirname, aber unabhängiger cdirname wird letzendlich doch aufgerufen
+char *Cdirvault (char *path);                           // wie Cdirname, aber unabhÃ¤ngiger cdirname wird letzendlich doch aufgerufen
 char *univault(char *path);                             // Austauschen von Variablen die mit getenv() geholt werden
 char *CFilevault (char *path);                          // kompletten Pfad korrigieren
 void CorrectPath(char *path);                           // Angegebenes Verzeichnis auf das aktuelle Betriebssystem anwenden
 
-void *RCread(char *filename);                           // RC-Datei in den Speicher lesen
-char *RCfind(void *RCNodes, char *var);                 // im Speicher nach RC-Wert suchen und die Value zurückgeben; wenn vorhanden, dann NULL
+void *RCread(int opt, char *rcreadfile, char *filename);                           // RC-Datei in den Speicher lesen
+char *RCfind(void *RCNodes, char *var);                 // im Speicher nach RC-Wert suchen und die Value zurÃ¼ckgeben; wenn vorhanden, dann NULL
+char *RCfindNum(void *RCNodes, char *var, int num);
+int RCValuesNum(void *RCNodes, char *mean, char *value, int num); // Finden Variable und Nennen an einer Positiion
+char *RCFileNameCreate(const char *filename);           // Einen Filenamen fuer RCread aufloesen
+char *RCdirvault(char *mask, char *prgname);            // Nur ein Verzeichnis erstellen und Variablen Pre-AuflÃ¶sen
+char *RCunivault(const char *filename);                 // Tauscht zusaetzlich zu den Systemvariablen
+//int RCreadPath(int opt, char *rc_Fullname, char *filename);
+int RCreadPath(int opt, char *rc_Fullname, char *subpath, char *filename); // Einzelnen Pfad bestimmen kann mit filename->FileprÃ¼fung sein, muss es aber nicht
 
-
-void GetCWD ( char *Kette );
-char *strgetCWD(void);
+int GetCWD ( char *Kette );
+char *strGetCWD(void);
 int save_chdir(char *path);
 
 int getach(void);
 
-// aktuelle Zentralfunktion um freien/belegten Speicherplatz feststellen zu können
+// aktuelle Zentralfunktion um freien/belegten Speicherplatz feststellen zu kÃ¶nnen
 int diskstate(char *Kette);
 unsigned long long diskfree  (char *Kette);
 unsigned long long disktotal (char *Kette);
 unsigned long long diskused  (char *Kette);
+/// zum bestimmen von festplattenplatz
 struct hs_disk_info{
     unsigned long long Free;
     unsigned long long Total;
@@ -827,6 +1038,30 @@ struct hs_disk_info{
 tools_xtrn struct hs_disk_info hs_diskinfo;
 
 
+// Minitool Setup um Textdateien komplett in den Speicher zu lesen
+enum {
+//    fra_is1252      = 1 << 11,
+//    fra_isUTF8      = 1 << 12,
+//    fra_isASC       = 1 << 13,
+//    fra_noTranslate = 1 << 14,
+    fra_isEOF       = 1 << 15,  /// Momentan das einzige Bit im Stall
+};
+
+// struct um fread_all zu speichern
+typedef struct frall_s{
+    int line;                   /// aktuelle Zeile im memory stream
+    long int sz;                /// LÃ¤nge der Datei / Stream
+    uint32_t flags;             /// mÃ¶gliche Flags des Stream (zZ nur EOF)
+    char *file;                 /// kompletter Inhalt der Datei
+    char *pointer;              /// StreamPointer
+    char *nextline;             /// aktuelle Zeile aus dem Stream nul terminatet
+    //char *filename ?          wer weiss ... kÃ¶nnte man kopieren
+}frall_t;                       /// Typedef von frall_s
+
+frall_t *fread_all(const char* filename);   // Datei einlesen und schliessen, kann dann von anderer Software geÃ¶ffnet werden
+void fread_all_close(frall_t *rs);          // Alle Zeiger und so weiter lÃ¶schen, also nicht die Datei nur die Zeiger
+int fread_all_getline(frall_t *rs);         // eine Zeile vom Memory Stream lesen
+
 
 void *Node_Add (void* StartNode, void *Data, int direction );
 void *Node_Add_After(void *StartNode, void *After, void*Data);
@@ -835,15 +1070,15 @@ void *Node_DelOne(void *StartNode, void *NodeToDel);
 void *Node_DelAll(void *StartNode);
 void *Node_GetNext(void *StartNode);
 void *Node_GetData(void *StartNode);
+void  Node_SetData(void *Node, void *Data, int freeOldData);
 int   Node_Count(void *StartNode);
-
 
 typedef int (*Nodecompfn)(const void*, const void*);
 void *Node_Sort(void *Stck, Nodecompfn Compare);
 
 // Stack Funktionen
-// Es muß ein void* definiert werden. Zum Init muß der auf NULL zeigen
-// Bei Verwendung von Stack müssen DATA ist die Datenverwaltung Usersache
+// Es muÃŸ ein void* definiert werden. Zum Init muÃŸ der auf NULL zeigen
+// Bei Verwendung von Stack mÃ¼ssen DATA ist die Datenverwaltung Usersache
 // Entweder mit malloc und free arbeiten oder aber feste Daten
 //
 // STCK_push(STACK,DATR)  LiFo Stack aufbauen (Last in First Out)
@@ -855,16 +1090,24 @@ void *Node_Sort(void *Stck, Nodecompfn Compare);
  @{
 */
 #ifdef HS_DEBUG
-tools_xtrn int NodesSortChanges;  ///< nur in der DEBUG-Version hochgezählt
+tools_xtrn int NodesSortChanges;  ///< nur in der DEBUG-Version hochgezÃ¤hlt
 #endif // HS_DEBUG
+/// Struct eines einzelnen Nodes - siehe @ref c_chainlist
 struct n_Node {
-    void *n_NEXT;   ///< Einfach Pointer auf den nächsten Datensatz
+    void *n_NEXT;   ///< Einfach Pointer auf den nÃ¤chsten Datensatz
     void *n_DATA;   ///< mit malloc geordeter Speicher
 };
 
 #define STCK_push(STACK,DATA)   STACK = Node_Add (STACK,DATA,false)
 #define STCK_pushl(STACK,DATA)  STACK = Node_Add (STACK,DATA,true)
 #define STCK_pop(STACK,DATA)    DATA  = Node_GetData (STACK); STACK = Node_DelFirstNode(STACK)
+
+/// Zum Einfuegen/Anhaengen von Datensaetzen
+enum NodeAddDirection{
+    Node_Add_Insert = 0, ///< Vor dem ersten Datendatz einfuegen
+    Node_Add_Append = 1, ///< An den letzten Datendatz anhaengen
+};
+
 ///@}
 
 #ifdef  __cplusplus
@@ -874,6 +1117,5 @@ struct n_Node {
 
 #undef tools_xtrn
 #endif //__TOOLSC__
-
-
 /*EOF*/
+

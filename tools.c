@@ -1,118 +1,168 @@
 //@see <h2><a href="modules.html">Modules</a></h2> ** Lizenz : Apache Lizenz 2.0  @name tools.c
 /**
-
- @todo uname domain füllen
+ @todo codelite
+ @todo uname domain fÃ¼llen
  @todo letzer Tag im Monat einpflegen
- @todo tooltest mit/für dump's
- @todo tooltest mit/für cfilename etc
- @todo __x86_64__ &| _WIN64 für time_ nutzen
- @todo Date_Is_DST weekday Sontag Uhrzeit berücksichtigen
+ @todo tooltest mit/fÃ¼r dump's
+ @todo tooltest mit/fÃ¼r cfilename etc
+ @todo __x86_64__ &| _WIN64 fÃ¼r time_ nutzen
+ @todo Date_Is_DST weekday Sontag Uhrzeit berÃ¼cksichtigen
  @todo define TIME_STR_5LU "%I64u" 5.5 !!
 
  @file tools.c
- @file tools.h
  @brief Beschreibung des Tools.c Projekt
 */
 /**
- @mainpage tools.c Projektübergreifende Funktionen
- Weiterführung der tools.c seit 1992
-
+ @mainpage tools.c Projektuebergreifende Funktionen
+<table cellspacing	="10"
+       cellpadding	="0"
+       width		="100%"
+       border		="0"
+><tr><td valign="top" width="25%">
  @author   [Heiko Stoevesandt [HS] Hesti](mailto:hstools@t-online.de)
  @date     01.03.92 Start der Tools in C siehe @ref r_revisionshistorie "Revisionshistorie"
  @copyright <a href="https://www.gnu.de/documents/gpl-2.0.de.html">GPL 2.0</a>
 
+Weiterfuehrung der tools.c seit 1992
+
+EMail: mailto:hstools@t-online.de
+HP:    http://hstools.sourceforge.net
+
+</td><td width="20%" style="background-image:URL(hstools_C.png); background-repeat: no-repeat; background-size: 100% auto;">
+</td><td width="55%" valign="top" style="padding-left: 10px; padding-top: 0px;">
+
+<div class="textblock"><dl class="section see"><dt>Hier eine Module/Guids</dt></dl></div>
+<div style="padding-left: 10px;">
+<a class="e1" href="modules.html">Index</a> <br>
+
+@ref c_base_history	"HStools History"<br>
+@ref InitTools "HStools Init"<br>
+@ref lprintf   "HStools lprintf"<br>
+@ref c_uname   "uname fÃ¼r Windows"<br>
+@ref strexpr   "strexpr Ausdruecke auswerten"<br>
+@ref c_chainlist "Einfach verkettete Listen"<br>
+
+</div>
+</td></tr></table>
+
+<table cellspacing	="10"
+       cellpadding	="0"
+       width		="100%"
+       border		="0"
+><tr><td valign="top" width="50%">
+
  ### Verzeichnis der grundlegenden Funktionsgruppen in tools.c
 
- - @subpage c_init_tools
- - @subpage c_args
- - @subpage c_lprintf
- - @subpage c_uname
- - @subpage c_strchr
- - @subpage c_malloc
- - @subpage c_tempfile
- - @subpage c_timerfunc
- - @subpage c_dumpfunc
- - @subpage c_iofunc
- - @subpage c_links
- - @subpage c_chainlist
+ @subpage c_init_tools <br>
+ @subpage c_args <br>
+ @subpage c_lprintf <br>
+ @subpage c_uname <br>
+ @subpage c_strchr <br>
+ @subpage c_malloc <br>
+ @subpage c_tempfile <br>
+ @subpage c_timerfunc <br>
+ @subpage c_dumpfunc <br>
+ @subpage c_iofunc <br>
+ @subpage c_links <br>
+ @subpage c_chainlist <br>
 
-  ### Verzeichnis der anderen Module
+</td><td valign="top" width="50%">
 
- - @subpage c_crc32
- - @subpage c_multi_args
- - @subpage c_rgbcolor
- - @subpage c_vars
- - @subpage c_cset
- - @subpage c_json
+ ### Verzeichnis externer Module
 
- Alle Informationen zu Änderungen in den einzelnen Funktionen werden dort direkt in der Revsionshistorie aufgelistet.
+ @subpage c_crc32 <br>
+ @subpage c_multi_args <br>
+ @subpage c_rgbcolor <br>
+ @subpage c_vars <br>
+ @subpage c_cset <br>
+ @subpage c_json <br>
+ @subpage c_vector <br>
+</td></tr></table>
+
+*/
+
+/**
+ @addtogroup c_base_history
+ @{
+ @brief Alle Informationen und Ã„nderungen
+
+ Alle Informationen zu Ã„nderungen in den einzelnen Funktionen werden dort direkt in der Revsionshistorie aufgelistet.
 
  @anchor r_revisionshistorie
 ___[ Revision ]______________________________________________________________
 
- **       1992 HS Ursprünglich von in und für Borland/Turbo C entwickelt
- **       1994 HS Komplette Überarbeitung und Implementierung nach Linux
- **       1997 HS Überarbeitung: Nun auch wieder unter MS-DOS/Windows einsetzbar
+ **       1992 HS UrsprÃ¼nglich von in und fÃ¼r Borland/Turbo C entwickelt
+ **       1994 HS Komplette Ãœberarbeitung und Implementierung nach Linux
+ **       1997 HS Ãœberarbeitung: Nun auch wieder unter MS-DOS/Windows einsetzbar
                   Weiterentwicklung auch in CPP einsetzbar
- ** 02.04.2006 HS RE_Create von einer alten Headerdatei. Alles "neu" geschrieben
-                  Alter Source war nicht mehr lesbar
- ** 01.04.2010 HS Neue Funktionen für eine Prüfsummenberechnung
- ** 05.07.2013 HS Angepasst an den aktuellen gcc Compiler
- ** 27.11.2017 HS Nochmal implementiert __linux__ und __WIN32__ Versionen
-                  für den Raspberry
- ** 30.12.2017 HS strchg new
- ** 08.04.2018 HS Impl. strmtch
- ** 08.04.2018 HS Impl. ParseFmtTime
- ** 10.04.2018 HS TinyC ist als Compiler auch vorgesehen
- ** 02.11.2018 HS Implementiert copyfiletime auch für Windows
- ** 13.11.2018 HS Kalendarfunktionen mktime_t neu
- ** 14.11.2018 HS Kalendarfunktionen mktime_s neu
-                  isLeapYear neu
- ** 05.02.2019 HS uname implementierung unter Windows (unter Linux schon drin)
- ** 10.02.2019 HS strtohexstr neu
- ** 03.03.2019 HS strstradd - strcat mit pointer neu
-                  HSLnum2Str hat jetzt einen Parameter mehr pad, der füller
-                  strftimeR - strftime hatte mal einen "Mrz" statt Mar zurückgegeben
-                  da flog die glibc_strftime raus und strftimeR kam rein
- ** 19.04.2019 HS Neue m_PRG_ Strings
- ** 23.04.2019 HS aChkARG ohne args, da diese ja bereitsabgelegt wurden
- ** 05.03.2020 HS FileCopy mit Prozentanzeige möglich
- ** 10.03.2020 HS Human2Num & Num2Human neu
- ** 22.03.2020 HS ChkARGlong um --long Parameter übergeben zu können
- ** 23.03.2020 HS DoxyGen Dokumentation
- ** 28.03.2020 HS neu strsetto In so manchen Bibliotheken gibt es ähnliches
- ** 01.04.2020 HS NEU: Codeblocks 20.03
- ** 01.04.2020 HS time_t kann jetzt 8 Bit sein oder 4 Bit
- ** 06.04.2020 HS Neue dynamische (malloc) Stringgrundfunktionen
- ** 07.04.2020 HS c_strchr in der Dokumentation unterteilt für eine besser Lesart
- ** 10.05.2020 HS filesize64 neu. Beim Filecopy von Dateien mit Dateien >4GB
+ ** 02.04.06 HS RE_Create von einer alten Headerdatei. Alles "neu" geschrieben
+                  Alter Source war nicht mehr lesbar. Nur der Borland C-Source
+ ** 01.04.10 HS Neue Funktionen fÃ¼r eine PrÃ¼fsummenberechnung
+ ** 05.07.13 HS Angepasst an den aktuellen gcc Compiler
+ ** 27.11.17 HS Nochmal implementiert __linux__ und __WIN32__ Versionen
+                fÃ¼r den Raspberry
+ ** 30.12.17 HS strchg new
+ ** 08.04.18 HS Impl. strmtch
+ ** 08.04.18 HS Impl. ParseFmtTime
+ ** 10.04.18 HS TinyC ist als Compiler auch vorgesehen
+ ** 02.11.18 HS Implementiert copyfiletime auch fÃ¼r Windows
+ ** 13.11.18 HS Kalendarfunktionen mktime_t neu
+ ** 14.11.18 HS Kalendarfunktionen mktime_s neu
+                isLeapYear neu
+ ** 05.02.19 HS uname implementierung unter Windows (unter Linux schon drin)
+ ** 10.02.19 HS strtohexstr neu
+ ** 03.03.19 HS strstradd - strcat mit pointer neu
+                HSLnum2Str hat jetzt einen Parameter mehr pad, der fÃ¼ller
+                strftimeR - strftime hatte mal einen "Mrz" statt Mar zurÃ¼ckgegeben
+                da flog die glibc_strftime raus und strftimeR kam rein
+ ** 19.04.19 HS Neue m_PRG_ Strings
+ ** 23.04.19 HS aChkARG ohne args, da diese ja bereitsabgelegt wurden
+ ** 05.03.20 HS FileCopy mit Prozentanzeige mÃ¶glich
+ ** 10.03.20 HS Human2Num & Num2Human neu
+ ** 22.03.20 HS ChkARGlong um --long Parameter Ã¼bergeben zu kÃ¶nnen
+ ** 23.03.20 HS DoxyGen Dokumentation
+ ** 28.03.20 HS neu strsetto In so manchen Bibliotheken gibt es Ã¤hnliches
+ ** 01.04.20 HS NEU: Codeblocks 20.03
+ ** 01.04.20 HS time_t kann jetzt 8 Bit sein oder 4 Bit
+ ** 06.04.20 HS Neue dynamische (malloc) Stringgrundfunktionen
+ ** 07.04.20 HS c_strchr in der Dokumentation unterteilt fÃ¼r eine besser Lesart
+ ** 10.05.20 HS filesize64 neu. Beim Filecopy von Dateien mit Dateien >4GB
                   liefert stat nur bis long ( 2 147 483 647 Bytes )
- ** 25.06.2020 HS Nach Prüfungsphase von strprintf jetzt für lprintf eingesetzt
- ** 26.06.2020 HS temp/random Funktionen
+ ** 25.06.20 HS Nach PrÃ¼fungsphase von strprintf jetzt fÃ¼r lprintf eingesetzt
+ ** 26.06.20 HS temp/random Funktionen
  **            HS llx I64x in strprintf auf __int64 angepasst Test 81.09
                   sollte somit einwandfrei sein
- ** 27.06.2020 HS verschiedene lprintf Anpassungen
- ** 07.07.2020 HS InitTools kann jetzt nur noch durch INITTOOLS_MSG_MAX begrenzt
-                  Meldungen mit %c bekommen. Außerdem können die Meldungen jetzt
-                  auch direkt im OPTS übergeben werden.
-               HS lprintf wird Zeilenumbrüche berücksichtigen
-               HS *neu* CFilevault wie CDirvault aber mit filenamen
- ** 09.07.2020 HS *neu* aChkARGlong
- ** 10.07.2020 HS ChkARG kann im Find-Teil das '*' haben.
- ** 18.08.2020 HS isOneString neu
- ** 19.10.2020 HS unter Linux verfeinert
- ** 29.11.2020 HS RCread und das finden des LogFilenamens überarbeitet
- ** 06.11.2020 HS In einzelne Module verfrachtet crc32 / multi_args
- ** 25.07.2022 HS sprintf -> sprintf_ex usw. für GCC 11.2 usw. ausgetauscht
- **               sprintf über strprintf
- **
+ ** 27.06.20 HS verschiedene lprintf Anpassungen
+ ** 07.07.20 HS InitTools kann jetzt nur noch durch INITTOOLS_MSG_MAX begrenzt
+                Meldungen mit %c bekommen. AuÃŸerdem kÃ¶nnen die Meldungen jetzt
+                auch direkt im OPTS Ã¼bergeben werden.
+             HS lprintf wird ZeilenumbrÃ¼che berÃ¼cksichtigen
+             HS *neu* CFilevault wie CDirvault aber mit filenamen
+ ** 09.07.20 HS *neu* aChkARGlong
+ ** 10.07.20 HS ChkARG kann im Find-Teil das '*' haben.
+ ** 18.08.20 HS isOneString neu
+ ** 19.10.20 HS unter Linux verfeinert
+ ** 29.11.20 HS RCread und das finden des LogFilenamens Ã¼berarbeitet
+ ** 06.11.20 HS In einzelne Module verfrachtet crc32 / multi_args
+ ** 25.07.22 HS sprintf -> sprintf_ex usw. fÃ¼r GCC 11.2 usw. ausgetauscht
+                sprintf Ã¼ber strprintf
+ ** 10.11.22 HS strGetCWD ist nur ein malloc Speicher strgetCWD gibts nicht mehr
+ ** 15.11.22 HS RCread ueberarbeitet
+                Online Dokumentation mit Darkmode (*aufgehÃ¼bscht*)
+ ** 29.08.23 HS timezone nicht unter UART
+                LLD_STR LLD_STR_LU8 fÃ¼r GCC 13.1
+ ** xx.12.23 HS Linux main
+ ** 28.01.24 HS fopen_readall gibt *char bei erfolg oder NULL fopen_getline
+ ** 22.03.24 HS strlstadd / strlstfree neu
+ ** 24.03.24 HS strquoute / strunquote neu
+ ** 02.04.24 HS rotierende Buffer die sich selbst oder auf Kommando freeen...
+             HS Jedes Datum von vier auf zweistellig umgestellt
 
+_____________________________________________________________________________
 
- _____________________________________________________________________________
- %{time dd.mm.yy} HS
-*/
+@} */
 
-
+///@noop  %{time dd.mm.yy} HS
 
 /**
  @addtogroup c_tools_globalvars
@@ -133,7 +183,7 @@ ___[ Revision ]______________________________________________________________
 */ /*
  @brief Init der tools.c Basisaufruf ist @ref InitTools
 
- Eine ausfühliche Beschreibung Beschreibung des Inits
+ Eine ausfÃ¼hliche Beschreibung Beschreibung des Inits
 
  Der Init ist die zentrale BasisInitialisierung aller globalen Variablen.
 
@@ -204,25 +254,25 @@ extern "C"
  iLogInfo kann das Aussehen des LogFiles ggf. auch des Syslogs erheblich beeinflussen.
 
  Es gibt folgende Parameter, die Auswirkungen auf die Startphase haben, bzw. das Aufzeichnen
- der Lognachrichten beeinflussen können.
+ der Lognachrichten beeinflussen kÃ¶nnen.
 
  iLogInfo-Flag       | Funktion
  --------------------|-----------------------------------------------------------
  INIT_NOSTARTmsg     | Der Programmstart erfolgt ohne Konsolennachricht
- INIT_NOLOG          | Es wird explizit nochmal der das LogFile-Bit im LogType gelöscht
- INIT_DATELOG        | Ein LogFilename wird zusätzlich mit dem aktuellen Datum geschrieben
- INIT_SYSLOG_ISODATE | Das Syslog wird wird mit IsoDate statt mit dem Syslogformat gefüllt. @ref LogSyslogIso
- INIT_LOG_ISODATE	 | Alle anderen Logs (außer dem Syslog) werden mit ISO-Datum gefüllt. @ref LogFileIso
- INIT_LOG_NOLOGEXTRA | Außer im Syslog wird das LogExtra (enthält im Normalfall den Programmnamen) unterdrückt @ref LogFileNoExtra
+ INIT_NOLOG          | Es wird explizit nochmal der das LogFile-Bit im LogType gelÃ¶scht
+ INIT_DATELOG        | Ein LogFilename wird zusÃ¤tzlich mit dem aktuellen Datum geschrieben
+ INIT_SYSLOG_ISODATE | Das Syslog wird wird mit IsoDate statt mit dem Syslogformat gefÃ¼llt. @ref LogSyslogIso
+ INIT_LOG_ISODATE	 | Alle anderen Logs (auÃŸer dem Syslog) werden mit ISO-Datum gefÃ¼llt. @ref LogFileIso
+ INIT_LOG_NOLOGEXTRA | AuÃŸer im Syslog wird das LogExtra (enthÃ¤lt im Normalfall den Programmnamen) unterdrÃ¼ckt @ref LogFileNoExtra
 
  @param PRGName     Programmname, darf NULL sein, dann wird der Programmname an arguv[0] ermittelt
  @param iMAJOR		Programm FinalRevision
  @param iMINOR      Programm SubRevision
  @param iBUILD      Build Version
  @param iBeta       Beta-Status, im Prinzip ein beliegiger String
- @param iLogInfo    Früher nur Switches zur initialen LogInfo siehe INIT_ Switches
+ @param iLogInfo    FrÃ¼her nur Switches zur initialen LogInfo siehe INIT_ Switches
 */
-/// Anzahl der möglichen Anhänge an m_PRG_INFO
+/// Anzahl der mÃ¶glichen AnhÃ¤nge an m_PRG_INFO
 #define INITTOOLS_MSG_MAX 25
 
 /**
@@ -230,7 +280,7 @@ extern "C"
 
  Der zentrale BasisInit. Er legt die Defaultwerte fest und steuert das Aussehen der Fehlerausgaben mit lprintf/lmsg.
 
- Sofern die Environment-Variable @ref HSDIR gesetzt ist, wird diese auch übernommen.
+ Sofern die Environment-Variable @ref HSDIR gesetzt ist, wird diese auch Ã¼bernommen.
 
  Der Basisinit kann minmalistisch mit
 
@@ -238,7 +288,7 @@ extern "C"
  InitTools(0,NULL,"");
  @endcode
 
- erfolgen. Es werden alle grundsätzlichen Variablen vernünftig belegt, aber es fehlen Variablen, wie @ref LogFileName etc. Für Minimalprojekte aber denkbar.
+ erfolgen. Es werden alle grundsÃ¤tzlichen Variablen vernÃ¼nftig belegt, aber es fehlen Variablen, wie @ref LogFileName etc. FÃ¼r Minimalprojekte aber denkbar.
 
  Ebenso minimalistisch geht es mit:
 
@@ -249,11 +299,11 @@ extern "C"
  Es wird so aber der Programmname erkannt usw.. Auch der LogFileName sollte so richtig
  sein, aber per default sind nur STDERR und SYSLOG als Ausgabe vorgesehen.
 
- Mit den @b opts können Parameter übergeben oder Flags geändert werden.
+ Mit den @b opts kÃ¶nnen Parameter Ã¼bergeben oder Flags geÃ¤ndert werden.
 
  opts werden von links nach rechts abgearbeitet und erwarten die Parameter auch so.
 
- typisch wäre so eine <dfn> "%v %m %t" </dfn> Variante. Diese Übergibt die Versionkontrolle, schaltet die Startnachricht aus und übergibt die Logfiletype.
+ typisch wÃ¤re so eine <dfn> "%v %m %t" </dfn> Variante. Diese Ãœbergibt die Versionkontrolle, schaltet die Startnachricht aus und Ã¼bergibt die Logfiletype.
  Im Ganzen sieht das so aus:
 
  @code
@@ -269,46 +319,46 @@ extern "C"
 
  tooltest V0.0.0 (c) 2020 by MIR
 
- Sieht im ersten Augenblick nach viel Aufwand für die kleine Zeile aus, aber "MIR" läßt sich auch mit einer @b "#define" Variablen austauschen. Damit
- können ganze Nachrichtenblöcke, in diesem Fall Copyright, ausgetauscht werden. m_PRG_INFO kann im ABOUT-Dialog Verwendung finden.
+ Sieht im ersten Augenblick nach viel Aufwand fÃ¼r die kleine Zeile aus, aber "MIR" lÃ¤ÃŸt sich auch mit einer @b "#define" Variablen austauschen. Damit
+ kÃ¶nnen ganze NachrichtenblÃ¶cke, in diesem Fall Copyright, ausgetauscht werden. m_PRG_INFO kann im ABOUT-Dialog Verwendung finden.
 
  <br>@anchor InitTools_OPTS
 
  optparam | type           | Beschreibung
  ---------|----------------|-------------
-    @b  ' |                | hat kein einleitendes '%%' Zeichen, der folgende Text bis zum nächsten @b ' wird 1:1 übernommen
-        c | char *         | mögliche ExtraMsg beim Start bzw. für @ref m_PRG_INFO. Möglichkeit 1 auf %c folgen ein Zeichen != '='
-        d | -              | @ref LogFileName mit zusätzlichen Datum
+    @b  ' |                | hat kein einleitendes '%%' Zeichen, der folgende Text bis zum nÃ¤chsten @b ' wird 1:1 Ã¼bernommen
+        c | char *         | mÃ¶gliche ExtraMsg beim Start bzw. fÃ¼r @ref m_PRG_INFO. MÃ¶glichkeit 1 auf %c folgen ein Zeichen != '='
+        d | -              | @ref LogFileName mit zusÃ¤tzlichen Datum
         e | -              | @ref LogFileWithExtra auf true setzen, per default ist es auf false
-        l | char*          | logs in diesem DatumsFormat darstellen ( siehe @ref strftimeR ) wird intern nach @ref LogDateFormat, wird NULL als Parameter übergeben wird es auf @ref SyslogDateFormat gesetzt
-        m | -              | StartMessage übergehen
-        o | -              | Kein CR/LF in lprintf auflösen @ref lprintfConvertCRLF
+        l | char*          | logs in diesem DatumsFormat darstellen ( siehe @ref strftimeR ) wird intern nach @ref LogDateFormat, wird NULL als Parameter Ã¼bergeben wird es auf @ref SyslogDateFormat gesetzt
+        m | -              | StartMessage Ã¼bergehen
+        o | -              | Kein CR/LF in lprintf auflÃ¶sen @ref lprintfConvertCRLF
         p | char*          | Programmname wird in @ref m_PRGNAME gespeichert -- @ref LogExtra zeigt darauf
         s | char*          | syslog mit diesem DatumsFormat speichern (siehe @ref strftimeR), nur unter Windows, wird sonst ignoriert -- intern nach @ref SyslogDateFormat
-        t | int( 0-255 )   | LogType @ref LOG_Ausgabekanäle in welche die Nachrichten von lprintf gespeichert werden
+        t | int( 0-255 )   | LogType @ref LOG_Ausgabekanaele in welche die Nachrichten von lprintf gespeichert werden
         v | 3 Ints 1 char* | Version 1.2.3 Beta -- wird in @ref m_MAJOR etc. gespeichert
 
  @return 0 oder das Programm muss abgebrochen werden
  @param arguc		Parameter von main Anzahl
  @param arguv       Parameter von main StringFeld
  @param opts        Modifkator der Optionen
- @param ...         Parameter für die Optionen
+ @param ...         Parameter fÃ¼r die Optionen
 
  @see c_lprintf
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 16.11.2016 HS Neue Listeverwaltung
- ** 20.01.2017 HS Logfiles werden nicht mehr dem Datum Voran, sondern mit dem
-                  Datum hinter dem Programmnamen geschrieben.
- ** 19.02.2018 HS HSDIR ist global verfügbar; wenn HSDIR[0]==0 dann unbesetzt
- ** 13.01.2019 HS m_PRG_argc & m_PRG_arguv global verfügbar
- ** 27.06.2020 HS Dokumentation aufgearbeitet
- ** 28.06.2020 HS LogFile Operatoren können im iLogInfo grundsätzlich eingerichtet werden
- ** 29.06.2020 HS Ganz neue Version, da mich verschiedene Optionen juckten
- ** 06.07.2020 HS aus den opts sind Nachrichten jetzt direkt möglich.
-               HS %1-%9 wird ersetzt durch %c und ist durch INITTOOLS_MSG_MAX begrenzt
+ ** 02.04.06 HS ReCreate
+ ** 16.11.16 HS Neue Listeverwaltung
+ ** 20.01.17 HS Logfiles werden nicht mehr dem Datum Voran, sondern mit dem
+                Datum hinter dem Programmnamen geschrieben.
+ ** 19.02.18 HS HSDIR ist global verfÃ¼gbar; wenn HSDIR[0]==0 dann unbesetzt
+ ** 13.01.19 HS m_PRG_argc & m_PRG_arguv global verfÃ¼gbar
+ ** 27.06.20 HS Dokumentation aufgearbeitet
+ ** 28.06.20 HS LogFile Operatoren kÃ¶nnen im iLogInfo grundsÃ¤tzlich eingerichtet werden
+ ** 29.06.20 HS Ganz neue Version, da mich verschiedene Optionen juckten
+ ** 06.07.20 HS aus den opts sind Nachrichten jetzt direkt mÃ¶glich.
+             HS %1-%9 wird ersetzt durch %c und ist durch INITTOOLS_MSG_MAX begrenzt
 _____________________________________________________________________________
 */ // 0123456789 - ab   fghijk  no qr  u wxyz
 
@@ -316,7 +366,7 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
 {
     bool printStartMessage;                                     // bestimmt ob eine Nachricht beim Programmstart automatsch ausgegeben wird
     bool LogfileNameWithDate;                                   // Jeden Tag einen anderen Namen erstellen
-    char *msg[INITTOOLS_MSG_MAX];                               // Nachrichten die an m_PRG_INFO angehängt werden, so dass es eine individuelle Nachricht ergibt
+    char *msg[INITTOOLS_MSG_MAX];                               // Nachrichten die an m_PRG_INFO angehÃ¤ngt werden, so dass es eine individuelle Nachricht ergibt
     char tmpd[PATH_MAX];
 
     int i;
@@ -324,7 +374,7 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
     char *opt_pos;                                              // zeiger in den opts
     va_list argpnt;                                             // variablelist ...
 
-    if (opts==NULL) return 1;                                   // nicht erlaubt. muss "" oder andere gültige charkette sein
+    if (opts==NULL) return 1;                                   // nicht erlaubt. muss "" oder andere gÃ¼ltige charkette sein
 
     tmp = getenv("HSDIR");                                      // ---- > HSDIR auswerten oder nullen
     if (tmp) strcpy_ex (HSDIR, tmp);
@@ -333,7 +383,7 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
     m_PRG_argc  = arguc;                                        // Args Intern merken
     m_PRG_arguv = arguv;
 
-    // Defaults, nur wenn geändert, dann anders
+    // Defaults, nur wenn geÃ¤ndert, dann anders
     //_________________________________________________________
 
     printStartMessage   = true;
@@ -349,7 +399,7 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
     LogDateFormat       = "%Y-%m-%d %H:%M:%S ";                 // 2020-06-29 15:33:21
     SyslogDateFormat    = "%b %d %H:%M:%S ";                    // Jun 29 15:33:21
 
-    m_MAJOR = 0;                                                // Revisionskontrolle; kann muß nicht
+    m_MAJOR = 0;                                                // Revisionskontrolle; kann muÃŸ nicht
     m_MINOR = 0;
     m_BUILD = 0;
     m_BETA  = "";
@@ -357,12 +407,13 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
     for (i=0;i<INITTOOLS_MSG_MAX;i++) msg[i] = NULL;            // Alle Zusatznachrichten NULLen
 
     strcpy (m_PRGNAME, "");                                     // default=leer
+
 #ifdef OS_WINDOWS
     sprintf_ex(SYSLOGFILE,"%s" DIR_SEP "SYSLOG.log",getenv("LOCALAPPDATA"));
 #endif
 
     va_start (argpnt, opts);                                    // ... auf erstes Argument positionieren
-    for (opt_pos=opts;;opt_pos++)                               // Zähler ist das in opt vermerkte
+    for (opt_pos=opts;;opt_pos++)                               // ZÃ¤hler ist das in opt vermerkte
     {
         if (*opt_pos==0) break;                                 // Keine opts mehr
         if (*opt_pos=='\'')
@@ -394,7 +445,7 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
         opt_pos++;                                              // Zeiger auf Argument
         if (*opt_pos==0) return EXIT_FAILURE;                   // ERROR, nach '%' muss ein Zeichen folgen
 
-        switch (*opt_pos)                                       // welche Option verändert werden soll
+        switch (*opt_pos)                                       // welche Option verÃ¤ndert werden soll
         {                                                       // Nachrichten
           case 'c':
               tmp = strdup(va_arg(argpnt, char *));
@@ -472,25 +523,18 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
         if (m_PRGNAME[0]) strcpy_ex (m_Workfile,m_PRGNAME);
         else              strcpy_ex (m_Workfile,"anytool");
     }
-    if (!m_PRGNAME[0]) strcpy_ex (m_PRGNAME, m_Workfile);          // Programmnamen kopieren, falls bis jetzt keiner existiert
+    if (!m_PRGNAME[0]) strcpy_ex (m_PRGNAME, m_Workfile);       // Programmnamen kopieren, falls bis jetzt keiner existiert
 
     // Logfilenamen erstellen
     //_________________________________________________________
 
     // Globales Config lesen
     RConfig = NULL;
-#ifdef OS_LINUX
-    RConfig = RCread("/etc/hsrc");
-#else // OS_WINDOWS
-    if (HSDIR[0]!=0)
-    {
-        RConfig = RCread("%HSDIR%" DIR_SEP "etc" DIR_SEP "hsrc");
-    }
-    if (!RConfig)
-    {
-        RConfig = RCread("%APPDATA%" DIR_SEP "hs" DIR_SEP "rc");
-    }
-#endif
+#ifdef OS_WINDOWS
+    RConfig =               RCread(opt_RCdir_HSDIR_etc|opt_RCdir_silence|opt_RCdir_nodflt, NULL, "hsrc");
+#endif // OS_WINDOWS
+    if (!RConfig) RConfig = RCread(opt_RCdir_root_etc|opt_RCdir_silence|opt_RCdir_nodflt, NULL, "hsrc");
+
     // Ab hier wird Filename des Logs gesucht
     // _________________________________________________________
 
@@ -498,17 +542,17 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
     //tmp = NULL;
 
     tmp = RCfind( RConfig, "LOGDIR" );                          // In der RConfig suchen nach LOGDIR=....
-    if (tmp) if (!DirOK(tmp)) tmp = NULL;                       // Wenn gefunden und ein gültiges Verzeichnis
+    if (tmp) if (!DirOK(tmp)) tmp = NULL;                       // Wenn gefunden und ein gÃ¼ltiges Verzeichnis
     if ((!tmp) && (HSDIR[0]!=0))                                // Noch kein Ergebnis, aber HSDIR im Environment
     {
-        sprintf_ex (tmpd, "%s" DIR_SEP "Log", HSDIR);                     // Prüfe ab das Verzeinis existiert
+        sprintf_ex (tmpd, "%s" DIR_SEP "Log", HSDIR);                     // PrÃ¼fe ab das Verzeinis existiert
         if (DirOK(tmpd)) tmp=tmpd;
     }
 #ifdef OS_LINUX
     if (!tmp) tmp = getenv("HOME");					            // Wenn nicht dann wird "HOME=/home/pi" angenommen
     if (!tmp) tmp = "/var/log";                                 // oder fallback
 #else
-    if (!tmp) tmp = Cdirvault ("%LOCALAPPDATA%");               // unter Windows wird [USERDIR]/Appdata/Local als fallback genommen
+    if (!tmp) tmp = Cdirvault ("%LOCALAPPDATA%\\");               // unter Windows wird [USERDIR]/Appdata/Local als fallback genommen
 #endif
     strcpy_ex(LogDir, tmp);
     if (LogfileNameWithDate) sprintf_ex (m_PRG_INFO, "%s-%s.log",  m_PRGNAME, datestr(unixtime()));
@@ -529,8 +573,8 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
             tmp = getenv("LOCALAPPDATA");			            // LOCALAPPDATA=C:\Users\Hesti\AppData\Local
             sprintf_ex (m_Workfile, "%s" DIR_SEP "%s", tmp, m_PRG_INFO);
         }
-//#endif
-//#ifdef OS_LINUX
+// #endif
+// #ifdef OS_LINUX
 // else
 
 //ifdef compile4me Idee ist nicht flexibel genug
@@ -551,8 +595,8 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
         // #------ comment ---------
         // log=/pub/logs/hesti
         // etc=/hs/etc
-        // map00=ä;ae
-        // map01=ü;ue
+        // map00=Ã¤;ae
+        // map01=Ã¼;ue
 
         tmp = RCfind( RConfig, "LOGDIR" );
         if (tmp) if (!DirOK(tmp)) tmp = NULL;
@@ -567,7 +611,7 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
     // Vorbelegen einiger Variablen
     //_________________________________________________________
 
-    LogExtra = m_PRGNAME;                                       // inbesondere für das syslog
+    LogExtra = m_PRGNAME;                                       // inbesondere fÃ¼r das syslog
     NODE_HEAD = NULL;                                           // Einige defaults
     DumpInit (DUMP_STDERR);
 
@@ -592,11 +636,12 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
         }
     }
 
-    // Grundsätzlich abfangen und Programm beenden --date --version
+    // GrundsÃ¤tzlich abfangen und Programm beenden --date --version
+    // 09.03.24 HS printf statt lprintf
+    // 12.03.24 HS domian mit eincopiliert
 
-    for (i=1;;i++)
+    for (i=1;i<arguc;i++)
     {
-        if (i>=arguc) break;
         //printf ("ARGV = \"%s\"\n", arguv[i]);
         if ((!strcasecmp(arguv[i], "--date")) ||
             (!strcasecmp(arguv[i], "--version"))
@@ -604,21 +649,37 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
               struct utsname utsbuf;
 
               printf ("%s\n",m_PRG_INFO);
-              printf ("Compiled at  : %s %s\n", __DATE__, __TIME__);
-              printf ("Compiled with: %s V%i.%02i.%02i (%s)\n",
+              printf ("%14s\t%s %s\n", "Compiled at:", __DATE__, __TIME__);
+              printf ("%14s\t%s V%i.%02i.%02i (%s)\n", "Compiled with:",
                        __COMPILER__, __COMPILER_VERSION__ / 10000,
                        (__COMPILER_VERSION__ / 100) % 100,
                        __COMPILER_VERSION__ % 100, OS_VERSION );
 
               if (uname(&utsbuf) >= 0)
               {
-                 lprintf("Machine:\t%s\nSysname:\t%s\nRelease:\t%s\nVersion:\t%s\nNode:   \t%s\n", //Domain: \t%s\n",
-                    utsbuf.machine,
-                    utsbuf.sysname,
-                    utsbuf.release,
-                    utsbuf.version,
-                    utsbuf.nodename
-                    //,utsbuf.domainname
+//                 printf("      Machine:\t%s\n      Sysname:\t%s\nRelease:\t%s\nVersion:\t%s\nNode:   \t%s\n", //Domain: \t%s\n",
+//                    utsbuf.machine, utsbuf.sysname, utsbuf.release, utsbuf.version, utsbuf.nodename
+//                    //,utsbuf.domainname
+//                    );
+
+                 printf ("%s\n",strfiller('-',80));
+                 printf("%14s\t%s\n%14s\t%s\n%14s\t%s\n%14s\t%s\n%14s\t%s\n"
+#ifdef OS_LINUX
+                        "%14s\t%s\n"
+#endif
+                        ,"Machine:", utsbuf.machine
+                        ,"Sysname:", utsbuf.sysname
+                        ,"Release:", utsbuf.release
+                        ,"Version:", utsbuf.version
+                        ,"Node:", utsbuf.nodename
+#ifdef OS_LINUX
+                        ,"Domain:",
+# ifdef __USE_GNU
+                        utsbuf.domainname
+# else
+                        utsbuf.__domainname
+# endif
+#endif
                     );
               }
               fflush(stdout);
@@ -652,29 +713,29 @@ int InitTools ( int arguc, char *arguv[] , char* opts, ... )
 
 ___[ Revision ]______________________________________________________________
 
- ** 31.05.1997 HS Create
- ** 16.05.1999 HS Portierung nach Unix
- ** 01.08.2016 HS Reimplemnted für Windows
- ** 17.11.2016 HS InitArg arg_GetNext arc_Clean neu, um überprüfen zu können,
-                  ob unsinnige Parameter überprüfen zu können.
- ** 09.12.2016 HS Rewrite von ChkARG
- ** 13.01.2019 HS Neu: Mainparameter '#num' Direkter Zugriff auf einzelne
-                  Parameter mit Nummer
- ** 10.07.2020 HS Wenn ChkARG im Find-Teil das '*' vorfindet, dann wird der erste
-                  nicht /- @ref ChkPar Parameter gefunden und korrekt verarbeitet.
+ ** 31.05.00 HS Create 31.05.1997
+ ** 31.05.00 HS Portierung nach Unix 16.05.1999
+ ** 01.08.16 HS Reimplemnted fÃ¼r Windows
+ ** 17.11.16 HS InitArg arg_GetNext arc_Clean neu, um Ã¼berprÃ¼fen zu kÃ¶nnen,
+                ob unsinnige Parameter Ã¼berprÃ¼fen zu kÃ¶nnen.
+ ** 09.12.16 HS Rewrite von ChkARG
+ ** 13.01.19 HS Neu: Mainparameter '#num' Direkter Zugriff auf einzelne
+                Parameter mit Nummer
+ ** 10.07.20 HS Wenn ChkARG im Find-Teil das '*' vorfindet, dann wird der erste
+                nicht /- @ref ChkPar Parameter gefunden und korrekt verarbeitet.
 _____________________________________________________________________________
 */
 
 char *arg_used=NULL;
 
-///@brief Init um Args später auswerten zu können, die nicht genutzt werden
+///@brief Init um Args spÃ¤ter auswerten zu kÃ¶nnen, die nicht genutzt werden
 void InitARG (int arguc)
 {
     arg_used = malloc0(arguc+1);
     arg_used[0] = 1;
 }
 
-///@brief Sub für arg_unused_print
+///@brief Sub fÃ¼r arg_unused_print
 int arg_GetNext(int point, int arguc)
 {
     int p;
@@ -699,7 +760,7 @@ int aarg_unused_print(void)
     return arg_unused_print(m_PRG_argc, m_PRG_arguv);
 }
 /**
- @brief über lprintf alle an main übergebenen _nicht_ genutzten Parameter ausgeben
+ @brief Ã¼ber lprintf alle an main Ã¼bergebenen _nicht_ genutzten Parameter ausgeben
  @return Anzahl der Fundstellen
 */
 int arg_unused_print(int argc, char *argv[])
@@ -735,7 +796,7 @@ int ChkPar(int tmp)
 }
 #endif // old_pars_version
 
-/// @brief prüfen ob das Zeichen ein Parameter ist
+/// @brief prÃ¼fen ob das Zeichen ein Parameter ist
 /// @return das Zeichen das Verwendet wurde. 0 wenn nichts gefunden
 int ChkPar(int val)
 {
@@ -752,7 +813,7 @@ int ChkPar(int val)
 
 ___[ Revision ]______________________________________________________________
 
- ** 13.01.2019 HS Create
+ ** 13.01.19 HS Create
 ___________________________________________________________________________*/
 
 int ChkParMain (char *Find, int arguc, char *arguv[])
@@ -767,8 +828,8 @@ int ChkParMain (char *Find, int arguc, char *arguv[])
     for (PosIHave=0;;PosIHave++)
     {
         if (PosIHave>=arguc) break;
-        src = arguv[PosIHave];                                                  // Durch die Übergebenen Parameter hangeln
-        if (ChkPar(src[0])!=0) break;                                           // darf als Parameter __NICHT__ gültig sein
+        src = arguv[PosIHave];                                                  // Durch die Ãœbergebenen Parameter hangeln
+        if (ChkPar(src[0])!=0) break;                                           // darf als Parameter __NICHT__ gÃ¼ltig sein
         if (numToFind==(PosIHave+1))                                            // Wenn gefunden Fundstelle mitteilen (1-xxx)
         {
             ARG = src;
@@ -783,7 +844,7 @@ int ChkParMain (char *Find, int arguc, char *arguv[])
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.07.2021 HS Create
+ ** 09.07.21 HS Create
 ___________________________________________________________________________*/
 
 int ChkParWos (char *Find, int arguc, char *arguv[])
@@ -799,8 +860,8 @@ int ChkParWos (char *Find, int arguc, char *arguv[])
     for (numFound=0,PosIHave=0;;PosIHave++)
     {
         if (PosIHave>=arguc) break;
-        src = arguv[PosIHave];                                                  // Durch die Übergebenen Parameter hangeln
-        if (ChkPar(src[0])!=0) continue;                                        // darf als Parameter __NICHT__ gültig sein
+        src = arguv[PosIHave];                                                  // Durch die Ãœbergebenen Parameter hangeln
+        if (ChkPar(src[0])!=0) continue;                                        // darf als Parameter __NICHT__ gÃ¼ltig sein
         if (numFound==numToFind)
         {
             ARG = src;
@@ -815,13 +876,13 @@ int ChkParWos (char *Find, int arguc, char *arguv[])
 
 /**
  @brief Auswertung eine single Parameters
- @return Bei Fehler wird 0 zurückgegeben, ansonsten die Position in argv -- ARG zeigt auf einen Parameter, wenn dieser angegeben wurde oder NULL, wenn kein Parameter angegeben
+ @return Bei Fehler wird 0 zurÃ¼ckgegeben, ansonsten die Position in argv -- ARG zeigt auf einen Parameter, wenn dieser angegeben wurde oder NULL, wenn kein Parameter angegeben
  @param Find    was zu finden ist. z.B. -a
 
- Parameterübergabe sollten möglich sein.
+ ParameterÃ¼bergabe sollten mÃ¶glich sein.
 
  Statt - kann unter Windows auch / benutzt werden. Ausgeschlossen sind mehrere Zeichen,
- -version ö.Ä. nur Buchstaben von a-z oder Zahlen sollten Anwendung finden.
+ -version Ã¶.Ã„. nur Buchstaben von a-z oder Zahlen sollten Anwendung finden.
 
  wenn dem Parameter ein . vorangestellt ist, dann ist der folgende Parameter ohne Werte und wird auch so handelt.
 
@@ -832,7 +893,7 @@ int ChkParWos (char *Find, int arguc, char *arguv[])
  -dDEST
  @endcode
 
-  Überprüfung der Parameter mit Slash oder Minus übergeben wurden
+  ÃœberprÃ¼fung der Parameter mit Slash oder Minus Ã¼bergeben wurden
 
 */
 
@@ -843,7 +904,7 @@ int aChkARG(char *Find)
 
 /**
  @brief Auswertung eine single Parameters
- @return Bei Fehler wird 0 zurückgegeben, ansonsten die Position in argv -- ARG zeigt auf einen Parameter, wenn dieser angegeben wurde oder NULL, wenn kein Parameter angegeben
+ @return Bei Fehler wird 0 zurÃ¼ckgegeben, ansonsten die Position in argv -- ARG zeigt auf einen Parameter, wenn dieser angegeben wurde oder NULL, wenn kein Parameter angegeben
  @param Find    was zu finden ist. z.B. -a
  @param arguc   Anzahl der Argumente
  @param arguv   String Feld, das durchsucht wird
@@ -858,7 +919,7 @@ int ChkARG(char *Find, int arguc, char *arguv[])
 
 /**
  @brief Auswertung eine single Parameters
- @return Bei Fehler wird 0 zurückgegeben, ansonsten die Position in argv -- ARG zeigt auf einen Parameter, wenn dieser angegeben wurde oder NULL, wenn kein Parameter angegeben
+ @return Bei Fehler wird 0 zurÃ¼ckgegeben, ansonsten die Position in argv -- ARG zeigt auf einen Parameter, wenn dieser angegeben wurde oder NULL, wenn kein Parameter angegeben
  @param Find    was zu finden ist. z.B. -a
  @param start   erst ab dieser Stelle suchen
  @param arguc   Anzahl der Argumente
@@ -868,17 +929,21 @@ int ChkARG(char *Find, int arguc, char *arguv[])
 
 ___[ Revision ]______________________________________________________________
 
- ** 20.02.2020 HS arg_used[p]=1 wurde an der falschen Stelle gesetzt
+ ** 20.02.20 HS arg_used[p]=1 wurde an der falschen Stelle gesetzt
+ ** 15.12.23 HS Anpassungen wg. -"0-9" und doppelt -e mÃ¶glich
 ____________________________________________________________________________*/
 
 int ChkARGwStart(char *Find, int start, int arguc, char *arguv[])
 {
-    int singlePar;
+    int singlePar,numPar;
     int p;
     char *src;
 
+    PNUM = -1;
     ARG = NULL;
     singlePar = 0;
+    numPar = 0;
+
     if (Find[0]=='#') return ChkParMain (Find, arguc, arguv);                   // Mainparameter #0 bis # #9999 sh. ohne ParameterSlashes
     if (Find[0]=='$') return ChkParWos  (Find, arguc, arguv);                   // Mainparameter $0 bis $9999 sh. ohne ParameterSlashes
 
@@ -888,70 +953,99 @@ int ChkARGwStart(char *Find, int start, int arguc, char *arguv[])
         Find++;
     }
     if (ChkPar(Find[0])) Find++;
-    if (Find[0]==0)                                                             // Prüfe ob erstes Zeichen ein Parameter ist
+    if (Find[0]==0)                                                             // PrÃ¼fe ob erstes Zeichen ein Parameter ist
     {                                                                           // und das zweite Zeichen ungleich 0 ist
         lprintf ("%s can't used as Checkupparameter", Find);
         return 0;
+    }
+    if (Find[0]=='0')
+    {
+        if (Find[1]=='-')
+        {
+            if (Find[2]=='9')
+            {
+                if (!arg_used)
+                {
+                    lprintf ("0-9 ohne InitArg not working");
+                    return 0;
+                }
+                numPar++;
+            }
+        }
     }
 
     for (p=start;;p++)                                                          // Alle Parameter
     {
         if (p>=arguc) break;                                                    // Ende ?
-        src = arguv[p];                                                         // Durch die Übergebenen Parameter hangeln
-        if (ChkPar(src[0])==0)                                                  // Wenn es kein gültiger Parameter ist
+        src = arguv[p];                                                         // Durch die Ãœbergebenen Parameter hangeln
+        if (ChkPar(src[0])==0)                                                  // Wenn es kein gÃ¼ltiger Parameter ist
         {
             if (*Find!='*') continue;                                           // der auch aktuell nicht gefunden werden soll
             if (arg_used) arg_used[p]=1;                                        // setzen falls vorhanden
             ARG = src;
-            continue;
-        }
-
-//      if (ChkPar(src[0])==0) continue;                                        // muss als Parameter gültig sein
-        src++;
-        if (tolower(Find[0])==src[0])                                           // auffindbar ? ja, dann
-        {
-            if (arg_used) arg_used[p]=1;                                        // setzen falls vorhanden
-            if (singlePar) return p;
-            src++;
-            if (src[0]==0)                                                      // möglicher Single Parameter, dann auf folgenden _Parameter_ prüfen
-            {
-                if ((p+1)<arguc)                                                // Gibt es noch Parameter ?
-                {
-                    if (!ChkPar(arguv[p+1][0]))                                 // Ist es auch kein anderer Parameter ?
-                    {
-                        if (arg_used) arg_used[p+1]=1;                          // setzen falls vorhanden
-                        ARG = arguv[p+1];                                       // Parameter zur Argument machen
-                    }
-                }
-            }else{
-                if (src[0]=='=')  src++;                                        // Gleichheitszeichen überlesen
-                if (src[0]!=0)                                                  // Vorhandenes Argument ?
-                {
-                    ARG = src;
-                }
-            }
-
-            if ( (isupper(Find[0])) && (ARG==NULL) )
-            {
-                if (arg_used) arg_used[p]=0;                                    // zurücksetzen falls vorhanden
-                lprintf ("ARG are not optional for %s", Find);
-                return 0;
-            }
             return p;
         }
+        if (arg_used) if (arg_used[p]) continue;                                // nur verarbeiten, wenn parameter noch nicht benutzt
+//      if (ChkPar(src[0])==0) continue;                                        // muss als Parameter gÃ¼ltig sein
+        src++;
+
+        if (numPar)                                                             // find = "0-9"
+        {
+            if (!isdigit(src[0])) continue;                                     // Ã¼bergen ist ein Parameter wie -15= ?
+            if (arg_used) if (arg_used[p]) continue;
+
+            for (PNUM=0;isdigit(src[0]);src++)                                  // dann alle alle Zeichen (Zahlen) abarbeiten
+            {
+                PNUM=PNUM*10;                                                   // das Ã¼bliche in eine integer wandel....
+                PNUM=PNUM+(src[0]-'0');
+            }
+        }else{                                                                  // Keine Zahl -15 gefordert, sonden ein Zeichen
+            if (tolower(Find[0])!=src[0]) continue;                             // dann mÃ¼ssen die beiden stimmen
+            src++;                                                              // und src muss dahinter zeigen
+        }
+
+        if (arg_used) arg_used[p]=1;                                            // setzen falls vorhanden
+        if (singlePar) return p;
+
+        if (src[0]==0)                                                          // mÃ¶glicher Single Parameter, dann auf folgenden _Parameter_ prÃ¼fen
+        {
+            if ((p+1)<arguc)                                                    // Gibt es noch Parameter ?
+            {
+                if (!ChkPar(arguv[p+1][0]))                                     // Ist es auch kein anderer Parameter ?
+                {
+                    if (arg_used) arg_used[p+1]=1;                              // setzen falls vorhanden
+                    ARG = arguv[p+1];                                           // Parameter zur Argument machen
+                }
+            }
+        }else{
+            if (src[0]=='=')  src++;                                            // Gleichheitszeichen Ã¼berlesen
+            if (src[0]!=0)                                                      // Vorhandenes Argument ?
+            {
+                ARG = src;
+            }
+        }
+
+        if ( (isupper(Find[0])) && (ARG==NULL) )
+        {
+            if (arg_used) arg_used[p]=0;                                       // zurÃ¼cksetzen falls vorhanden
+            lprintf ("ARG are not optional for %s", Find);
+            return 0;
+        }
+        return p;
+
     }
     return 0;
 }
 /**
  @brief Auswertung eines long Parameters
- @return Bei Fehler wird 0 zurückgegeben, ansonsten die Position in argv
+ @return Bei Fehler wird 0 zurÃ¼ckgegeben, ansonsten die Position in argv
 
- Nach langer Überlegung das gesammte Konzept anzupassen, können
+ Nach langer Ãœberlegung das gesammte Konzept anzupassen, kÃ¶nnen
  long Parameter nun genauso flexibel, wird shortparameter verwendet
  werden.
 
- Es können in der long--version nur doppelte Minuszeichen verwendet werden.
- Folgende Schreibweisen sind zulässig:
+ Es kÃ¶nnen in der long--version nur doppelte Minuszeichen verwendet werden.
+ Folgende Schreibweisen sind zulÃ¤ssig:
 
  @code
  --day
@@ -962,10 +1056,10 @@ int ChkARGwStart(char *Find, int start, int arguc, char *arguv[])
  --max  = 2048
  @endcode
 
- Wird der Parameter nicht gefunden, wird 0 zurückgegeben.
+ Wird der Parameter nicht gefunden, wird 0 zurÃ¼ckgegeben.
  Ansonsten, die Position des Parameters
 
- Aus dem Konzept heraus können jetzt Konstrukte wie
+ Aus dem Konzept heraus kÃ¶nnen jetzt Konstrukte wie
 
  if ( ChkARGlong("help", argc,argv) || ChkARG("-?", argc,argv) || (argc<2) )
  {
@@ -976,7 +1070,7 @@ int ChkARGwStart(char *Find, int start, int arguc, char *arguv[])
 
 ___[ Revision ]______________________________________________________________
 
- ** 22.03.2020 HS Create
+ ** 22.03.20 HS Create
 _____________________________________________________________________________*/
 
 int ChkARGlong(char *Find, int argc, char *argv[])
@@ -991,10 +1085,10 @@ int ChkARGlong(char *Find, int argc, char *argv[])
     for (p=1;;p++)                                                              // Alle Parameter
     {
         if (p>=argc) break;                                                     // Ende ?
-        src = argv[p];                                                          // Durch die Übergebenen Parameter hangeln
+        src = argv[p];                                                          // Durch die Ãœbergebenen Parameter hangeln
         if (strncmp(src,"--",2)) continue;                                      // Ist es ein long Parameter ?
-        src += 2;                                                               // "--" überlesen
-        br = 0;                                                                 // br = 0 = Kein angehängtes Argument
+        src += 2;                                                               // "--" Ã¼berlesen
+        br = 0;                                                                 // br = 0 = Kein angehÃ¤ngtes Argument
         for (l=0;;l++)
         {
             if (src[l]==0) break;
@@ -1009,7 +1103,7 @@ int ChkARGlong(char *Find, int argc, char *argv[])
                 break;
             }
         }
-        if ((int)strlen(Find)!=l) continue;                                     // beide müssen gleich lang sein
+        if ((int)strlen(Find)!=l) continue;                                     // beide mÃ¼ssen gleich lang sein
         if (strncasecmp(src,Find,l)) continue;                                  // in dieser Form, da hinter dem Parameter noch das Argument kommen kann
         if (arg_used) arg_used[p]=1;                                            // setzen falls vorhanden
         if (br==0)
@@ -1024,29 +1118,29 @@ int ChkARGlong(char *Find, int argc, char *argv[])
             }
             return p;
         }
-        src += l;                                                               // Länge korrigieren
+        src += l;                                                               // LÃ¤nge korrigieren
         if (br==1)                                                              // war es ein Leerzeichen, dann lese bis nichtSpace
         {                                                                       // wenn es kein '=' ist, dann br=3 ansonsten br=2
             for (l=0;;l++)
             {
-                if (src[l]==0) return p;                                        // Außer Leerzeichen nix gewesen
-                if (src[l]==' ') continue;                                      // diese werden überlesen
+                if (src[l]==0) return p;                                        // AuÃŸer Leerzeichen nix gewesen
+                if (src[l]==' ') continue;                                      // diese werden Ã¼berlesen
                 src += l;                                                       // src auf das Zeichen setzen setzen
                 if (src[0]=='=') br=2;                                          // '=' hier? das br mitteilen, das src auf '=' sind
                 else br=3;                                                      // oder das das Argument gefunden wurde
                 break;
             }
         }
-        if (br==2)                                                              // war es ein '=', dann dahinter und überlese Spaces
+        if (br==2)                                                              // war es ein '=', dann dahinter und Ã¼berlese Spaces
         {
-            for (l=1;;l++)                                                      // dann wird nur noch ein ' ' überlesen
+            for (l=1;;l++)                                                      // dann wird nur noch ein ' ' Ã¼berlesen
             {
                 if (src[l]!=' ') break;
             }
             br = 3;                                                             // auf fertiges Argument setzen
             src += l;                                                           // src korrigieren auf das Argument
         }
-        if (br==3)                                                              // br muss hier 3 sein! Aus Sicherheitsgründen abgefangen
+        if (br==3)                                                              // br muss hier 3 sein! Aus SicherheitsgrÃ¼nden abgefangen
         {
             ARG = src;
             return p;
@@ -1063,7 +1157,7 @@ int ChkARGlong(char *Find, int argc, char *argv[])
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.07.2020 HS neu
+ ** 09.07.20 HS neu
 _____________________________________________________________________________*/
 
 int aChkARGlong(char *Find)
@@ -1081,18 +1175,18 @@ int aChkARGlong(char *Find)
  mehr bei @see lprintf
  @see lmsg
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 */ /**
  @brief Ausgeben von Lognachrichten (mit Datum und Uhrzeit) zu einem oder mehreren Ausgaben.
  @return EXIT_SUCCESS wenn alles OK war, sonst Fehler
  @param fmt wie bei printf
  @param ... die Parameter, wie bei printf
 
- Gesteuert wird lprintf über die Variable LogType, diese enthält
- Bitorientiert die Ausgabekanäle.
+ Gesteuert wird lprintf Ã¼ber die Variable LogType, diese enthÃ¤lt
+ Bitorientiert die AusgabekanÃ¤le.
 
- @anchor LOG_Ausgabekanäle
- Mögliche Ausgabekanäle sind:
+ @anchor LOG_Ausgabekanaele
+ MÃ¶gliche AusgabekanÃ¤le sind:
 
  Bit       | defVAL      | Ausgabe      | Bemerkung
  ----------|-------------|--------------|----------
@@ -1100,20 +1194,20 @@ int aChkARGlong(char *Find)
  0000 0010 | LOG_STDERR  | stderr       | normalerweise der Bildschirm
  0000 0100 | LOG_LOGFILE | logfile      | ein File - eine Logdatei dflt: ProgrammName.log wenn mit %d in den OPTS im @ref InitTools gestartet, dann mit Datum
  0000 1000 | LOG_SYSLLOG | syslog       | unter unix wie syslog, unter Windows im Userverzeichenis AppData\\Local ferne in der Variablen SYSLOGFILE
- 0001 0000 | LOG_SIGNAL  | signalhandler| nicht mehr verfügbar --- war nur unter Windows verfügbar in Unix zZ. nicht implmentiert
- 0010 0000 | LOG_CACHE   | special      | Hier wird nur in großen Blöcken ins LogFile geschrieben, um die I/O zu reduzieren.
+ 0001 0000 | LOG_SIGNAL  | signalhandler| nicht mehr verfÃ¼gbar --- war nur unter Windows verfÃ¼gbar in Unix zZ. nicht implmentiert
+ 0010 0000 | LOG_CACHE   | special      | Hier wird nur in groÃŸen BlÃ¶cken ins LogFile geschrieben, um die I/O zu reduzieren.
  0100 0000 | LOG_WINMSG  | windebuglog  | Das Windowseigene Logsystem wird bedient; eignet sich sehr gut, wenn viele Programme ineinandergreifen
 
  @note LOG_SYSLOG ist unter Unix bereits in /usr/include/syslog.h definiert. DH. wird LOG_SYSLLOG als Variable benutzt.
 
- Alle Zeilen haben den gleichen, grundsätzlichen Aufbau, wie ein syslog unter Unix.
+ Alle Zeilen haben den gleichen, grundsÃ¤tzlichen Aufbau, wie ein syslog unter Unix.
  @code
  Beispiel:
  Mar 18 10:54:59 KAFPRG Starte jetzt die Kaffeemaschine
  @endcode
 
- Ferner kann das Aussehen der Logzeile über die Variable @em LogExtra gesteuert werden. Kurze und präzise ExtraInformationen oder
- zusätzliche Modulinformationen lassen sich so informativ unterbringen. @em LogExtra kann auch mit anderen Informationen gefüttert werden
+ Ferner kann das Aussehen der Logzeile Ã¼ber die Variable @em LogExtra gesteuert werden. Kurze und prÃ¤zise ExtraInformationen oder
+ zusÃ¤tzliche Modulinformationen lassen sich so informativ unterbringen. @em LogExtra kann auch mit anderen Informationen gefÃ¼ttert werden
  Sollen diese Informationen ausgegeben werden, dann ist das mit dem ( bool @ref LogFileWithExtra ) ein-/aus-/umschaltbar.
 
  @code
@@ -1129,31 +1223,31 @@ int aChkARGlong(char *Find)
  @endcode
 
  Das Aussehen kann nahezu frei angepasst werden. Sowohl das Datum in der Logdatei, wie die Informationen selbst. Unter Windows kann auch dass Datum
- angepasst werden. Wird die Funktion @em syslog selbst aufgerufen ist die Datumsform nicht änderbar.
+ angepasst werden. Wird die Funktion @em syslog selbst aufgerufen ist die Datumsform nicht Ã¤nderbar.
 
   @see InitTools
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 25.06.2020 HS Nach Prüfungsphase von strprintf jetzt für lprintf eingesetzt
- ** 27.06.2020 HS Windows Logging in der Ansi-Version realisiert
- ** 30.06.2020 HS Anpassungen vom neuen InitTools übernommen
+ ** 02.04.06 HS ReCreate
+ ** 25.06.20 HS Nach PrÃ¼fungsphase von strprintf jetzt fÃ¼r lprintf eingesetzt
+ ** 27.06.20 HS Windows Logging in der Ansi-Version realisiert
+ ** 30.06.20 HS Anpassungen vom neuen InitTools Ã¼bernommen
 ___________________________________________________________________________*/
 
 int lprintf(char *fmt, ...)
 {
     int     rtCode;                     // ReturnCode 0 ansonsten Fehler
-    char    syslog_timestr[24];         // benutzt für syslog timestring
-    char    isodate_timestr[24];        // benutzt für iso timestring
-    char    *errtext;                   // buffer für strprintf
+    char    syslog_timestr[24];         // benutzt fÃ¼r syslog timestring
+    char    isodate_timestr[24];        // benutzt fÃ¼r iso timestring
+    char    *errtext;                   // buffer fÃ¼r strprintf
     char    *nextline;                  // buffer Zeichen nach CR/LF
     char    FileName[PATH_MAX];         // LogFileName
     char    *XFileName;                 // Pointer are schnelleres strcpy
     time_t  now;                        // aktuelle Zeit
 
     va_list argptr;                     // variablelist
-    struct tm *mytime;                  // structure für strftime
+    struct tm *mytime;                  // structure fÃ¼r strftime
 
     FILE *P;                            // Logfile
 
@@ -1174,7 +1268,7 @@ int lprintf(char *fmt, ...)
     if (lprintfConvertCRLF == true)       //--->>    CleanUp erlaubt ??
     {
         char    *tmp;
-        strdelchar(errtext,'\r');       // möglichen CR entfernen ....
+        strdelchar(errtext,'\r');       // mÃ¶glichen CR entfernen ....
         tmp = strchr(errtext,'\n');     // wenn LF, dann dort 0 Rest muss dann
         if (tmp)                        // LF gefunden ?
         {
@@ -1184,7 +1278,7 @@ int lprintf(char *fmt, ...)
         }
     }
 
-    // *_timestr mit dem aktuellen Datum / Zeit füllen
+    // *_timestr mit dem aktuellen Datum / Zeit fÃ¼llen
     // Syslog  sollte im Format "Mar 18 11:05:04 " sein.
     // IsoDate sollte im Format "2020-06-27 18 11:05:04 " sein.
     //                           012345678901234567890123456
@@ -1220,7 +1314,7 @@ int lprintf(char *fmt, ...)
         {
             if ((LogType & LOG_CACHE))
             {
-                // atexit ggf. ausführen
+                // atexit ggf. ausfÃ¼hren
                 if (LogAtExitFlush==false)
                 {
                     LogAtExitFlush=true; // Das sollte einzig sein, damit nur einmal atexit installiert wird
@@ -1247,6 +1341,7 @@ int lprintf(char *fmt, ...)
 
     if (LogType & LOG_SYSLLOG)          // printout to Windows-Syslog
     {
+
 #ifdef OS_LINUX
         syslog (LOG_ERR, "%s", errtext);
         //syslog (LOG_CRIT , "%s", Str);
@@ -1296,13 +1391,13 @@ int lprintf(char *fmt, ...)
     free(errtext);
     if (nextline)                                                       // kann nur != NULL sein, wenn lprintfConvertCRLF auf true ist
     {
-        if (rtCode==EXIT_SUCCESS) rtCode = lprintf ("%s",nextline);     // wenn bisher alles erfolgreich war, dann  nächste Zeile ausgeben
+        if (rtCode==EXIT_SUCCESS) rtCode = lprintf ("%s",nextline);     // wenn bisher alles erfolgreich war, dann  nÃ¤chste Zeile ausgeben
         free(nextline);
     }
     return(rtCode);
 }
 
-///@brief für atexit - kann nur mit void arbeiten
+///@brief fÃ¼r atexit - kann nur mit void arbeiten
 void exitlprintfflush(void){lprintfflush();}
 
 /**
@@ -1314,7 +1409,7 @@ void exitlprintfflush(void){lprintfflush();}
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 int lprintfflush(void)
@@ -1324,10 +1419,9 @@ int lprintfflush(void)
     int     BufLen;
     FILE    *S,*D;
 
-    if (!(LogType & LOG_CACHE)) return -1;                                      // Wenn Caching nicht aktive
+    if (!(LogType & LOG_CACHE)) return -1;                                      // Wenn Caching nicht aktiv
     // LogType &= ~LOG_CACHE;                                                      // Entferne Cache-Bit ??
-
-    sprintf_ex (FileName,"%s-%ld", LogFileName, (long) getpid());               // Wie lautet der Filename für Caching
+    sprintf_ex (FileName,"%s-%ld", LogFileName, (long) getpid());               // Wie lautet der Filename fÃ¼r Caching
     if (!FileOK(FileName)) return 0;                                            // 0 Zeilen, aber keine Fehler, wenn keine Fehler vorhanden war
 
     if( ( D = fopen(LogFileName , "ab")) == NULL ) return -2;                   // can't write to LOG
@@ -1346,7 +1440,7 @@ int lprintfflush(void)
     free (buffer);
     fclose (D);
     fclose (S);
-    if (remove (FileName) != 0)                                                 // Cachezwischenspeicher löschen
+    if (remove (FileName) != 0)                                                 // Cachezwischenspeicher lÃ¶schen
     {
         //perror ("remove");
     }
@@ -1355,13 +1449,13 @@ int lprintfflush(void)
 }
 
 /**
- @brief Initialisieren der Felder etc für @ref lmsg
+ @brief Initialisieren der Felder etc fÃ¼r @ref lmsg
  @return EXIT_SUCCESS zZ. kein anderer Level
 
 ___[ Revision ]______________________________________________________________
 
- ** 15.06.2020 HS Create (tooltest)
- ** 08.07.2020 HS Implementiert in tools.c
+ ** 15.06.20 HS Create (tooltest)
+ ** 08.07.20 HS Implementiert in tools.c
 ___________________________________________________________________________*/
 
 int lmsg_init(void)
@@ -1379,19 +1473,19 @@ int lmsg_init(void)
     return EXIT_SUCCESS;
 }
 
-// so nicht drin, aber Nostalgie ist auch was schönes
+// so nicht drin, aber Nostalgie ist auch was schÃ¶nes
 // lmsg_setup( LMSG_SET_LEVEL, LMSG_ERROR );
 // int lmsg_setup( int do_what, int parm );
 
 /**
- @brief Nachrichten, abhängig von der Entscheidung des Programmnutzer ausgeben
+ @brief Nachrichten, abhÃ¤ngig von der Entscheidung des Programmnutzer ausgeben
  @param behavior Nachrichtenlevel
  @param fmt wie bei printf
  @param ... die Parameter, wie bei printf
- @return EXIT_SUCCESS  EXIT_FAILURE nur, wenn die Nachricht nicht ausgegeben oder hätte ausgegeben werden können
+ @return EXIT_SUCCESS  EXIT_FAILURE nur, wenn die Nachricht nicht ausgegeben oder hÃ¤tte ausgegeben werden kÃ¶nnen
 
- Ziel ist es Nachrichten auszugeben, welche der Benutzer in welcher Tiefe haben möchte. Das Aussehen wird aber im wesentlichen von @ref lprintf gesteuert.
- Einstellungen für lprintf werden @b nicht ver-/geändert ! Es ist durchaus möglich lmsg und lprintf gleichzeitig zu verwenden
+ Ziel ist es Nachrichten auszugeben, welche der Benutzer in welcher Tiefe haben mÃ¶chte. Das Aussehen wird aber im wesentlichen von @ref lprintf gesteuert.
+ Einstellungen fÃ¼r lprintf werden @b nicht ver-/geÃ¤ndert ! Es ist durchaus mÃ¶glich lmsg und lprintf gleichzeitig zu verwenden
 
  @note Es sollte eine Funktion geschaffen werden mit der der aktuelle @ref lmsg_level vom Benutzer festgelegt werden kann.
 
@@ -1402,10 +1496,10 @@ int lmsg_init(void)
 
 ___[ Revision ]______________________________________________________________
 
- ** 19.02.2020 HS in HSbackup ( DMSG )
- ** 09.06.2020 HS Das erste Mal strprintf genutzt
- ** 15.06.2020 HS Create (tooltest)
- ** 08.07.2020 HS Implementiert in tools.c
+ ** 19.02.20 HS in HSbackup ( DMSG )
+ ** 09.06.20 HS Das erste Mal strprintf genutzt
+ ** 15.06.20 HS Create (tooltest)
+ ** 08.07.20 HS Implementiert in tools.c
 ___________________________________________________________________________*/
 
 int lmsg (int behavior, char *fmt, ...)
@@ -1452,15 +1546,15 @@ int lmsg (int behavior, char *fmt, ...)
 /**
  @addtogroup c_uname
  @{
- @brief Füllt ein Struct utsname mit Informationen über die aktuelle Maschine
+ @brief FÃ¼llt ein Struct utsname mit Informationen Ã¼ber die aktuelle Maschine
  @return -1 bei Fehlern ansonsten 0
  @param name Zeiger auf den utsname Buffer
 
- Unter Windows gibt es kein UName, aber die Informationen können trotzdem
+ Unter Windows gibt es kein UName, aber die Informationen kÃ¶nnen trotzdem
  hilfreich rein.
 
  @code
- Folgender struct wird gefüllt.
+ Folgender struct wird gefÃ¼llt.
 
  struct utsname {               // Beispiel
     char sysname[];             // Windows
@@ -1474,8 +1568,8 @@ int lmsg (int behavior, char *fmt, ...)
 
 ___[ Revision ]______________________________________________________________
 
- ** 05.02.2019 Updated
- ** 06.02.2019 Updated
+ ** 05.02.19 Updated
+ ** 06.02.19 Updated
 ___________________________________________________________________________*/
 
 #ifdef OS_WINDOWS
@@ -1579,7 +1673,6 @@ else if (build>=10240) {                        // WIN 10
 }
 #endif
 
-
     SYSTEM_INFO     sysInfo;
     ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
     GetSystemInfo(&sysInfo);
@@ -1635,9 +1728,9 @@ CString GetStringFromReg(HKEY keyParent, CString keyName, CString keyValName)
  @param keyName    pointer auf den MainKey
  @param keyValName die Value
  @param buffer     pointer auf den Buffer
- @param bufsize    Größe des Buffers
+ @param bufsize    GrÃ¶ÃŸe des Buffers
 
- Buffer kann NULL sein, dann aber keinen Rückgabewert. Sinvoll, wenn nur die Existenz abgefragt werden soll
+ Buffer kann NULL sein, dann aber keinen RÃ¼ckgabewert. Sinvoll, wenn nur die Existenz abgefragt werden soll
 
  An der bufsize-Groesse wird der RRF-Wert bestimmt.
 
@@ -1653,7 +1746,7 @@ CString GetStringFromReg(HKEY keyParent, CString keyName, CString keyValName)
 
 ___[ Revision ]______________________________________________________________
 
- ** 23.12.2020 HS Create
+ ** 23.12.20 HS Create
 ___________________________________________________________________________*/
 
 int readWindowsRegistery(HKEY keyParent, char *keyName, char *keyValName, char *buffer, int bufsize)
@@ -1681,7 +1774,7 @@ int readWindowsRegistery(HKEY keyParent, char *keyName, char *keyValName, char *
  gibt es nicht. In C sind es eine Aneinandereihung von Zeichen. Oft auch als
  Zeichenketten bezeichnet. Ein Zeichen in C ist ein char. Das ist eine
  8-Bit grosse Zahl. Oft wird trotzdem von einem String gesprochen.
- Per Definition wird ein String mit einer abschließenden 0 in einem char Feld
+ Per Definition wird ein String mit einer abschlieÃŸenden 0 in einem char Feld
  gespeichert.
 
  @note strupr & strlwr sind unter Windows implementiert unter Unix fehlten diese
@@ -1695,9 +1788,9 @@ int readWindowsRegistery(HKEY keyParent, char *keyName, char *keyValName, char *
 
 */
 
-/// Wie gross der Zwischenbuffer zum escapen werden kann. Es handelt sich um einen Faktor. Es werden derzeit 120% des Orginalbuffers geschätzt @see strEsc <- wird hier verwendet
+/// Wie gross der Zwischenbuffer zum escapen werden kann. Es handelt sich um einen Faktor. Es werden derzeit 120% des Orginalbuffers geschÃ¤tzt @see strEsc <- wird hier verwendet
 #define BIGBUFFER_FAKTOR 120
-/// Größe der Zeichenkette für binstr  @see binstr <- wird hier verwendet
+/// GrÃ¶ÃŸe der Zeichenkette fÃ¼r binstr  @see binstr <- wird hier verwendet
 #define BIN_INT_SIZE (sizeof (unsigned int) *8)
 /// defeniert wie gross der Buffer ist, bevor ein realloc gemacht werden muss siehe @ref y_charadd
 #define YSTRING_BLOCKSIZE 64
@@ -1724,7 +1817,7 @@ int readWindowsRegistery(HKEY keyParent, char *keyName, char *keyValName, char *
 
 ___[ Revision ]______________________________________________________________
 
- ** 11.07.2016 HS Create
+ ** 11.07.16 HS Create
 ___________________________________________________________________________*/
 
 int strcount(char *STRING,char FOUND)
@@ -1749,7 +1842,7 @@ int strcount(char *STRING,char FOUND)
 
 ___[ Revision ]______________________________________________________________
 
- ** 08.11.2017 HS Create
+ ** 08.11.17 HS Create
 ___________________________________________________________________________*/
 
 int strstrpos(char *STRING,char *FIND, int from)
@@ -1765,8 +1858,8 @@ int strstrpos(char *STRING,char *FIND, int from)
     if (from>=l)      return -1;
     // doppelt if (from<0)       return -1;
 
-    l = strlen(FIND);                                                           // zu findene Länge merken
-    if (l<=0)              return -1;                                           // out of Range prüfen
+    l = strlen(FIND);                                                           // zu findene LÃ¤nge merken
+    if (l<=0)              return -1;                                           // out of Range prÃ¼fen
 
     for (k=from;;k++)                                                           // Alle Zeichen in STRING abgegehen
     {
@@ -1789,7 +1882,7 @@ int strstrpos(char *STRING,char *FIND, int from)
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.04.2018 HS Create
+ ** 09.04.18 HS Create
 ___________________________________________________________________________*/
 
 int strchrpos(char *STRING,char FIND, int from)
@@ -1820,7 +1913,7 @@ int strchrpos(char *STRING,char FIND, int from)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 char *strupr( char *Kette )
@@ -1852,15 +1945,15 @@ char *strlwr( char *Kette )
 #endif
 #if 0
 /* *
- @brief Gibt zurück, ob es sich um <b>EINEN</b> String handelt
+ @brief Gibt zurÃ¼ck, ob es sich um <b>EINEN</b> String handelt
  @return EXIT_SUCCESS / EXIT_FAILURE
- @param STRING zu prüfender String
+ @param STRING zu prÃ¼fender String
 
- Gibt EXIT_SUCCESS im Erfolgsfall zurück. EXIT_FAILURE wenn es nicht ein einzelner String ist.
+ Gibt EXIT_SUCCESS im Erfolgsfall zurÃ¼ck. EXIT_FAILURE wenn es nicht ein einzelner String ist.
 
 ___[ Revision ]______________________________________________________________
 
- ** 18.08.2020 HS Create
+ ** 18.08.20 HS Create
 ___________________________________________________________________________*/
 
 int isOneString(char *STRING)
@@ -1901,13 +1994,13 @@ int isOneString(char *STRING)
 #endif
 
 /**
- @brief Gibt definitiv einen String zurück bei NULL ""
+ @brief Gibt definitiv einen String zurÃ¼ck bei NULL ""
  @return String
- @param C zu Prüfstring
+ @param C zu PrÃ¼fstring
 
 ___[ Revision ]______________________________________________________________
 
- ** 25.12.2016 HS Create
+ ** 25.12.16 HS Create
 ___________________________________________________________________________*/
 
 char *strNotNULL(char *C)
@@ -1920,22 +2013,22 @@ char *strNotNULL(char *C)
  @brief Aus einem String einen Teil entfernen
  @return String
  @param STRING die zu bearbeitende Zeichenkette
- @param pos    ab hier löschen
- @param len    Anzahl der Zeichen die gelöscht werden
+ @param pos    ab hier lÃ¶schen
+ @param len    Anzahl der Zeichen die gelÃ¶scht werden
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 char *strdel(char *STRING, int pos, int len)
 {
     int i;
 
-    if (len<=0) return STRING;                                                  // Mindestens 1 Zeichen löschen
-    if (strlen(STRING)<=(size_t)pos) return STRING;                             // Nur wenn Position möglich ansonsten ..
+    if (len<=0) return STRING;                                                  // Mindestens 1 Zeichen lÃ¶schen
+    if (strlen(STRING)<=(size_t)pos) return STRING;                             // Nur wenn Position mÃ¶glich ansonsten ..
 
-    if (strlen(&STRING[pos]) <= (size_t)len )                                   // Nur wenn die Anzahl gelöscht werden können
+    if (strlen(&STRING[pos]) <= (size_t)len )                                   // Nur wenn die Anzahl gelÃ¶scht werden kÃ¶nnen
     {
         STRING[pos]=0;                                                          // Groesse muss passen
         return STRING;
@@ -1943,11 +2036,11 @@ char *strdel(char *STRING, int pos, int len)
 
     for (i=pos;;i++)
     {
-        if (STRING[i]==0) break;                                                // Ende prüfen
+        if (STRING[i]==0) break;                                                // Ende prÃ¼fen
         if (STRING[i+len]==0)                                                   // Ende des gesuchten
         {
             STRING[i]=0;
-            break;                                                              // Auf Ende prüfen
+            break;                                                              // Auf Ende prÃ¼fen
         }
         STRING[i]=STRING[i+len];                                                // Kopiere Zeichen
     }
@@ -1955,10 +2048,10 @@ char *strdel(char *STRING, int pos, int len)
 }
 
 /**
- @brief Fügt einen String in einen anderen ein
- @param STRING String der geändert werden soll
- @param INS    String der eingefügt werden soll
- @param pos    Ab welcher Position eingefügt werden soll
+ @brief FÃ¼gt einen String in einen anderen ein
+ @param STRING String der geÃ¤ndert werden soll
+ @param INS    String der eingefÃ¼gt werden soll
+ @param pos    Ab welcher Position eingefÃ¼gt werden soll
 
  @code
 
@@ -1973,7 +2066,7 @@ char *strdel(char *STRING, int pos, int len)
          012345678901234
          abcxyzdefhijklm
            ^^^^^
- Nochmal eine übliche Form:
+ Nochmal eine Ã¼bliche Form:
 
  STRING   = 1234567890
  INS      = abc
@@ -1984,8 +2077,8 @@ char *strdel(char *STRING, int pos, int len)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 11.07.2020 HS mögliches MemoryLeak abgefangen
+ ** 02.04.06 HS ReCreate
+ ** 11.07.20 HS mÃ¶gliches MemoryLeak abgefangen
 ___________________________________________________________________________*/
 
 void strins(char *STRING, char *INS, int pos)
@@ -1996,9 +2089,9 @@ void strins(char *STRING, char *INS, int pos)
     if (pos>s) return;
     for (i=s;i>=pos;i--)                                                        // Verschieben der restlichen Zeichenkette
     {
-        STRING[i+l]=STRING[i];                                                  // um Platz für den Teil von "Insert" zu machen
+        STRING[i+l]=STRING[i];                                                  // um Platz fÃ¼r den Teil von "Insert" zu machen
     }
-    for (i=pos,l=0;;i++,l++)                                                    // Jetzt den neuen Teil übertragen
+    for (i=pos,l=0;;i++,l++)                                                    // Jetzt den neuen Teil Ã¼bertragen
     {
         if (INS[l]==0) break;
         STRING[i]=INS[l];
@@ -2006,22 +2099,49 @@ void strins(char *STRING, char *INS, int pos)
 }
 
 /**
- @brief sowas ähnliches wie strcat
+ @brief FÃ¼gt einen String an einen anderen an
+ @param STRING String der geÃ¤ndert werden soll
+ @param INS    String der angefÃ¼gt werden soll
+
+
+___[ Revision ]______________________________________________________________
+
+ ** 18.03.24 HS First Release
+___________________________________________________________________________*/
+
+void strappend (char *STRING, char *INS)
+{
+    int i, l;
+    if (!STRING) return;
+    if (!INS) return;
+    if (!INS[0]) return;
+    l = strlen(STRING);
+    for (i=0;;i++)
+    {
+        STRING[i+l]=INS[i];
+        if (!INS[i]) break;
+    }
+    return;
+}
+
+
+/**
+ @brief sowas Ã¤hnliches wie strcat
  @return 0 Error bzw. Anzahl der erfolgreich kopierten Zeichen
  @param [in]     start_ptr   Start Pointer
  @param [out]    end_ptr    Ende Pointer
  @param [in]     str         String der kopiert wird.
  @param [in,out] size_cnt    Anzahl der Zeichen
 
- Sowas ähnliches wie strcat, nur wird die Anzahl der kopierten Zeichen
- zurückgegeben und es wird ein pointer auf das letzte Zeichen positioniert
- im Fehlerfall wird 0 zurückgegeben. Im Erfolgsfall die Anzahl der kopierten
+ Sowas Ã¤hnliches wie strcat, nur wird die Anzahl der kopierten Zeichen
+ zurÃ¼ckgegeben und es wird ein pointer auf das letzte Zeichen positioniert
+ im Fehlerfall wird 0 zurÃ¼ckgegeben. Im Erfolgsfall die Anzahl der kopierten
  Zeichen. Da auch das NULLbyte ein Zeichen ist kann auch ein Leerstring
  erfolgreich kopiert worden sein.
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.03.19 HS Neu für strftimeR
+ ** 02.03.19 HS Neu fÃ¼r strftimeR
 ___________________________________________________________________________*/
 
 int strstradd (char *start_ptr, char **end_ptr, char *str, int *size_cnt)
@@ -2042,15 +2162,15 @@ int strstradd (char *start_ptr, char **end_ptr, char *str, int *size_cnt)
 }
 
 /**
- @brief String beliebig mit einem Zeichen füllen
+ @brief String beliebig mit einem Zeichen fÃ¼llen
  @param [out] dest    Zeichenkette, die geschrieben wird.
- @param [in]  filler  char mit dem gefüllt wird
+ @param [in]  filler  char mit dem gefÃ¼llt wird
  @param [in]  counter Anzahl die im String stehen sollen
 
 
 ___[ Revision ]______________________________________________________________
 
- ** 28.03.2020 HS Neue Funktion
+ ** 28.03.20 HS Neue Funktion
 ___________________________________________________________________________*/
 
 void strsetto (char *dest, char filler, int counter)
@@ -2060,25 +2180,25 @@ void strsetto (char *dest, char filler, int counter)
 }
 
 /**
- @brief String beliebig mit einem Zeichen füllen
- @return String gefüllte Zeichenkette
- @param [in]  filler  char mit dem gefüllt wird
+ @brief String beliebig mit einem Zeichen fÃ¼llen
+ @return String gefÃ¼llte Zeichenkette
+ @param [in]  filler  char mit dem gefÃ¼llt wird
  @param [in]  counter Anzahl die im String stehen sollen
 
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.10.2022 HS Neue Funktion
+ ** 01.10.22 HS Neue Funktion
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char* strfiller (char filler, int counter)
 {
-    static char* outfiller=NULL;
-    if (outfiller) free(outfiller);
+    char* outfiller;
     outfiller = NULL;
     if (counter>=0)
     {
-        outfiller = malloc(counter+2);
+        outfiller = malloc_temp(counter+2);
         memset_ex(outfiller,filler,counter);
         outfiller[counter]=0;
     }
@@ -2089,38 +2209,39 @@ char* strfiller (char filler, int counter)
  @brief Return Right Chars
  @return String (Kopie)
  @param STRING die zu bearbeitende Zeichenkette
- @param len    Anzahl der Zeichen die gelöscht werden
+ @param len    Anzahl der Zeichen die gelÃ¶scht werden
 
  Wenn im STRING weniger Zeichen als STRING_MAX sind, dann werden
- weniger Zeichen zurückgegeben
+ weniger Zeichen zurÃ¼ckgegeben
 
 ___[ Revision ]______________________________________________________________
 
- ** 29.11.2016 HS Create
+ ** 29.11.16 HS Create
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *RightStr (char *STRING, int len)
 {
     int l;
     int s;
-    static char rslt[STRING_MAX+1];
+    char *rslt;
 
-    if (!STRING)                                            // Sicherheitsabfrage ob String gefüllt ist.
+    if (!STRING)                                            // Sicherheitsabfrage ob String gefÃ¼llt ist.
     {
-        rslt[0]=0;                                          // mit leeren String zurückkommen
+        rslt=malloc_temp(2);                                // mit leeren String zurÃ¼ckkommen
         return rslt;
     }
 
     l = len;                                                // max. auf STRING_MAX begrenzen
     if (l>STRING_MAX) l=STRING_MAX;
     s = strlen(STRING);
+    rslt=malloc_temp(s+1);
     if (s<=l)                                               // String ist kleiner als len
     {
         strcpy_ex (rslt,STRING);
         return rslt;
     }
     strcpy_ex (rslt,&STRING[s-l]);
-    //rslt[0]=0;
     return rslt;
 }
 
@@ -2128,43 +2249,49 @@ char *RightStr (char *STRING, int len)
  @brief Return Left Chars
  @return String (Kopie)
  @param STRING die zu bearbeitende Zeichenkette
- @param len    Anzahl der Zeichen die gelöscht werden
+ @param len    Anzahl der Zeichen die gelÃ¶scht werden
 
  Wenn im STRING weniger Zeichen als STRING_MAX sind, dann werden
- weniger Zeichen zurückgegeben
+ weniger Zeichen zurÃ¼ckgegeben
 
 ___[ Revision ]______________________________________________________________
 
- ** 29.11.2016 HS Create
+ ** 29.11.16 HS Create
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *LeftStr (char *STRING, int len)
 {
-    int l;
-    static char rslt[STRING_MAX+1];
+    int l,s;
+    char *rslt;
 
-    if (!STRING)                                            // Sicherheitsabfrage ob String gefüllt ist.
+    if (!STRING)                                            // Sicherheitsabfrage ob String gefÃ¼llt ist.
     {
-        rslt[0]=0;                                          // mit leeren String zurückkommen
+        rslt=malloc_temp(2);                                // mit leeren String zurÃ¼ckkommen
         return rslt;
     }
 
     l = len;                                                // max. auf STRING_MAX begrenzen
     if (l>STRING_MAX) l=STRING_MAX;
-    strncpy_ex (rslt,STRING,STRING_MAX);
+    if (l<0) l=0;
+    s = strlen(STRING);
+    if (l>s) l=s+1;
+    rslt = malloc_temp(l+2);
+    memset_ex(rslt,'*',l+2);
+    strncpy_ex (rslt,STRING,l);
     rslt[l]=0;
     return rslt;
 }
 
 /**
- @brief Strings an einen str mit realloc dranhängen
+ @brief Strings an einen str mit realloc dranhÃ¤ngen
  @return Pointer auf den neuen String
  @param STRING die zu bearbeitende Zeichenkette
- @param AddStr Anzuhängender String
+ @param AddStr AnzuhÃ¤ngender String
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 char *strstrcat(char *STRING, char *AddStr)
@@ -2185,12 +2312,12 @@ char *strstrcat(char *STRING, char *AddStr)
 }
 
 /**
- @brief Linke Spaces und Tabs löschen
+ @brief Linke Spaces und Tabs lÃ¶schen
  @param C die zu bearbeitende Zeichenkette
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void strltrim(char *C)
@@ -2212,12 +2339,12 @@ void strltrim(char *C)
 }
 
 /**
- @brief Rechte Spaces und Tabs löschen
+ @brief Rechte Spaces und Tabs lÃ¶schen
  @param C die zu bearbeitende Zeichenkette
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void strrtrim(char *C)
@@ -2234,12 +2361,12 @@ void strrtrim(char *C)
 }
 
 /**
- @brief Rechte und Linkte Spaces und Tabs löschen
+ @brief Rechte und Linkte Spaces und Tabs lÃ¶schen
  @param C die zu bearbeitende Zeichenkette
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void strCL(char *C)
@@ -2253,18 +2380,18 @@ void strCL(char *C)
  @param SRC die zu bearbeitende Zeichenkette
  @param RemoveAnyChar Zeichenkette der zu entfernenden chars
 
- strpbrk übernimmt hier die Hauptarbeit
+ strpbrk Ã¼bernimmt hier die Hauptarbeit
 
  @code
  char * strpbrk(char *string, char *spanset);
  @endcode
 
- strpbrk findet alle vorkommenden Zeichen in einem String, welche in spanset übergeben werden. Der Rückgabewert ist ein char Zeiger auf das gefundene Zeichen.
+ strpbrk findet alle vorkommenden Zeichen in einem String, welche in spanset Ã¼bergeben werden. Der RÃ¼ckgabewert ist ein char Zeiger auf das gefundene Zeichen.
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.08.2016 HS ReCreate
- ** 16.12.2016 HS Jetzt mit strpbrk realisiert
+ ** 01.08.16 HS ReCreate
+ ** 16.12.16 HS Jetzt mit strpbrk realisiert
 ___________________________________________________________________________*/
 
 void strclean (char *SRC, char *RemoveAnyChar)
@@ -2305,13 +2432,13 @@ void strclean (char *SRC, char *RemoveAnyChar)
 }
 
 /**
- @brief Einzelnes Zeichen (rm) aus SRC löschen
+ @brief Einzelnes Zeichen (rm) aus SRC lÃ¶schen
  @param SRC die zu bearbeitende Zeichenkette
  @param rm char das entfernt werden soll
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.12.2016 HS ReCreate
+ ** 16.12.16 HS ReCreate
 ___________________________________________________________________________*/
 
 void strdelchar (char *SRC, char rm)
@@ -2338,7 +2465,7 @@ void strdelchar (char *SRC, char rm)
 
 ___[ Revision ]______________________________________________________________
 
- ** 12.07.2016 HS ReCreate
+ ** 12.07.16 HS ReCreate
 ___________________________________________________________________________*/
 
 void strReplace(char *C, char FROM, char DEST)
@@ -2352,14 +2479,14 @@ void strReplace(char *C, char FROM, char DEST)
 }
 
 /**
- @brief Prüft das letzte Zeichen im String=Findchar
- @return gibt -1 Error oder Position zurück
+ @brief PrÃ¼ft das letzte Zeichen im String=Findchar
+ @return gibt -1 Error oder Position zurÃ¼ck
  @param C die zu bearbeitende Zeichenkette
- @param Findchar char das geprüft wird
+ @param Findchar char das geprÃ¼ft wird
 
 ___[ Revision ]______________________________________________________________
 
- ** 15.11.2016 HS Create
+ ** 15.11.16 HS Create
 ___________________________________________________________________________*/
 
 int strright(char *C, char Findchar)
@@ -2369,29 +2496,101 @@ int strright(char *C, char Findchar)
     {
         if (C[i]==0) return -1;
         if (C[i]!=Findchar) continue;
-        if (C[i+1]==0)return i;
+        if (C[i+1]==0) return i;
     }
     return -1;
 }
 
 /**
- @brief STRING durch Space aufsplitten und das durch idx benannte Element zuückgeben
+ @brief String ohne AnfÃ¼hrungszeichen
+ @return 0 keine Ã„nderungen
+ @param Kette zu Ã„ndernder String
+
+ Quotes wie AnfÃ¼hrungszeichen und Hochkommas entfernen
+ Am Anfang und Ende die Quotes entfernen
+
+___[ Revision ]______________________________________________________________
+
+ ** 18.03.24 HS First Release
+___________________________________________________________________________*/
+
+int strunquote(char *Kette)
+{
+
+    int i;
+    char Delim;
+    if (!Kette) return 0;               // NULL uebergben
+    if (!Kette[0]) return 0;            // Leerstring, es gibs also ein Kette[1];
+    Delim = Kette[0];                   // MÃ¶glicher Begrenzer
+    if ( (Delim!='\"') &&  (Delim!='\'') ) return 0;
+    for (i=1;;i++)                      // Start hinter dem Delim
+    {
+        if (!Kette[i]) return 0;
+        if ( (Kette[i]==Delim) && (!Kette[i+1]) ) break;
+    }
+    Kette[i]=0;
+    strdel(Kette,0,1);
+    return 1;
+}
+
+/**
+ @brief String, wenn nÃ¶tig mit AnfÃ¼hrungszeichen oder Hochkommas modifizieren
+ @return 0 keine Ã„nderungen, -1=Leerstring, sonst Anzahl der Spaces
+ @param Kette zu Ã„ndernder String
+
+ Quotes wie AnfÃ¼hrungszeichen oder Hochkommas jeweils setzen um einen String
+ zu begrenzen und als Singleparameter zu kennzeichnen. Setzt 2 Zeichen Platz
+ in "kette" vorraus.
+
+___[ Revision ]______________________________________________________________
+
+ ** 24.03.24 HS First Release, extrahiert von hsmenugen
+ ** 25.03.24 HS Leerstrings werden ebenfalls gequoted, aber -1 als return
+___________________________________________________________________________*/
+
+int strquote (char *Kette)
+{
+    int spaced;
+    char *e;                                                // Position in Kette
+    char usedQuoteMark[] = "\"";                            // Das Zeichen mit \" vorbesetzten wird durch \' ersetzt falls vorhanden
+    spaced = 0;                                             // Auf kein Space gefunden setzen
+    if (Kette[0]==0) spaced=-1;
+    for (e=Kette;; e++)                                     // Kette Buchstabe fuer Buchstabe abarbeiten
+    {
+        if (*e=='\"')    usedQuoteMark[0] = '\'';           // Wenn innerhalb von Kette schon ein \" vorhanden, dann \' benutzen
+        if (isspace(*e)) spaced++;                          // Wenn es ein space gibt ... schliesst auch tab ein
+        if (*e=='\0')    break;                             // raus wenn Kette am letzten Buchstaben angekommen
+    }
+    if (spaced)
+    {
+        //strappend(Kette, usedQuoteMark);
+        *e = usedQuoteMark[0];                              // Am Ende von Kette \0 Ã¼berschreiben
+        e++;                                                // und wieder
+        *e = '\0';                                          // \0 einsetzen
+        strins(Kette,usedQuoteMark,0);
+    }
+    return spaced;
+}
+
+/**
+ @brief STRING durch Space aufsplitten und das durch idx benannte Element zurÃ¼ckgeben
  @return durch idx benannte Element oder ""
  @param STRING die zu bearbeitende Zeichenkette
  @param idx Welches Element
 
  Ein Argument (idx) aus eine String suchen
- gibt "" zurück falls nicht gefunden
- gibt das Argument zurück, falls Ergebnis vorliegt
+ gibt "" zurÃ¼ck falls nicht gefunden
+ gibt das Argument zurÃ¼ck, falls Ergebnis vorliegt
 
 ___[ Revision ]______________________________________________________________
 
- ** 23.01.2017 HS Create
+ ** 23.01.17 HS Create
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *stridx(char *STRING, int idx)
 {
-    static char rslt[STRING_MAX+1];
+    char *rslt;
 
     int a;
     int p;
@@ -2399,9 +2598,10 @@ char *stridx(char *STRING, int idx)
 
     p=0;
     a=0;
+    rslt = malloc_temp(strlen(STRING)+1);
     for (;;)
     {
-        for (;;p++)                                                             // Finde im STRING den Beginn das erste (nächste) Argument
+        for (;;p++)                                                             // Finde im STRING den Beginn das erste (nÃ¤chste) Argument
         {
             if (STRING[p]==0) return "";
             if (STRING[p]==' ') continue;
@@ -2421,15 +2621,15 @@ char *stridx(char *STRING, int idx)
 
 /**
  @brief in STRING Zeichenkette (FIND) austauschen gegen REPL
- @return ungeänderter Pointer auf STRING
+ @return ungeÃ¤nderter Pointer auf STRING
  @param STRING die zu bearbeitende Zeichenkette
  @param FIND Zeichenkette die gefunden werden soll
  @param REPL Zeichenkette durch die ersetzt werden soll
 
 ___[ Revision ]______________________________________________________________
 
- ** 30.12.2017 HS Create
- ** 06.01.2018 HS umbenannt von strchg in strstrreplace
+ ** 30.12.17 HS Create
+ ** 06.01.18 HS umbenannt von strchg in strstrreplace
 ___________________________________________________________________________*/
 
 char *strstrreplace (char *STRING,char *FIND, char *REPL)
@@ -2452,29 +2652,29 @@ char *strstrreplace (char *STRING,char *FIND, char *REPL)
 
 /**
  @brief Src aufteilen und zwar nach dem ersten Auftauchen von (char)Delemiter
- @return -1 Fehler 0 OK , dann sind DLeft und DRight mit malloc geholter Speicher gefüllt
+ @return -1 Fehler 0 OK , dann sind DLeft und DRight mit malloc geholter Speicher gefÃ¼llt
  @param [in]  Src die zu bearbeitende Zeichenkette
  @param [in]  delimiter Zeichen das gesucht wird
  @param [out] DLeft Linker Teil
  @param [out] DRight Rechter Teil
 
  Src aufteilen und zwar nach dem ersten Auftauchen von (char)Delemiter
- Bei Fehler wird !0 zurückgegeben. Bei Erfolg 0, dann sind DLeft und DRight
- mit malloc geholter Speicher gefüllt.
+ Bei Fehler wird !0 zurÃ¼ckgegeben. Bei Erfolg 0, dann sind DLeft und DRight
+ mit malloc geholter Speicher gefÃ¼llt.
 
 ___[ Revision ]______________________________________________________________
 
- ** 08.07.2018 HS Create
+ ** 08.07.18 HS Create
 ___________________________________________________________________________*/
 
 int strsplit(char *Src, char delimiter, char **DLeft, char **DRight)
 {
-    static char *L;                     // Links
-    static char *R;                     // Rechts
+    char *L;                     // Links war static
+    char *R;                     // Rechts war static
     int i;                              // Zeiger im String
     for (i=0;;i++)
     {
-        if (Src[i]==0)                  // StringEnde, dann NULL als Rückgabewert
+        if (Src[i]==0)                  // StringEnde, dann NULL als RÃ¼ckgabewert
         {
             *DLeft  = NULL;
             *DRight = NULL;
@@ -2482,27 +2682,28 @@ int strsplit(char *Src, char delimiter, char **DLeft, char **DRight)
         }
         if (Src[i]==delimiter) break;   // Wenn richtiger Trenner
     }
-    L = (char*)malloc0(i+2);            // Linken Teil i=Länge plus 2
+    //links und rechts .. sind mallociierte Speicher mit static unfug
+    L = (char*)malloc0(i+2);            // Linken Teil i=LÃ¤nge plus 2
     strncpy_ex(L,Src,i);                // reinkopieren
     R = strdup (&Src[i+1]);             // Rechten Teil vom Trenner behandlen
     CL(L);                              // Bereinigen
     CL(R);
-    *DLeft  = L;                        // Übergeben
+    *DLeft  = L;                        // Ãœbergeben
     *DRight = R;
     return 0;                           // Als OK, markieren
 }
 
 /**
- @brief Aus einem String ein Argumente lesen und zurückgeben
+ @brief Aus einem String ein Argumente lesen und zurÃ¼ckgeben
  @return STRING Kann NULL sein muss mit free freigegeben werden
  @param [in]  start_ptr Startposition
  @param [out] end_ptr   Endposition
  @param [in]  position  Position, die gesucht wird
  @param [in]  flags)    wir STRSTRSPLIT_SINGLE_QUOTES
 
- Aus einem String ein Argumente lesen und zurückgeben. Kann NULL sein.
- Das Verhalten welche Zeichen Trenner sind und ob Quotes erlaubt sind können
- über die flags gesteuert werden.
+ Aus einem String ein Argumente lesen und zurÃ¼ckgeben. Kann NULL sein.
+ Das Verhalten welche Zeichen Trenner sind und ob Quotes erlaubt sind kÃ¶nnen
+ Ã¼ber die flags gesteuert werden.
 
  @code
 #define STRSTRSPLIT_SPACE_DELIMITTER 0x01
@@ -2516,7 +2717,7 @@ int strsplit(char *Src, char delimiter, char **DLeft, char **DRight)
 
 ___[ Revision ]______________________________________________________________
 
- ** 24.02.2019 HS Create
+ ** 24.02.19 HS Create
 ___________________________________________________________________________*/
 
 char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags)
@@ -2526,7 +2727,7 @@ char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags)
     int lastchar;                                                               // TRUE, wenn keine weiteren Zeichen mehr folgen
 
     char *rslt;                                                                 // das Ergebnis unserer Suchen, kann NULL sein
-    char *piece;                                                                // Teilstück das durchsucht wird.
+    char *piece;                                                                // TeilstÃ¼ck das durchsucht wird.
     char *p;                                                                    // aktuelles Zeichen
 
     p = start_ptr;                                                              // Startposition
@@ -2535,8 +2736,8 @@ char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags)
 	rslt = NULL;                                                                // Ergebis bei default NULL
     for (strnum=0;;strnum++)
     {
-        for(;;p++) if ( (*p!=' ') && (*p!='\t') && (*p!='\n') ) break;          // Leerzeichen uä. ignorieren
-        piece=p;                                                                // Beginnend mit der ersten gültigen Zeichen
+        for(;;p++) if ( (*p!=' ') && (*p!='\t') && (*p!='\n') ) break;          // Leerzeichen uÃ¤. am Anfang ignorieren
+        piece=p;                                                                // Beginnend mit der ersten gÃ¼ltigen Zeichen
         isInStr=0;                                                              // und wird sind nicht zwischen Quotes
 
         for (;;p++)
@@ -2553,10 +2754,9 @@ char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags)
                 )
             {
                 if (isInStr==0)                                                 // Starte String, dabei wird das davor allerdings vergessen
-                {                                                               // der String per"version" würde nur version zurück geben
+                {                                                               // der String per"version" wÃ¼rde nur version zurÃ¼ck geben
                     isInStr=*p;                                                 // ansonsten Zeichen merken
-                    piece=p;
-                    if ( flags & STRSTRSPLIT_NO_QUOTES_RETURN ) piece++;        // Wenn keine Quotes gewünscht sind Startposition erhöhen
+                    if ( flags & STRSTRSPLIT_NO_QUOTES_RETURN ) piece++;        // Wenn keine Quotes gewÃ¼nscht sind Startposition erhÃ¶hen
                     continue;
                 }
                 if (isInStr==*p)                                                // Wenn passendes Quote gefunden wird
@@ -2593,18 +2793,18 @@ char *strstrsplit (char *start_ptr, char **end_ptr, int position, int flags)
 }
 /**
  @brief String Argumente aufteilen.
- @return Pointer auf Stringliste Sowohl die Liste als auch die Argumente müssen mit free freigegeben werden
+ @return Pointer auf Stringliste Sowohl die Liste als auch die Argumente mÃ¼ssen mit free freigegeben werden
  @param strin Liste, die aufgeteilt werden soll
 
- String Argumente aufteilen. Es wir eine Liste der Argumente zurückgegeben
- Sowohl die Liste als auch die Argumente müssen mit free freigegeben werden
+ String Argumente aufteilen. Es wir eine Liste der Argumente zurÃ¼ckgegeben
+ Sowohl die Liste als auch die Argumente mÃ¼ssen mit free freigegeben werden.
  Leerzeichen in Argumenten werden mit " oder ' realisiert.
- So ist - "Das wird ein Test" - als ein Argument zurückgeliefert. Wo bei
- die Anführungszeichen nicht entfernt werden.
+ So ist - "Das wird ein Test" - als ein Argument zurÃ¼ckgeliefert. Wo bei
+ die AnfÃ¼hrungszeichen nicht entfernt werden. Das gilt auch fÃ¼r eine ID="307"
 
 ___[ Revision ]______________________________________________________________
 
- ** 24.02.2019 HS Create
+ ** 24.02.19 HS Create
 ___________________________________________________________________________*/
 
 char **strlst(char *strin)
@@ -2619,18 +2819,70 @@ char **strlst(char *strin)
 	for (strnum=0;;strnum++)
     {
         if (*wstr==0)   piece=NULL;                                             // Leerer Rest = Ende und damit nicht beachten
-        else            piece = strstrsplit(wstr,&wstr,0,STRSTRSPLIT_DEFAULT);  // Sonst nächste Teilstück vom Stringin holen
+        else            piece = strstrsplit(wstr,&wstr,0,STRSTRSPLIT_DEFAULT);  // Sonst nÃ¤chste TeilstÃ¼ck vom Stringin holen
         if (lst==NULL)  lst = malloc(     sizeof(char*)* (strnum+2));           // Speicher reservieren
         else            lst = realloc(lst,sizeof(char*)* (strnum+2));
         lst[strnum]=piece;                                                      // Argument merken
         if (!piece) break;
 	}
-	return lst;                                                                 // Liste zurückgeben
+	return lst;                                                                 // Liste zurÃ¼ckgeben
+}
+
+/**
+ @brief String Argumente hinzufÃ¼gen
+ @return Pointer auf die geÃ¤nderte Stringliste
+ @param listin Pointer auf die "Stringliste"
+ @param newitem anzufÃ¼gendes pointer hinzufÃ¼gen
+
+ Sowohl die Liste als auch die Argumente mÃ¼ssen mit free freigegeben werden
+
+___[ Revision ]______________________________________________________________
+
+ ** 22.03.24 HS Create
+___________________________________________________________________________*/
+
+char **strlstadd(char** listin, char *newitem)
+{
+    int num;
+    if (listin)
+    {
+        for (num=0;listin[num];num++);
+        listin = realloc(listin,sizeof(char*) * (num+2));
+    }else{
+        num=0;
+        listin = malloc( sizeof(char*) * 2);
+    }
+    listin[num]=newitem;
+    listin[num+1]=NULL;
+    return listin;
+}
+
+/**
+ @brief String Argumente in einem Rutsch freigeben
+ @return NULL
+ @param listin Pointer auf die "Stringliste"
+
+ Sowohl die Liste als auch die Argumente mÃ¼ssen mit free freigegeben werden
+
+___[ Revision ]______________________________________________________________
+
+ ** 22.03.24 HS Create
+___________________________________________________________________________*/
+
+char **strlstfree(char **listin)
+{
+    int i;
+    if (!listin) return NULL;
+    for (i=0;listin[i];i++)
+    {
+        free (listin[i]);
+    }
+    return free0(listin);
 }
 
 /**
  @brief sprintf ohne meckern
- @return negativ=Fehler ansonsten Stringlänge
+ @return negativ=Fehler ansonsten StringlÃ¤nge
  @param DST     Destination Pointer
  @param fmt     printf Format
  @param ...     wie printf
@@ -2639,7 +2891,7 @@ char **strlst(char *strin)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2020 HS wg. GCC 8.1 umgehung der Fehlermeldung
+ ** 02.04.20 HS wg. GCC 8.1 umgehung der Fehlermeldung
 ___________________________________________________________________________*/
 
 int sprintf_ex (char *DST, char *fmt, ...)
@@ -2683,7 +2935,7 @@ char *strcpy_ex(char *dst, const char *src)
 {
     assert(dst!=NULL);
     assert(src!=NULL);
-        return memcpy_ex(dst,src,strlen(src)+1);
+    return memcpy_ex(dst,src,strlen(src)+1);
 }
 
 /**
@@ -2749,16 +3001,46 @@ char *strncpy_ex(char *dst, const char *src, int len)
 }
 
 /**
- @brief Zeichenkette Matching prüft ob str mit dem Muster in pat übereinstimmt
+ @brief strdup_ex
+ @return DST
+ @param src Source Pointer
+
+ Anfertigen einer mit malloc reservierten Kopie eines String.
+
+ Hier meckert keiner, aber strdup zickte rum und reservierte keinen
+ Speicher, sondern legte einen Pointer an. AnschlieÃŸender free(mem)
+ wollte dann den Speicher freigeben, aber es gab einen Fehler
+ "double free or corruption".
+
+___[ Revision ]______________________________________________________________
+
+ ** 01.02.24 HS wg. Fehlermeldung"double free or corruption"
+___________________________________________________________________________*/
+
+//#error "char *strdup_ex(const char *src)"
+char *strdup_ex(const char *src)
+{
+	int len;
+	char *dst;
+	if (src == NULL) return NULL;
+	len = strlen(src);
+	dst = malloc (len + 1);
+	memcpy_ex(dst, src, len);
+	dst[len] = 0;
+	return dst;
+}
+
+/**
+ @brief Zeichenkette Matching prÃ¼ft ob str mit dem Muster in pat Ã¼bereinstimmt
  @return true / false
  @param pat Pattern das gescant wird
- @param str Prüfling
+ @param str PrÃ¼fling
  @param flags kann nur 0 oder STRMTCH_CASE sein
 
- Geprüft wird der String in str
+ GeprÃ¼ft wird der String in str
  Muster (pat) darf nur die Wildcards '*' und '?' enthalten
 
- Rückgabewert kann nur TRUE oder FALSE sein.
+ RÃ¼ckgabewert kann nur TRUE oder FALSE sein.
 
  @code
  strmtch ("H?rry*", "Horryble", 0) wird also TRUE ergeben.
@@ -2767,8 +3049,8 @@ char *strncpy_ex(char *dst, const char *src, int len)
 
 ___[ Revision ]______________________________________________________________
 
- ** 08.04.2018 HS Create
- ** 24.06.2018 HS Wenn Zeichen am Anfang, dann gings nicht mit case
+ ** 08.04.18 HS Create
+ ** 24.06.18 HS Wenn Zeichen am Anfang, dann gings nicht mit case
 ___________________________________________________________________________*/
 
 
@@ -2841,23 +3123,24 @@ int strmtch (const char *pat, const char *str, int flags)
 
 ___[ Revision ]______________________________________________________________
 
- ** 06.01.2018 HS Create
- ** 19.02.2018 HS Um den Parameter STRARG_DEL erweitert
+ ** 06.01.18 HS Create
+ ** 19.02.18 HS Um den Parameter STRARG_DEL erweitert
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *strstrarg (char *STRING, int arg, char STRARG_DEL)
 {
-    static char rslt[STRING_MAX+1];
+    char *rslt;
     char *s;
     int k;
     int l;
 
-    if (arg<=0) return STRING;                              // Argment muss 1 oder größer sein -> sollte das NULL sein ??
+    if (arg<=0) return STRING;                              // Argment muss 1 oder grÃ¶ÃŸer sein -> sollte das NULL sein ??
     s=STRING;
-
-    for (l=1;l<=arg;l++)                                    // Im String [s=reststring] nach dem nächsten ARG suchen
+    rslt=malloc_temp(strlen(STRING)+1);
+    for (l=1;l<=arg;l++)                                    // Im String [s=reststring] nach dem nÃ¤chsten ARG suchen
     {                                                       // l ist das aktuelle Argument
-        for (;;s++)                                         // s auf das nächste nicht delimiter setzen
+        for (;;s++)                                         // s auf das nÃ¤chste nicht delimiter setzen
         {
             if (s[0]!=STRARG_DEL) break;
         }
@@ -2865,11 +3148,11 @@ char *strstrarg (char *STRING, int arg, char STRARG_DEL)
         for (k=0;;k++,s++)                                  // Hier beginnt das ARG number l
         {
             if (s[0]==0) break;                             // Stringende
-            if (s[0]==STRARG_DEL) break;                    // oder Fundstelle nächstes delimiter
+            if (s[0]==STRARG_DEL) break;                    // oder Fundstelle nÃ¤chstes delimiter
             rslt[k]=s[0];                                   // ansonsten aktuelles Zeichen kopieren
         }
         rslt[k]=0;                                          // Ergebnis mit 0 abschliessen
-        if (l==arg) return rslt;                            // Argument richtig, dann String zurückgeben
+        if (l==arg) return rslt;                            // Argument richtig, dann String zurÃ¼ckgeben
     }
     return NULL;
 }
@@ -2880,7 +3163,7 @@ char *strstrarg (char *STRING, int arg, char STRARG_DEL)
 
 ___[ Revision ]______________________________________________________________
 
- ** 23.07.2016 HS ReCreate
+ ** 23.07.16 HS ReCreate
 ___________________________________________________________________________*/
 
 void revstr (char *str)
@@ -2938,8 +3221,8 @@ char *strnum(int num)
  @brief Eine Zeichenkette aus einem INT machen
  @return Ergebnis Zeichenkette
  @param num welche Zahl
- @param pad mit welchem char füllen
- @param sized Auf welche Größe
+ @param pad mit welchem char fÃ¼llen
+ @param sized Auf welche GrÃ¶ÃŸe
 
  Wrappt zu HSnum2Str
 
@@ -2958,33 +3241,36 @@ char *strnumformated(int num, char pad, int sized)
  @brief Eine Zeichenkette aus einem INT machen
  @return Ergebnis Zeichenkette
  @param Wert welche Zahl
- @param pad mit welchem char füllen
+ @param pad mit welchem char fÃ¼llen
  @param trenn zeigt an das es einen trenner alle 3 Zahlen gibt
- @param maxsize Auf welche Größe
+ @param maxsize Auf welche GrÃ¶ÃŸe
 
  Die Arbeitsroutine ....
  Wenn trenn NICHT 0, dann wird alle 3 Zeichen ein Trennzeichen zu besseren
  Lesbarkeit gesetzt.
- wenn maxsize 0 ist, dann Linksbündig formatiert
- wenn  maxsize>0 wird mit pad gefüllt,
+ wenn maxsize 0 ist, dann LinksbÃ¼ndig formatiert
+ wenn  maxsize>0 wird mit pad gefÃ¼llt,
 
 ___[ Revision ]______________________________________________________________
 
  ** 04.01.17 HS erstellt
  ** 03.03.19 HS Noch ein Wrapper mit formatierter Zahl
  **          HS Um pad erweitert
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *HSLnum2Str ( unsigned long long Wert, char pad, char trenn, int maxsize)
 {
     unsigned long long  w,e,r;
-    unsigned int        i,p,t;
+    unsigned int        p,t;
+    int                 l;
 
-    static char         rtstr  [64];                // Return String
+    char *rtstr;                // Return String
+    rtstr = malloc_temp(64);
 
     if ( (maxsize>0) && (pad==0)) memset_ex(rtstr,' ',64); // ignore filler
     else                          memset_ex(rtstr,pad,64);
-    p = sizeof(rtstr)-1;
+    p = 64-1; // sizeof(rtstr)-1;
     t = 0;
     w = Wert;
     rtstr[p]=0;
@@ -3015,12 +3301,22 @@ char *HSLnum2Str ( unsigned long long Wert, char pad, char trenn, int maxsize)
         }
         p++;
     }
-    if (maxsize>0) i=maxsize-(sizeof(rtstr)-(p+1));  // negative maxsize wird nicht gefüllt
-    else i=0;
 
-    for (;p<sizeof(rtstr);i++,p++)
+    if (maxsize<=0)
     {
-        rtstr[i]=rtstr[p];
+        l = 0;
+    }else{
+        l = maxsize-(64-(p+1));  // negative maxsize wird nicht gefÃ¼llt   sizeof(rtstr)
+        if (l<0) l = 0; // since 18.02.23 HS
+    }
+
+    //if (maxsize>0) i=maxsize-(sizeof(rtstr)-(p+1));  // negative maxsize wird nicht gefÃ¼llt
+    //else i=0;
+
+    //for (;p<sizeof(rtstr);l++,p++)
+    for (;p<64;l++,p++)
+    {
+        rtstr[l]=rtstr[p];
     }
     return rtstr;
 }
@@ -3035,12 +3331,12 @@ char *HSnum2Str ( unsigned long Wert, char pad, char trenn, int maxsize)
 
 /**
  @brief Konvertiert eine Zal in einen String mit Punkten getrennt
- @param Kette Im Prinzip der Rückgabewert Kette gefüllt
+ @param Kette Im Prinzip der RÃ¼ckgabewert Kette gefÃ¼llt
  @param Wert Wert der umgerechnet wird.
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.01.2016 HS .
+ ** 01.01.16 HS .
 ___________________________________________________________________________*/
 
 void Long2IStr ( char *Kette, unsigned long Wert)
@@ -3059,11 +3355,11 @@ void LLong2IStr ( char *Kette, unsigned long long Wert)
  @return Kette
  @param Kette zu bearbeitende Zeichenkette
 
- Löscht unerwünschte Nullen oder falls notwendig sogar den Punkt in der Zahl
+ LÃ¶scht unerwÃ¼nschte Nullen oder falls notwendig sogar den Punkt in der Zahl
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.03.2020 HS Create
+ ** 09.03.20 HS Create
 ___________________________________________________________________________*/
 
 char *CleanNumberAfterDot(char *Kette)
@@ -3089,7 +3385,7 @@ char *CleanNumberAfterDot(char *Kette)
             return Kette;
         }
         if (Kette[l]!='0') break;                           // Letztes Zeichen ist keine "0", dann Ende
-        Kette[l]=0;                                         // Die Null löschen
+        Kette[l]=0;                                         // Die Null lÃ¶schen
     }
     return Kette;
 }
@@ -3097,15 +3393,15 @@ char *CleanNumberAfterDot(char *Kette)
 /// Kilo Byte   Mega Byte   Giga Byte   Tera Byte   Peta Byte   Exa Byte   Zetta Byte   Yotta Byte
 static char *HumanNames[] = {"KB","MB","GB","TB","PB","EB","ZB","YB"};
 /**
- @brief Große Zahlen für Menschen <em>leserlich</em> darstellen
+ @brief GroÃŸe Zahlen fÃ¼r Menschen <em>leserlich</em> darstellen
  @return String der die Zahl in num beschreibt
  @param num Zahl die beschrieben werden soll
  @param perc Genauigkeit nach dem Komma
 
- Große Zahlen so darstellen, dass max. 4 Zahlen mit einer Angabe von
+ GroÃŸe Zahlen so darstellen, dass max. 4 Zahlen mit einer Angabe von
  xfachen von Bytes (also KB/TB etc.) angegeben wird.
 
- Ergebnis wird in eine char* zurückgegeben.
+ Ergebnis wird in eine char* zurÃ¼ckgegeben.
 
  Der Buffer wird mit 128 Bytes allociert, wenn als erstes aufgerufen wird.
 
@@ -3118,27 +3414,28 @@ static char *HumanNames[] = {"KB","MB","GB","TB","PB","EB","ZB","YB"};
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.03.2020 HS Create
+ ** 09.03.20 HS Create
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *Num2Human(double num, int perc)
 {
-    double mNum;                                            // double für Nachkommastellen
-    int i;                                                  // schleifenzähler
+    double mNum;                                            // double fÃ¼r Nachkommastellen
+    int i;                                                  // schleifenzÃ¤hler
     int m = sizeof(HumanNames) / sizeof (char *);           // MaxHumanName
-    static char* HumanRead=NULL;                            // pointer auf das Ergebnis
+    char* HumanRead;                                        // pointer auf das Ergebnis
 
-    if (HumanRead==NULL) HumanRead=malloc0(128);            // Speicher nur wenn noch keiner da ist
-    strcpy_ex (HumanRead, "Overflow");                         // auf ungültig setzen, falls die Schleife Ergebnis offen
+    HumanRead=malloc_temp(128);                             // Speicher nur wenn noch keiner da ist
+    strcpy_ex (HumanRead, "Overflow");                      // auf ungÃ¼ltig setzen, falls die Schleife Ergebnis offen
 
     mNum = num;                                             // Die Zahl
-    if (mNum<1024)                                          // Unter 1 K läuft NIX
+    if (mNum<1024)                                          // Unter 1 K lÃ¤uft NIX
     {
         sprintf_ex (HumanRead, "%.0lf", mNum);              // und Ergebnis speichern
         return HumanRead;
     }
 
-    for (i=0;i<m;i++)                                       // Für Alle HumanNames
+    for (i=0;i<m;i++)                                       // FÃ¼r Alle HumanNames
     {
         mNum /= 1024;                                       // Ansonsten mNum verkleiner und i+=1
         if (mNum < 1024)                                    // Kleiner 1024, dann passt das Ergebnis
@@ -3147,7 +3444,7 @@ char *Num2Human(double num, int perc)
             break;
         }
     }
-    //strrtrim(HumanRead);                                    // ggf. rechtes Space löschen
+    //strrtrim(HumanRead);                                    // ggf. rechtes Space lÃ¶schen
     return CleanNumberAfterDot(HumanRead);
 }
 
@@ -3158,11 +3455,12 @@ char *Num2Human(double num, int perc)
 
  Gegenpart zu @ref Num2Human nur wirdaus einem String eine Zahl macht
 
- @note Wenn man unvernüftige String parst, dann kommt auch eine komische Zahl raus
+ @note Wenn man unvernÃ¼ftige String parst, dann kommt auch eine komische Zahl raus
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.03.2020 HS Create
+ ** 09.03.20 HS Create
+ ** 22.02.24 HS Auch ein Zeichen reicht vÃ¶llig 100G = 100GB
 ___________________________________________________________________________*/
 
 double Human2Num(char *Kette)
@@ -3174,11 +3472,10 @@ double Human2Num(char *Kette)
     int slength;
     int k;
     int m = sizeof(HumanNames) / sizeof (char *);           // MaxHumanName
-
     p = strdup(Kette);                                      // manipulierbares Duplikat schaffen
-    slength =strlen(p);                                     // Länge
+    slength =strlen(p);                                     // LÃ¤nge
     rslt_multi=0;                                           // Ergebnis Multiplikator
-    if (slength>2)                                          // Mindestens 3 Zeichen
+    if (slength>1)                                          // Mindestens 2 Zeichen
     {
         multi=1024;                                         // 0 KB 1 MB usw.
         for (k=0;k<m;k++)
@@ -3188,9 +3485,16 @@ double Human2Num(char *Kette)
                 if (tolower(p[slength-1])==tolower(HumanNames[k][1]))
                 {                                           // Wenn beide Zeichen passen
                     rslt_multi = multi;
-                    p[slength-2]=0;                         // löschen der Größenangabe
+                    p[slength-2]=0;                         // lÃ¶schen der GrÃ¶ÃŸenangabe
                     break;
                 }
+            }
+            // and ... nur ein richtiges Zeichen reicht auch
+            if (tolower(p[slength-1])==tolower(HumanNames[k][0]))
+            {                                           // Wenn beide Zeichen passen
+                rslt_multi = multi;
+                p[slength-1]=0;                         // lÃ¶schen der GrÃ¶ÃŸenangabe
+                break;
             }
             multi = multi * 1024;
         }
@@ -3210,12 +3514,12 @@ double Human2Num(char *Kette)
  @param num Zahl, die gerundet wird
  @param perc Genauikget hinter dem Komma
 
-Da sich irgendwie keine andere saubere Lösung anbietet
+Da sich irgendwie keine andere saubere LÃ¶sung anbietet
 - runden via String
 
 ___[ Revision ]______________________________________________________________
 
- ** 10.03.2020 HS Create
+ ** 10.03.20 HS Create
 ___________________________________________________________________________*/
 
 double simple_round(double num, int perc)
@@ -3236,12 +3540,12 @@ double simple_round(double num, int perc)
  @return EXIT_SUCCESS / EXIT_FAILURE
  @param [in]  start_p    Start des HexStrings hier
  @param [out] end_p      Ende des gelesenen Strings
- @param [in]  len        Max. Länge oder 0, dann kann er unendlich lang sein(theoretisch)
+ @param [in]  len        Max. LÃ¤nge oder 0, dann kann er unendlich lang sein(theoretisch)
  @param [out] rslt       Ergebnis
 
 ___[ Revision ]______________________________________________________________
 
- ** 24.01.19 HS Create ursprünglich für HSjson
+ ** 24.01.19 HS Create ursprÃ¼nglich fÃ¼r HSjson
 ___________________________________________________________________________*/
 
 int fromHex(char *start_p, char **end_p, int len, long long* rslt)
@@ -3255,11 +3559,11 @@ int fromHex(char *start_p, char **end_p, int len, long long* rslt)
     for (i=0;;i++)
     {
         *end_p=p;
-        if (len>0)                                                      // maxlänge beachten ?
+        if (len>0)                                                      // maxlÃ¤nge beachten ?
         {
-            if (i>=len) break;                                          // überschritten ?
+            if (i>=len) break;                                          // Ã¼berschritten ?
         }else{
-            if (*p==0) break;                                           // ohne Länge, dann bei stringende ->
+            if (*p==0) break;                                           // ohne LÃ¤nge, dann bei stringende ->
         }
         if (!isxdigit(*p)) return EXIT_FAILURE;                         // ist ein Hexdigit ? -> sonst ende
         if (*p>='0' && *p<='9') c=*p-'0';                               // 0-9
@@ -3279,8 +3583,8 @@ int fromHex(char *start_p, char **end_p, int len, long long* rslt)
 
 ___[ Revision ]______________________________________________________________
 
- **  02.04.2006 HS ReCreate
- **  24.01.2019 HS Rewritten, aber langsamer und komplexer, dafür flexibler
+ **  02.04.06 HS ReCreate
+ **  24.01.19 HS Rewritten, aber langsamer und komplexer, dafÃ¼r flexibler
 ___________________________________________________________________________*/
 
 //long hextol(char *STRING)
@@ -3318,60 +3622,78 @@ long hextol(char *STRING)
  @brief HexString aus einem Buffer machen
  @return Zeichenkette mit HexDump des Buffers
  @param from Buffer der gelesen wird
- @param format Flags
+ @param size maximale lÃ¤nge ( bei NOZERO, oder 1 = unendlich >1 maxlÃ¤nge )
+ @param bytes_per_line Anzahl der Zellen pro Zeile
+ @param format Flags [STRHEX .... ]
 
  Gedacht als Debughelfer zur Ausgabe in Datei oder Bildschirm
  aus dem Buffer "from" wird ein HexDump erzeugt, der wiederum in einem
- dynamischen String abgelegt wird. Wird strtohexstr("",0) aufgerufen, dann
- wird dieser Speicher freigegeben. Muss aber nicht ....
+ dynamischen String abgelegt wird. Wird strtohexstr("",0,0,0) aufgerufen, dann
+ wird dieser Speicher freigegeben. Muss man aber nicht machen....
+
+ * from     Speicher der auszubegeben ist. Hier kann man wenn die maxSize
+            nicht stimmt schnell einen segfault auslÃ¶sen
+ * size     maximale Anzahl der Zeichen, dabei sind mindestens 2 Zeichen Pflicht
+            0 wird nur verwendet um den Speicher frei zu geben
+            1 wird verwendet, wenn ein String NULL terminiert wird.
+ * bytes_p. Anzahl von Reihen des HexDumps
 
  format hat folgenden Aufbau:
 
- -     0   = nur immer "00 " für jedes Byte   (KEIN LF am Ende)
- - 0x100  = Jede Zeile mit Index  "0000: "
- - 0x200  = mit ASC am Ende
- - 0x400  = ignoriere null, dann maxhex in einer Zeile ausgeben
- - 1-7f   = Anzahl der Ziffern pro Zeile.
+ * nix / 0       = nur immer "00 " fÃ¼r jedes Byte (KEIN LF am Ende, nur ein Leerzeichen)
+ * STRHEX_INDEX  = Jede Zeile mit Index  "0000: "
+ * STRHEX_ASC    = mit ASC am Ende
+ * STRHEX_NOZERO = ignoriere 0, dann size und maxhex in einer Zeile ausgeben
 
 ___[ Revision ]______________________________________________________________
 
- ** 10.02.2019 HS Create
- ** 02.04.2020 HS Neues Format mit 0x400 Es wird der Buffer in voller Länge
-                  ausgegeben, auch wenn eine NULL dabei ist, kann nicht
-                  mehrzeilig sein.
+ ** 10.02.19 HS Create
+ ** 02.04.20 HS Neues Format mit 0x400 Es wird der Buffer in voller LÃ¤nge
+                ausgegeben, auch wenn eine NULL dabei ist, kann nicht
+                mehrzeilig sein.
+ ** 01.02.24 HS Neuer Aufruf
+                Doku angepasst
+ ** 02.04.24 HS malloc_temp statt NULL und malloc
 ___________________________________________________________________________*/
 
-char *strtohexstr(char *from, int format)
-{
-    static char *rslt=NULL;                                                     // Init mit NULL
-    if (rslt) free(rslt);                                                       // bei wiederholung Speicher freigeben
-    rslt=NULL;                                                                  // und für neues rslt vorbereiten
 
+//char *strtohexstr(char *from, int format)
+//char *strdump( void* fromAddr, size_t size, int format )
+char *strtohexstr(char* from, size_t size, size_t bytes_per_line, int format )
+{
+    char *rslt;                                                                 // Init mit NULL
     int i;
     int haveNextLine=TRUE;                                                      // Zeigt, dass eine neue Zeile begonnen werden soll und Variable entsprechend gesetzt werden
     int maxHex;
     int linHex;
     char hex[32];
-    char ascAdd[128];
+    char ascAdd[130];
+    rslt=NULL;                                                                  // und fÃ¼r neues rslt vorbereiten
+
+    if ( (size==0) && (*from == '\0') ) return from;                            // nix ausgeben, dann fertig
 
     linHex = 0;
-    maxHex = format & 0x7f;                                                     // Anzahl der Maximalen Hexzahlen pro Zeile 0 = kein Ende
+    maxHex = bytes_per_line;                                                    // Anzahl der Maximalen Hexzahlen pro Zeile 0 = kein Ende
+    if (maxHex<1)   maxHex=128;
+    if (maxHex>128) maxHex=128;                                                 // Maximal 127
+
     for (i=0;;i++)
     {
-        if (format & 0x400)
+        if (size>1) if (i>=size) { break; }
+        if (format & STRHEX_NOZERO)
         {
             if (maxHex==0) break;
-            if (i>0)
-            {
-                if (haveNextLine) break;
-            }
+//            if (i>0)
+//            {
+//                if (haveNextLine) break;
+//            }
         }else{
             if (from[i]==0) break;                                              // String Ende
         }
 
         if (haveNextLine)                                                       // Wenn neue Zeile
         {
-            if (format & 0x100)                                                 // Format mit Index anzeigt
+            if (format & STRHEX_INDEX)                                          // Format mit Index anzeigt
             {
                 sprintf_ex (hex,"%04x: ",i);                                    // einfach mit sprintf
                 stradd(rslt, hex);                                              // un zum Ergebnis
@@ -3388,33 +3710,72 @@ char *strtohexstr(char *from, int format)
         linHex++;
         if (linHex<maxHex) continue;                                            // Maximale Zeilen erreicht ?
         haveNextLine=TRUE;                                                      // Ja, dann Kennzeichnen
-        if (format & 0x200) stradd (rslt,ascAdd);                               // Wenn ASC gefordert, dann ...
+        if (format & STRHEX_ASC) stradd (rslt,ascAdd);                          // Wenn ASC gefordert, dann ...
         stradd (rslt,"\n");                                                     // Zeilenende...
     }
     if (!haveNextLine)                                                          // Wenn nicht gerade in einer neuen Zeile gelandet
     {
-        if (format & 0x200)                                                     // und ascAdd gewünscht ist
+        if (format & STRHEX_ASC)                                                // und ascAdd gewÃ¼nscht ist
         {
             if (maxHex>0)                                                       // und nicht endloszeile war .....
             {
-                for (;linHex<maxHex;linHex++) stradd (rslt,"   ");              // dann den String auffüllen
+                for (;linHex<maxHex;linHex++) stradd (rslt,"   ");              // dann den String auffÃ¼llen
             }
-            stradd (rslt,ascAdd);                                               // ASC anfügen
+            stradd (rslt,ascAdd);                                               // ASC anfÃ¼gen
         }
         if (format!=0) stradd (rslt,"\n");                                      // Zeilen Ende!!
     }
-    return rslt;
+    return malloc_temp_string(rslt);
 }
 
 /**
- @brief num in Binärer Form in einen String schreiben
+ @brief src nimmt eine ipv4 Adresse in der form 111.222.333.444 an.
+ @return ipv4_t
+ @param src IPv4 Adresse in asc.
+
+___[ Revision ]______________________________________________________________
+
+ ** 12.02.24 HS Neu
+___________________________________________________________________________*/
+
+ipv4_t getipv4(char *src)
+{
+    ipv4_t r;
+    int n;
+    int l;
+    r = 0;
+    for (l=0;l<4;l++)                                                           // max. 4 Zahlen
+    {
+        for (n=0;;src++)                                                        // Jede Zahl wird nach n gepatcht
+        {
+            if ((*src==0) || (*src=='.')) break;                                // Zahl solle abgegrenzt sein
+            if (isdigit(*src))                                                  // Nur zahlen sind zulÃ¤ssig
+            {
+                n = n * 10;                                                     // Zahl konstruieren
+                n = n + ( *src - '0' );
+            }
+        }
+        r = (r * 256) + n;                                                      // Jeder char a 8 Bit
+        if (*src==0) break;                                                     // ende ?
+        src++;
+    }
+    return r;
+}
+
+/**
+ @brief num in BinÃ¤rer Form in einen String schreiben
  @return String
  @param num Zahl die umgewandelt wird
 
 ___[ Revision ]______________________________________________________________
 
- ** 22.07.2016 HS ReCreate
+ ** 22.07.16 HS ReCreate
 ___________________________________________________________________________*/
+
+//** 02.04.24 HS malloc_temp statt static
+//    char *rslt;
+//    rslt = strprintf ( "%4.4i%2.2i%2.2i%2.2i%2.2i%2.2i",
+//    return malloc_temp_string(rslt);
 
 char *binstr( unsigned int num )
 {
@@ -3422,10 +3783,10 @@ char *binstr( unsigned int num )
     int n;
     int b;
     int m;
-    static char rslt[BIN_INT_SIZE+1];       // 33
-
+    char *rslt;
+    rslt = malloc_temp(BIN_INT_SIZE+1);       // 33
     n=num;
-    memset_ex (rslt,0,BIN_INT_SIZE+1);
+    //memset_ex (rslt,0,BIN_INT_SIZE+1);
     b = BIN_INT_SIZE-1;
     m = BIN_INT_SIZE;
     for (i=0;i<m;i++,b--)
@@ -3444,9 +3805,9 @@ char *binstr( unsigned int num )
 
 ___[ Revision ]______________________________________________________________
 
- ** 13.11.2016 HS reCreate
- ** 27.12.2016 HS für SQLITE3 "Y" und "N" implemntiert
- ** 10.03.2018 HS ON/OFF implementation
+ ** 13.11.16 HS reCreate
+ ** 27.12.16 HS fÃ¼r SQLITE3 "Y" und "N" implemntiert
+ ** 10.03.18 HS ON/OFF implementation
 ___________________________________________________________________________*/
 
 int GetIntTrueFalsefromString(char *STRING)
@@ -3486,17 +3847,17 @@ int strexpr_brace_count;
  @return number
  @param expr STRING Die zu bearbeitende Zeichenkette
 
- Einen einfachen Parses für dezimale Ausdrücke
+ Einen einfachen Parses fÃ¼r dezimale AusdrÃ¼cke
 
- Einfach Ausdrücke, wie  1280 + 340 oder 1280 + ( 2 * 170 ) oder 1280 + 4*85 führen zu
- gleichen Ergebnis. DH. sollen die Zeichenfolgen auswertet und das Ergenis richtig zurückgeben.
+ Einfach AusdrÃ¼cke, wie  1280 + 340 oder 1280 + ( 2 * 170 ) oder 1280 + 4*85 fÃ¼hren zu
+ gleichen Ergebnis. DH. sollen die Zeichenfolgen auswertet und das Ergenis richtig zurÃ¼ckgeben.
 
- Die vier arithmetischen Operatoren und Klammern sind im Ausdruck zulässig. Einfache und
+ Die vier arithmetischen Operatoren und Klammern sind im Ausdruck zulÃ¤ssig. Einfache und
  komplexe Aufgaben sollen in der Routine eingebettet werden.
 
  Die Aufgabe ist ein einfache Expressionen als auch komplexe Aufgaben in rekursive
- Abstiegsanalyse durchzuführen. Ein einfacher Parser liefert ggf. für 3 + 4 * 2 das Ergebnis 24.
- Mathematisch richtig ist aber die 4*2 zuerst und dann 3 zu addieren auszuführen. Abstiegsparsing!
+ Abstiegsanalyse durchzufÃ¼hren. Ein einfacher Parser liefert ggf. fÃ¼r 3 + 4 * 2 das Ergebnis 24.
+ Mathematisch richtig ist aber die 4*2 zuerst und dann 3 zu addieren auszufÃ¼hren. Abstiegsparsing!
 
  Auf der obersten Ebene besteht ein Ausdruck aus mehreren Summanden:
 
@@ -3519,13 +3880,13 @@ int strexpr_brace_count;
  3,4 * (25 - 4) / 2. Die Faktoren sind 3,4, (25 - 4) und 2. Die /2 ist ein Faktor. Mathematisch
  gesehen ist es das Gleiche wie *1/2 ausgerechnet 1/2 = 0,5. Auch Faktoren sind noch zerlegbar.
  Jeder Faktor ist ein Atom. Jedes Atom kann eine einzelne Zahl oder ein Unterausdruck in
- Klammern sein. Unterausdrücke können auf die gleiche Weise wie der gesamte Ausdruck analysiert
+ Klammern sein. UnterausdrÃ¼cke kÃ¶nnen auf die gleiche Weise wie der gesamte Ausdruck analysiert
  werden ( es sind die Summanden in Klammern, dann Faktoren und dann Atome).
 
  Rekursives Abstiegsparsing!
 
- Zur Implementierung ist zu beachten, insbesondere weil auch mehrere Ausdrücke in einer
- Zeile vorkommen können:
+ Zur Implementierung ist zu beachten, insbesondere weil auch mehrere AusdrÃ¼cke in einer
+ Zeile vorkommen kÃ¶nnen:
 
  Snippet  | Beschreibung
  --------:|---------------------------
@@ -3538,8 +3899,8 @@ int strexpr_brace_count;
 
 ___[ Revision ]______________________________________________________________
 
- **  03.11.2020 HS Erstellt
- **  05.11.2020 HS Klammerausdrücke werden gecounted
+ **  03.11.20 HS Erstellt
+ **  05.11.20 HS KlammerausdrÃ¼cke werden gecounted
 ___________________________________________________________________________*/
 
 double strexpr(char* expr)
@@ -3552,7 +3913,7 @@ double strexpr(char* expr)
     // return r;
 }
 
-/// @see strexpr mit Rückgabe nach end_ptr
+/// @see strexpr mit RÃ¼ckgabe nach end_ptr
 double strexpr_r(char* expr, char** end_ptr)
 {
     strexpr_brace_count=0;
@@ -3562,7 +3923,7 @@ double strexpr_r(char* expr, char** end_ptr)
 ///@}
 ///@}
 
-/// interne Funkktion - Auflösen eines Schnipsels (Atom) @see strexpr
+/// interne Funkktion - AuflÃ¶sen eines Schnipsels (Atom) @see strexpr
 double strexprAtom(char** expr)
 {
     double rslt;
@@ -3581,13 +3942,13 @@ double strexprAtom(char** expr)
     if (*p=='-')                                            // Negatives Vorzeichen gefunden ?
     {
         negativ=true;                                       // markiere als negativ
-        p++;                                                // überlese das Zeichen
+        p++;                                                // Ã¼berlese das Zeichen
     }else{
         negativ=false;                                      // ansonsten positiv
     }
-    if (*p=='+') p++;                                       // Pluszeichen können überlesen werden
+    if (*p=='+') p++;                                       // Pluszeichen kÃ¶nnen Ã¼berlesen werden
 
-    // Prüfe auf Klammern, wenn wahr, dann direkter Ausstiegspunkt
+    // PrÃ¼fe auf Klammern, wenn wahr, dann direkter Ausstiegspunkt
     if(*p == '(')
     {
         *expr = p+1;
@@ -3597,35 +3958,35 @@ double strexprAtom(char** expr)
         {
             if (!isspace(*p)) break;
         }
-        if(*p != ')') return 0;                             // Möglicher Fehler wenn klammer zu fehlt
+        if(*p != ')') return 0;                             // MÃ¶glicher Fehler wenn klammer zu fehlt
         strexpr_brace_count--;
         *expr = p+1;
         return (negativ) ? -rslt : rslt;
     }
-    // Mögliche Hexadezimale Zahl prüfen ... kann noch um oktalbereicher erweitert werden
+    // MÃ¶gliche Hexadezimale Zahl prÃ¼fen ... kann noch um oktalbereicher erweitert werden
     // 28.11.20 HS p[1] sonst wird daraus nie eine hexzahl
     if ((p[0]=='0') && (p[1]=='x'))                         // 0x am anfang, dann eine Hexadzimale Zahl
     {
-        long long y;                                        // für fromHex
+        long long y;                                        // fÃ¼r fromHex
         p+=2;                                               // '0x' kann dann mal weg
-        fromHex(p, &end_ptr, 0, &y);                        // zahl auflösen und als long long speichern un y
+        fromHex(p, &end_ptr, 0, &y);                        // zahl auflÃ¶sen und als long long speichern un y
         rslt = (double) y;                                  // was auch das Ergebnis ist
     }else{
-        rslt = strtod(p, &end_ptr);                         // simple, einfach den Compiler bemühen
+        rslt = strtod(p, &end_ptr);                         // simple, einfach den Compiler bemÃ¼hen
     }
-    *expr = end_ptr;                                        // das "Ende" tzurück speichern
-    if(end_ptr == p) return 0;                              // nichts gefunden ! Hier könnte eine Fehler ausgegeben werden
+    *expr = end_ptr;                                        // das "Ende" tzurÃ¼ck speichern
+    if(end_ptr == p) return 0;                              // nichts gefunden ! Hier kÃ¶nnte eine Fehler ausgegeben werden
     //lprintf ("Outgoing %s", *expr);
     return (negativ) ? -rslt : rslt;                        // Ergebnis mit dem richtigen Vorzeichen
 }
 
-/// interne Funkktion - Auflösen eines Factors (Multiplizieren oder Dividieren) @see strexpr
+/// interne Funkktion - AuflÃ¶sen eines Factors (Multiplizieren oder Dividieren) @see strexpr
 double strexprFactors(char** expr)
 {
     double num1;                                            // Erste Zahl
     double num2;                                            // Zeiter Zahl
     char *p;                                                // pnt nacht erster Zahl
-    num1 = strexprAtom(expr);                               // auflösen und mit der Zahl zurückkommen
+    num1 = strexprAtom(expr);                               // auflÃ¶sen und mit der Zahl zurÃ¼ckkommen
     for(;;)
     {
         p = *expr;
@@ -3643,18 +4004,18 @@ double strexprFactors(char** expr)
         if  ((*p != '/') && (*p != '*')) return num1;       // wenn nicht multiplizieren oder division, dann fertig ( Austiegspunkt )
         *expr=p+1;                                          // hinter das Rechenzeichen
         num2 = strexprAtom(expr);                           // 2.Teil holen
-        if (*p == '/') num1 /= num2;                        // und Operation durchführen
+        if (*p == '/') num1 /= num2;                        // und Operation durchfÃ¼hren
         else           num1 *= num2;
     }
 }
 
-/// interne Funkktion - Auflösen einer Summe (Addition und Subtraktion) @see strexpr
+/// interne Funkktion - AuflÃ¶sen einer Summe (Addition und Subtraktion) @see strexpr
 double strexprSummands(char** expr)
 {
     double num1;                                            // Erste Zahl
     double num2;                                            // Zeiter Zahl
     char *p;                                                // pnt nacht erster Zahl
-    num1 = strexprFactors(expr);                            // auflösen und mit der Zahl zurückkommen
+    num1 = strexprFactors(expr);                            // auflÃ¶sen und mit der Zahl zurÃ¼ckkommen
     for(;;)
     {
         p = *expr;
@@ -3666,13 +4027,13 @@ double strexprSummands(char** expr)
             }
             if ((*p == '-') || (*p == '+'))
             {
-                if (isdigit(p[1])) if (strexpr_brace_count==0) return num1; // ** Prüfen ob das so stimmt
+                if (isdigit(p[1])) if (strexpr_brace_count==0) return num1; // ** PrÃ¼fen ob das so stimmt
             }
         }
         if ((*p != '-') && (*p != '+')) return num1;        // wenn nicht addieren oder subtrahieren ( Austiegspunkt )
         *expr=p+1;                                          // hinter das Rechenzeichen
         num2 = strexprFactors(expr);                        // 2.Teil holen
-        if(*p == '-')  num1 -= num2;                        // und Operation durchführen
+        if(*p == '-')  num1 -= num2;                        // und Operation durchfÃ¼hren
         else           num1 += num2;
     }
 }
@@ -3688,24 +4049,24 @@ double strexprSummands(char** expr)
 */
 
 /**
- @brief Zeichenkette konvertieren um diese ASC in SQL zb. speichern zu können
+ @brief Zeichenkette konvertieren um diese ASC in SQL zb. speichern zu kÃ¶nnen
  @return Konvertieten String
  @param Kette Zeichenkette die konvertiert wird
 
- - Zeichenkette konvertieren um diese ASC in SQL zb. speichern zu können
+ - Zeichenkette konvertieren um diese ASC in SQL zb. speichern zu kÃ¶nnen
  - Auch CR/LF Konvert???
  - toDo: MaxSize
 
  strEsc und strDeEsc sind entstanden um Texte jeder Form in einem Textfeld in eine SQLite3 Datenbank zu speichern.
- Dabei stellten sich einige Probleme. Unter anderem kann beim strEsc der Buffer viel größer werden als der Orginaltext.
- Bei der Implementation ist dazu noch hinzugekommen, daß man in einem solchen Textfeld schwerlich ein " speichern kann.
+ Dabei stellten sich einige Probleme. Unter anderem kann beim strEsc der Buffer viel grÃ¶ÃŸer werden als der Orginaltext.
+ Bei der Implementation ist dazu noch hinzugekommen, daÃŸ man in einem solchen Textfeld schwerlich ein " speichern kann.
  Realisation:
- Die üblichen EscapeZeichen können in \\n \\r usw. gespeichert werden. Zeichen die isprint aussortiert werden als \\000 wobei
- 000 durch den ASC-Code gesetzt wird. Alle Zeichen von 001 bis 255 sind so möglich. Das 000 kennzeichnet das Stringende.
+ Die Ã¼blichen EscapeZeichen kÃ¶nnen in \\n \\r usw. gespeichert werden. Zeichen die isprint aussortiert werden als \\000 wobei
+ 000 durch den ASC-Code gesetzt wird. Alle Zeichen von 001 bis 255 sind so mÃ¶glich. Das 000 kennzeichnet das Stringende.
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.10.2018 HS Create
+ ** 16.10.18 HS Create
 ___________________________________________________________________________*/
 
 char *strEsc(char *Kette)
@@ -3717,19 +4078,19 @@ char *strEsc(char *Kette)
     int k;
     unsigned char c;
 
-    szBuf = strlen(Kette) + (( strlen(Kette) * BIGBUFFER_FAKTOR) / 100);        // Startbuffergroeße
+    szBuf = strlen(Kette) + (( strlen(Kette) * BIGBUFFER_FAKTOR) / 100);        // StartbuffergroeÃŸe
     if (szBuf<256) szBuf = 256;                                                 // der Buffer sollte mindestens 256 Byte sein
     //lprintf ("szBuf =%i strlen=%i",szBuf,strlen(Kette));
     rslt = malloc0(szBuf);                                                      // Buffer reservieren
 
     for (s=0,d=0;;s++,d++)
     {
-        if ((d+8)>szBuf)                                                        // Destgrösse sollte mindestens 8 Zeichen Extrabuffer hergeben
+        if ((d+8)>szBuf)                                                        // DestgrÃ¶sse sollte mindestens 8 Zeichen Extrabuffer hergeben
         {
-            szBuf = szBuf + 128;                                                // Buffer um 128 Zeichen vergrößern
+            szBuf = szBuf + 128;                                                // Buffer um 128 Zeichen vergrÃ¶ÃŸern
             rslt = realloc(rslt,szBuf);
             //lprintf ("realloc: d=%i szBuf =%i strlen=%i",d,szBuf,strlen(Kette));
-            for (k=d;k<szBuf;k++) rslt[k]=0;                                    // den Rest des Buffers mit 0 füllen
+            for (k=d;k<szBuf;k++) rslt[k]=0;                                    // den Rest des Buffers mit 0 fÃ¼llen
         }
         c = Kette[s];                                                           // aktuelles Zeichen
         if (c==0)       { rslt[d]=0; break; }                                   // Ende ?
@@ -3738,7 +4099,7 @@ char *strEsc(char *Kette)
 //        if (c=='\"')    { rslt[d]='\\'; d++; rslt[d]='\"'; continue; }        Hat leider nicht geklappt
 //        if (isprint(c)) { rslt[d]=c; continue; }
 
-        if (c!='\"') if (isprint(c)) { rslt[d]=c; continue; }                   // Wenn nicht ", dann auf darstelbares Zeichen prüfen
+        if (c!='\"') if (isprint(c)) { rslt[d]=c; continue; }                   // Wenn nicht ", dann auf darstelbares Zeichen prÃ¼fen
 
         if (c=='\n')    { rslt[d]='\\'; d++; rslt[d]='n'; continue; }           // LF
         if (c=='\r')    { rslt[d]='\\'; d++; rslt[d]='r'; continue; }           // CR
@@ -3757,16 +4118,16 @@ char *strEsc(char *Kette)
 }
 
 /**
- @brief Zeichenkette konvertieren um diese ASC in SQL zb. speichern zu können
+ @brief Zeichenkette konvertieren um diese ASC in SQL zb. speichern zu kÃ¶nnen
  @return Konvertieten String
  @param Kette Zeichenkette die konvertiert wird
 
- Das Geleiche nochmal rückwärts wie @ref strEsc
- Hier stellt sich das Problem mit dem größer werdenden Buffer nicht.
+ Das Geleiche nochmal rÃ¼ckwÃ¤rts wie @ref strEsc
+ Hier stellt sich das Problem mit dem grÃ¶ÃŸer werdenden Buffer nicht.
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.10.2018 HS Create
+ ** 16.10.18 HS Create
 ___________________________________________________________________________*/
 
 char *strDeEsc(char *Kette)
@@ -3776,7 +4137,7 @@ char *strDeEsc(char *Kette)
     int d;
     unsigned char c;
 
-    rslt = malloc0(strlen(Kette)+16);                                           // Plus+1 hätte gereicht
+    rslt = malloc0(strlen(Kette)+16);                                           // Plus+1 hÃ¤tte gereicht
     for (s=0,d=0;;s++,d++)
     {
         c = Kette[s];                                                           // aktuelles Zeichen
@@ -3789,9 +4150,9 @@ char *strDeEsc(char *Kette)
         if (c=='t') { rslt[d]='\t'; continue; }                                 // TAB
         if (c=='\\') { rslt[d]='\\'; continue; }                                // Backslah selbst
         if (c=='\'') { rslt[d]='\''; continue; }                                // Hochkomma
-        if (c=='\"') { rslt[d]='\"'; continue; }                                // Sollte nicht vorkommen, da das mit \034 übersetzt wird
+        if (c=='\"') { rslt[d]='\"'; continue; }                                // Sollte nicht vorkommen, da das mit \034 Ã¼bersetzt wird
 
-        if ((isdigit(Kette[s])) && (isdigit(Kette[s+1])) && (isdigit(Kette[s+2]))) // Ansonsten 3 Digits für sonstige Sonderzeichen
+        if ((isdigit(Kette[s])) && (isdigit(Kette[s+1])) && (isdigit(Kette[s+2]))) // Ansonsten 3 Digits fÃ¼r sonstige Sonderzeichen
         {
             c =   (Kette[s]  -'0') * 100; s++;
             c = c+(Kette[s]-'0') * 10;    s++;
@@ -3826,7 +4187,8 @@ void y_dump(ty*y)
     printf ("ty-like var:\n");
     printf ("maxsize: %i\n", y->maxsize);
     printf ("pntr:    %i\n", y->pntr);
-    printf ("buffer[32]; %s", strtohexstr(y->buffer, 0x200 + 0x400 + 32));
+    //printf ("buffer[32]; %s", strtohexstr(y->buffer, 0x200 + 0x400 + 32));
+    printf ("buffer[32]: %s", strtohexstr(y->buffer, 32, 32, STRHEX_NOZERO | STRHEX_ASC ));
 }
 #else
 void y_dump(ty*y __attribute__ ((unused)) ){};
@@ -3837,11 +4199,11 @@ void y_dump(ty*y __attribute__ ((unused)) ){};
  @param [in,out] y        ein dynamischer Buffer vom type @ref ty
  @param [in]     b        Ein Buffer mit dem Initialisiert wird. _kann_ NULL sein.
 
- In buffer Es wird eine Kopie angelegt. DH. der Urspüngliche Buffer wird nicht verändert.
+ In buffer Es wird eine Kopie angelegt. DH. der UrspÃ¼ngliche Buffer wird nicht verÃ¤ndert.
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.04.2020 HS Create
+ ** 09.04.20 HS Create
 ___________________________________________________________________________*/
 
 void y_init(ty *y, char *b)
@@ -3860,14 +4222,14 @@ void y_init(ty *y, char *b)
 }
 
 /**
- @brief Ein Bufferende markieren ohne den Zeichenpointer zu ändern
+ @brief Ein Bufferende markieren ohne den Zeichenpointer zu Ã¤ndern
  @param [in,out] y        ein dynamischer Buffer vom type @ref ty
 
  Markiert nur ein Ende. Der Buffer kann direkt weiter benutzt werden.
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.04.2020 HS Create
+ ** 09.04.20 HS Create
 ___________________________________________________________________________*/
 
 void y_end(ty *y)
@@ -3877,12 +4239,12 @@ void y_end(ty *y)
 }
 
 /**
- @brief Per Definition die Funktion, die den Buffer freigibt und so herrichtet, daß er gleich wieder benutzt werden _kann_ .
+ @brief Per Definition die Funktion, die den Buffer freigibt und so herrichtet, daÃŸ er gleich wieder benutzt werden _kann_ .
  @param [in,out] y        ein dynamischer Buffer vom type @ref ty
 
 ___[ Revision ]______________________________________________________________
 
- ** 09.04.2020 HS Create
+ ** 09.04.20 HS Create
 ___________________________________________________________________________*/
 
 void y_free(ty *y)
@@ -3893,7 +4255,7 @@ void y_free(ty *y)
 
 
 /**
- @brief Zeichen dynamisch in eine String schreiben
+ @brief Zeichen dynamisch in einen String schreiben
  @param [in,out] y        ein dynamischer Buffer vom type @ref ty
  @param [in]     c        char der hinzukommt
 
@@ -3906,7 +4268,7 @@ void y_free(ty *y)
 
 ___[ Revision ]______________________________________________________________
 
- ** 03.04.2020 HS Erste Version
+ ** 03.04.20 HS Erste Version
 ___________________________________________________________________________*/
 
 void y_charadd (ty *y, char c)
@@ -3922,7 +4284,7 @@ void y_charadd (ty *y, char c)
 }
 
 /**
- @brief Ein Zeichen mehrfach dynamisch in eine String schreiben
+ @brief Ein Zeichen mehrfach dynamisch in einen String schreiben
  @param [in,out] y        ein dynamischer Buffer vom type @ref ty
  @param [in]     c        char der hinzukommt
  @param [in]     nsize    wie oft das Zeichen erzeugt werden soll
@@ -3931,7 +4293,7 @@ void y_charadd (ty *y, char c)
 
 ___[ Revision ]______________________________________________________________
 
- ** 06.04.2020 HS Create
+ ** 06.04.20 HS Create
 ___________________________________________________________________________*/
 
 void y_multicharadd (ty *y, char c, int nsize)
@@ -3947,7 +4309,7 @@ void y_multicharadd (ty *y, char c, int nsize)
 }
 
 /**
- @brief Einen String an eine dynamischen Buffer vom Typ ty anhängen
+ @brief Einen String an einen dynamischen Buffer vom Typ ty anhÃ¤ngen
  @param [in,out] y        ein dynamischer Buffer vom type @ref ty
  @param [in]     s        String der hinzukommt
 
@@ -3955,7 +4317,7 @@ void y_multicharadd (ty *y, char c, int nsize)
 
 ___[ Revision ]______________________________________________________________
 
- ** 06.04.2020 HS Create
+ ** 06.04.20 HS Create
 ___________________________________________________________________________*/
 
 void y_stringadd (ty *y, char *s)
@@ -3975,20 +4337,20 @@ void y_stringadd (ty *y, char *s)
  @param [in]     base       Die Basis der auszugebenden Zahl typisch sind 2,8,10 oder 16 (Sonderfall 11 zeigt eine unsigned zahl mit base 10 an)
  @param [in]     altformat  Alternatives Format, ob 0x oder 0b vor die Zahl kommen
  @param [in]     capitalize Ergebnis in Grossschrift ( Uppercase )
- @param [in]     num_size   Minimale Größe der Zahl
+ @param [in]     num_size   Minimale GrÃ¶ÃŸe der Zahl
  @param [in]     num_prec   Genauigkeit
- @param [in]     num_padc   Füllzeichen kann 0,'0' oder auch ' ' sein
- @param [in]     num_adjustment_left Ob die Zahl links- oder rechtsbündig notiert wird
+ @param [in]     num_padc   FÃ¼llzeichen kann 0,'0' oder auch ' ' sein
+ @param [in]     num_adjustment_left Ob die Zahl links- oder rechtsbÃ¼ndig notiert wird
  @param [in]     add_plussign Welches Pluszeichen es sein soll. kann 0,' ' oder '+' sein, intern auch '-'
 
- Ist im Prinzip eine Unterfunktion von @ref strprintf , die alles aufgeschlüsselt hat.
+ Ist im Prinzip eine Unterfunktion von @ref strprintf , die alles aufgeschlÃ¼sselt hat.
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.04.2020 HS Create
- ** 10.04.2020 HS ein overflow nach *-1 abzufragen geht nicht, wenn mit -O2
-                  kompiliert wird. stattdessen sind jetzt
-                  LLONG_MAX und LLONG_MIN drin.
+ ** 01.04.20 HS Create
+ ** 10.04.20 HS ein overflow nach *-1 abzufragen geht nicht, wenn mit -O2
+                kompiliert wird. stattdessen sind jetzt
+                LLONG_MAX und LLONG_MIN drin.
 ___________________________________________________________________________*/
 
 void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capitalize, size_t num_size, int num_prec, char num_padc, bool num_adjustment_left, char add_plussign )
@@ -4025,7 +4387,7 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
 	if (u<0)                                                    // Wenn kleiner null
     {
         minus=true;                                             // setze Minusflag
-        if (u!=LLONG_MIN)                                       // Prüfen ob es  0x8000000000000000 war
+        if (u!=LLONG_MIN)                                       // PrÃ¼fen ob es  0x8000000000000000 war
         {
             u = -u;                                             // Minuszeichen umkehren
         }else{
@@ -4041,7 +4403,7 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
         uval ++;
         for (;;)                                                // Zahl reverse ablegen
         {
-            n = uval%base;                                      // das was überbleibt, wenn durch base geteilt wird
+            n = uval%base;                                      // das was Ã¼berbleibt, wenn durch base geteilt wird
             y_charadd( &numbuf, digs[0][n]);                    // im Speicher ablegen
             uval /= base;                                       // jetzt teilen
             if (uval==0) break;
@@ -4049,12 +4411,12 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
         minus=false;
         //overflow=false;
     }else{                                                      // Dieser Teil arbeitet mit _signend_ values
-        for (;;)                                                // Zahl reverse ablegen und Spezialbuffer füllen
+        for (;;)                                                // Zahl reverse ablegen und Spezialbuffer fÃ¼llen
         {
-            n = u%base;                                         // das was überbleibt, wenn durch base geteilt wird
+            n = u%base;                                         // das was Ã¼berbleibt, wenn durch base geteilt wird
             y_charadd( &numbuf, digs[0][n]);                    // im Speicher ablegen
             u /= base;                                          // jetzt teilen
-            if (u==0)                                           // wenn nichts mehr überbleibt
+            if (u==0)                                           // wenn nichts mehr Ã¼berbleibt
             {
                 if (overflow) numbuf.buffer[0]++;               // wenn overflow, dann letzte Zahl um eins mehr
                 break;
@@ -4077,7 +4439,7 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
         if (base==2) adj+=2;
         if (base==16) adj+=2;
     }
-    if (num_prec>0)                                             // Genauigkeit muss ggf. mit '0' gefüllt werden
+    if (num_prec>0)                                             // Genauigkeit muss ggf. mit '0' gefÃ¼llt werden
     {
         //bool br; // zum debuggen
         //printf ("size=%i prec=%i adj=%i\n",(int)num_size,num_prec,adj);
@@ -4091,13 +4453,13 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
         }
         if (num_padc=='0') num_padc=' ';
     }
-    if (!num_padc) num_padc=' ';                                // sicherstellen das padc gefüllt ist
+    if (!num_padc) num_padc=' ';                                // sicherstellen das padc gefÃ¼llt ist
     if (altformat)                                              // mit Angabe von "0x" etc
     {
         if ((num_padc=='0') && (base==2))  y_stringadd( y, digs[1]);
         if ((num_padc=='0') && (base==16)) y_stringadd( y, digs[2]);
     }
-    if ( (!num_adjustment_left) && (num_size>0) )               // Fülle wenn Zahl rechts stehen soll
+    if ( (!num_adjustment_left) && (num_size>0) )               // FÃ¼lle wenn Zahl rechts stehen soll
     {
         if (add_plussign && (num_padc=='0'))
         {
@@ -4143,35 +4505,35 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
  @brief strprintf kopiert alle Zeichen in fmt nach buffer
  @return buffer ( Null terminiert )
  @param fmt  Format weitgehgend wie printf
- @param ...  Variablen, die zu fmt passen müssen
+ @param ...  Variablen, die zu fmt passen mÃ¼ssen
 
  strprintf kopiert alle Zeichen in fmt nach buffer, der sich dynamisch
  anpasst. und am Ende mit __free__ freigegeben werden muss.
 
- Wie in allen Strings gelten hier die üblichen Formatierungssymbole,
- die intern nur 1:1 übernommen werden.
+ Wie in allen Strings gelten hier die Ã¼blichen Formatierungssymbole,
+ die intern nur 1:1 Ã¼bernommen werden.
 
- Als "Esc" wird die Zeichenfolge bezeichnet, die ein Sonderzeichen auslöst.
+ Als "Esc" wird die Zeichenfolge bezeichnet, die ein Sonderzeichen auslÃ¶st.
 
  Esc | Zeichenbeschreibung
  ----|--------------------
  \\n | (NextLine)   Sprung an den Anfang der folgenden Bildschirmzeile
- \\b | (Backspace)  Gehe ein Zeichen zurück
+ \\b | (Backspace)  Gehe ein Zeichen zurÃ¼ck
  \\a | (Akustic)    Akustisches Signal
  \\r | (return)     Sprung an den Anfang der aktuellen Bildschirmzeile
- \\\\ | (Backslash)  Ausgabe des Gegenschrägstrichs "\"
- \\\" | (double Quotes) Ausgabe eines Anführungszeichens
- \\t | (tab)        Sprung zur nächsten Tabulatorposition
+ \\\\ | (Backslash)  Ausgabe des GegenschrÃ¤gstrichs "\"
+ \\\" | (double Quotes) Ausgabe eines AnfÃ¼hrungszeichens
+ \\t | (tab)        Sprung zur nÃ¤chsten Tabulatorposition
  %%n |              Einleitung der formatierten Ausgabe von n bezeichnet. n kann dabei eine komplexe Beschreibung #-11.5llx  oder ein simples s sein.
 
  Die Beschreibung wie "%12.3s" wird in bis zu 4 Einzelteile zerlegt; siehe Tabelle unten.
- Die Einzelteile haben und müssen in der hier verwendeten Reihenfolge benutzt werden.
+ Die Einzelteile haben und mÃ¼ssen in der hier verwendeten Reihenfolge benutzt werden.
 
  %[flags][width][.[precision]]type
 
  Einer solchen Formatierungshilfe folgt in den Parametern (...)
- gewöhnlich eine Varaiable, die dazu passen muss. Ist das nicht
- der Fall, dann stürzt das Programm oft ganz unsanft ab.
+ gewÃ¶hnlich eine Varaiable, die dazu passen muss. Ist das nicht
+ der Fall, dann stÃ¼rzt das Programm oft ganz unsanft ab.
 
  Formatierte Ausgabe hat folgende Syntax
 
@@ -4185,17 +4547,17 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
 
  Charakter   | Beschreibung
  ------------|--------------
- -           | (Minus) Richtet die Ausgabe dieses nach links aus. (Standardmäßig wird die Ausgabe rechtsbündig ausgerichtet.)
- +           | (Plus) Stellt ein Plus für positiv vorzeichenbehaftete numerische Typen voran. positiv = +, negativ = -. (Die Standardeinstellung stellt nichts vor positive Zahlen.)
- Leerzeichen | (Leerzeichen) Stellt ein Leerzeichen für positive vorzeichenbehaftete numerische Typen voran. positiv =, negativ = -. Dieses Flag wird ignoriert, wenn das Flag + vorhanden ist. (Die Standardeinstellung stellt nichts vor positive Zahlen.)
- 0           | (Null) Wenn die Option 'Breite' angegeben ist, werden Nullen für numerische Typen vorangestellt. (Die Standardeinstellung stellt Leerzeichen voran.) Beispielsweise erzeugt printf ("%4i", 5) 5, während printf ("%03i", 5) 005 erzeugt.
+ -           | (Minus) Richtet die Ausgabe dieses nach links aus. (StandardmÃ¤ÃŸig wird die Ausgabe rechtsbÃ¼ndig ausgerichtet.)
+ +           | (Plus) Stellt ein Plus fÃ¼r positiv vorzeichenbehaftete numerische Typen voran. positiv = +, negativ = -. (Die Standardeinstellung stellt nichts vor positive Zahlen.)
+ Leerzeichen | (Leerzeichen) Stellt ein Leerzeichen fÃ¼r positive vorzeichenbehaftete numerische Typen voran. positiv =, negativ = -. Dieses Flag wird ignoriert, wenn das Flag + vorhanden ist. (Die Standardeinstellung stellt nichts vor positive Zahlen.)
+ 0           | (Null) Wenn die Option 'Breite' angegeben ist, werden Nullen fÃ¼r numerische Typen vorangestellt. (Die Standardeinstellung stellt Leerzeichen voran.) Beispielsweise erzeugt printf ("%4i", 5) 5, wÃ¤hrend printf ("%03i", 5) 005 erzeugt.
  #           | (Hash) Alternative Form:
- # bei fF    | Bei f, F enthält die Ausgabe immer einen Dezimalpunkt ** die Type geE sind nicht implementiert **
+ # bei fF    | Bei f, F enthÃ¤lt die Ausgabe immer einen Dezimalpunkt ** die Type geE sind nicht implementiert **
  # bei bBoxX | Bei b, o, x und X wird der Text 0, 0b, 0B, 0x bzw. 0X Zahlen ungleich Null vorangestellt.
 
  *//* Derzeit noch nicht drin
  # bei gG    | Bei g und G werden nachgestellte Nullen nicht entfernt
- # bei fFeEg | Bei f, F, e, E und g  enthält die Ausgabe immer einen Dezimalpunkt ** die Type geE sind nicht implementiert **
+ # bei fFeEg | Bei f, F, e, E und g  enthÃ¤lt die Ausgabe immer einen Dezimalpunkt ** die Type geE sind nicht implementiert **
  (Apostroph) | Auf die Ganzzahl oder den Exponenten einer Dezimalstelle wird das Tausendertrennzeichen angewendet.
  *//**
 
@@ -4204,7 +4566,7 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
    Typ      | Beschreibung
  ----------|-------------
  %%d %%i   | Decimal signed number auch %%ld
- %%o	   | Octal integer. immer führende 0 für Oktal in manchen Version von printf auch ohne, hier immer mit
+ %%o	   | Octal integer. immer fÃ¼hrende 0 fÃ¼r Oktal in manchen Version von printf auch ohne, hier immer mit
  %%x %%X   | Hex number.
  %%u	   | Unsigned number. wenn nicht llu angegeben, dann ist die die nummer nur einfach long (0xffffffff) llu ist doppel lang (0xffffffffffffffff)
  %%c	   | einfacher char
@@ -4218,10 +4580,10 @@ void y_numadd (ty *y, long long u, unsigned int base, bool altformat, bool capit
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.04.2020 HS Create
- ** 06.04.2020 HS Weiterentwicklung
- ** 09.04.2020 HS Auf dynamische Buffer umgestellt
- ** 13.04.2020 HS Auf 32bit angepasst
+ ** 01.04.20 HS Create
+ ** 06.04.20 HS Weiterentwicklung
+ ** 09.04.20 HS Auf dynamische Buffer umgestellt
+ ** 13.04.20 HS Auf 32bit angepasst
 ___________________________________________________________________________*/
 
 char *strprintf(const char *fmt, ...)
@@ -4238,7 +4600,7 @@ char *strprintf(const char *fmt, ...)
  @brief Interna von @ref strprintf
  @return buffer (Null terminiert )
  @param fmt  Format weitgehgend wie printf
- @param argp Variablen, die zu fmt passen müssen
+ @param argp Variablen, die zu fmt passen mÃ¼ssen
 
 ___[ Revision ]______________________________________________________________
 
@@ -4277,7 +4639,7 @@ char *vstrprintf(const char *fmt, va_list argp)
 	    if (c != '%')                                                           // keine va Zeichen->
 	    {
 	        y_charadd(&rslt,c);                                                 // buffer schreiben
-            continue;                                                           // nächstes
+            continue;                                                           // nÃ¤chstes
 	    }
 
 	    length      = 0;
@@ -4305,7 +4667,7 @@ char *vstrprintf(const char *fmt, va_list argp)
             fmt++;
 	    }
 
-	    if (isdigit(c))                                                         // Wenn Zahl dann Länge
+	    if (isdigit(c))                                                         // Wenn Zahl dann LÃ¤nge
         {
             while(isdigit(c))
             {
@@ -4313,8 +4675,8 @@ char *vstrprintf(const char *fmt, va_list argp)
                 fmt++;
                 c = *fmt;
             }
-	    }else if (c == '*')                                                     // Zahl aus dem nächsten va_arg lesen
-	    {                                                                       // printf ("%*.*d",3,4,5.12); wäre ein 005.1200
+	    }else if (c == '*')                                                     // Zahl aus dem nÃ¤chsten va_arg lesen
+	    {                                                                       // printf ("%*.*d",3,4,5.12); wÃ¤re ein 005.1200
             fmt++;                                                              // Hier nur das erste *
             c = *fmt;
             length = va_arg(argp, int);
@@ -4326,14 +4688,14 @@ char *vstrprintf(const char *fmt, va_list argp)
             lenfrom_star=true;
 	    }
 
-	    if (c == '.')                                                           // möglicher Punkt für folgende Genauigkeit
+	    if (c == '.')                                                           // mÃ¶glicher Punkt fÃ¼r folgende Genauigkeit
         {
             fmt++;
             c = *fmt;
             prec = 0;                                                           // kann auch ohne folgende Zahl sein !
             if (isdigit(c))
             {
-                while(isdigit(c))                                               // Nochmal * für das 2. Sternchen
+                while(isdigit(c))                                               // Nochmal * fÃ¼r das 2. Sternchen
                 {                                                               // oder
                     prec = 10 * prec + (c - '0');
                     fmt++;
@@ -4353,7 +4715,7 @@ char *vstrprintf(const char *fmt, va_list argp)
             {
                 if (c!='l') break;
                 islong++;
-                fmt++;                                                          // wird nur benötigt wenn sizeof(int)<sizeof(long)
+                fmt++;                                                          // wird nur benÃ¶tigt wenn sizeof(int)<sizeof(long)
                 c = *fmt;
             }
         }
@@ -4380,12 +4742,12 @@ char *vstrprintf(const char *fmt, va_list argp)
             {
                 c = va_arg(argp, int);
                 length--;
-                if ((length > 0) && !ladjust)                                   // Links füllen
+                if ((length > 0) && !ladjust)                                   // Links fÃ¼llen
                 {
                     y_multicharadd(&rslt,' ',length);
                 }
                 y_charadd(&rslt,c);
-                if ((length > 0) && ladjust)                                    // rechts füllen
+                if ((length > 0) && ladjust)                                    // rechts fÃ¼llen
                 {
                     y_multicharadd(&rslt,' ',length);
                 }
@@ -4396,13 +4758,13 @@ char *vstrprintf(const char *fmt, va_list argp)
             {
                 char *p;
                 char *p2;
-                if (prec == -1) prec = 0x7fffffff;                              // Maximumal für INT
+                if (prec == -1) prec = 0x7fffffff;                              // Maximumal fÃ¼r INT
 
                 p = va_arg(argp, char *);
                 if (p == (char *)0) p = "";
 
                 nee=0;
-                if (length > 0 && !ladjust)                                     // Links füllen
+                if (length > 0 && !ladjust)                                     // Links fÃ¼llen
                 {
                     p2 = p;
                     for (; *p != '\0' && nee < prec; p++) nee++;
@@ -4417,12 +4779,12 @@ char *vstrprintf(const char *fmt, va_list argp)
                         if (nee >= prec) break;
                         y_charadd(&rslt,*p);
                     }
-                }                                                               // Rechts füllen
+                }                                                               // Rechts fÃ¼llen
                 if (nee < length && ladjust) y_multicharadd(&rslt,' ',length-nee);
                 break;
             }
 
-            case 'B':                                                           // Binär ausgabe
+            case 'B':                                                           // BinÃ¤r ausgabe
                 capitals=true;
                 __attribute__((fallthrough));
             case 'b':
@@ -4441,7 +4803,7 @@ char *vstrprintf(const char *fmt, va_list argp)
             case 'D':                                                           // Zahl ausgeben
             case 'i':
             case 'd':
-                if (islong<2) u = va_arg(argp, __int32);   // unter Linux-x64  statt long 19.10.20 HS  __int32_t
+                if (islong<2) u = va_arg(argp, signed int);   // unter Linux-x64  statt long 19.10.20 HS __int32 geht nicht immer
                 else          u = va_arg(argp, __int64);
                 y_numadd(&rslt,u,10,altfmt,capitals,length,prec,padc,ladjust,plus_sign);
                 break;
@@ -4509,15 +4871,15 @@ char *vstrprintf(const char *fmt, va_list argp)
                         y_charadd(&rslt,'.');                                   // Punkt
                         for (nee=0;;nee++)
                         {
-                            if (nee>=prec) break;                               // für jede Stelle die dargestellt wird vor das Komma verschieben
+                            if (nee>=prec) break;                               // fÃ¼r jede Stelle die dargestellt wird vor das Komma verschieben
                             r = r * 10;
                         }
-                        u = r;                                                  // Nachkommastellen löschen
+                        u = r;                                                  // Nachkommastellen lÃ¶schen
                         l = r-u;                                                // l hat jetzt Stellen hinter
-                        if (l>=0.5) u++;                                        // möglicherweisen runden
+                        if (l>=0.5) u++;                                        // mÃ¶glicherweisen runden
 
                         if (lenfrom_star) len = length-(rslt.pntr-base);          // von der aktuellen Stelle die Startposition abziehen
-                        else              len=0;                                // oder länge 0
+                        else              len=0;                                // oder lÃ¤nge 0
                         if (ladjust) y_numadd(&rslt,u,10,false,false,len,prec,'0',ladjust,0);
                         else         y_numadd(&rslt,u,10,false,false,0  ,prec,'0',ladjust,0);
                     }
@@ -4526,7 +4888,7 @@ char *vstrprintf(const char *fmt, va_list argp)
                 }
 
             case '\0':                                                          // Ende ???
-                fmt--; // für fmt++ negierenden kann das null byte erneut c zugewiesen werden
+                fmt--; // fÃ¼r fmt++ negierenden kann das null byte erneut c zugewiesen werden
                 break;
 
             default:
@@ -4545,7 +4907,7 @@ char *vstrprintf(const char *fmt, va_list argp)
  @{
  @brief Tempfiles und primitive Random Numbers
 
- Da MS und Linux sich über die Umsetzung nicht ganz oder auch sehr unschön
+ Da MS und Linux sich Ã¼ber die Umsetzung nicht ganz oder auch sehr unschÃ¶n
  zusammenkommen ist hier alles auf ein simples System zusammengestrichen worden.
 
  tempuniqnumber liefert nur Zahlen bis 32767 (RAND_MAX). Lieg auch auch rand().
@@ -4555,12 +4917,12 @@ char *vstrprintf(const char *fmt, va_list argp)
 
 /**
  @brief Liefert eine Zeichenkette auf ein TempVerzeichnis
-        in Abhängigkeit vom Betriebssystem zurück
+        in AbhÃ¤ngigkeit vom Betriebssystem zurÃ¼ck
  @return char*
 
 ___[ Revision ]______________________________________________________________
 
- ** 25.06.2020 HS ReCreate
+ ** 25.06.20 HS ReCreate
 ___________________________________________________________________________*/
 
 char *tempdir(void)
@@ -4577,11 +4939,11 @@ char *tempdir(void)
  @brief Liefert eine Zahl im Bereich von 0-9223372036854775807LL
  Kann durch maxrand eingegrenzt werden.
  @return int
- @param maxrand Größtmögliche Zahl, die aber maximal LONGLONGRAND_MAX (0x7ffffffffffffffffLL) sein darf ....
+ @param maxrand GrÃ¶ÃŸtmÃ¶gliche Zahl, die aber maximal LONGLONGRAND_MAX (0x7ffffffffffffffffLL) sein darf ....
 
 ___[ Revision ]______________________________________________________________
 
- ** 25.06.2020 HS ReCreate
+ ** 25.06.20 HS ReCreate
 ___________________________________________________________________________*/
 
 long long randomnumber(long long maxrand)
@@ -4614,16 +4976,16 @@ long long randomnumber(long long maxrand)
 
  Die Zeichenkette von tempfilename muss mit free freigegeben werden.
 
- Das File existiert zu diesem Zeitpunkt noch nicht. Wenn es angelegt wird, sollte es also auch gelöscht werden.
- Das passiert nämlich sonst nicht. Sollten alle 32... Files angelegt sein, dann kann das dauern bis noch ein
+ Das File existiert zu diesem Zeitpunkt noch nicht. Wenn es angelegt wird, sollte es also auch gelÃ¶scht werden.
+ Das passiert nÃ¤mlich sonst nicht. Sollten alle 32... Files angelegt sein, dann kann das dauern bis noch ein
  freies File gefunden wird.
 
  @return char*
- @param ins eine mögliche Beschreibung, wenn NULL dann "hs"
+ @param ins eine mÃ¶gliche Beschreibung, wenn NULL dann "hs"
 
 ___[ Revision ]______________________________________________________________
 
- ** 25.06.2020 HS ReCreate
+ ** 25.06.20 HS ReCreate
 ___________________________________________________________________________*/
 
 char *tempfilename(char *ins)
@@ -4659,7 +5021,7 @@ char *tempfilename(char *ins)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void *malloc0(size_t size)
@@ -4683,14 +5045,130 @@ void *malloc0(size_t size)
 
 ___[ Revision ]______________________________________________________________
 
- ** 26.12.2006 HS Create
+ ** 26.12.06 HS Create
+ ** 02.04.24 HS Kette=NULL geht nicht wenn kette schon NULL
 ___________________________________________________________________________*/
 
 void* free0(void *Kette)
 {
-    if (Kette) free(Kette);
-    Kette=NULL;
+    if (Kette)
+    {
+        free(Kette);
+        Kette=NULL;
+    }
     return Kette;
+}
+
+
+//extern void *malloc (size_t __size) __THROW __attribute_malloc__ __attribute_alloc_size__ ((1)) __wur;
+/// interner ZÃ¤hler: 0=MALLOC_ROTATE_SIZE Zeiger auf buffer -1=uninitialisiert
+int malloc_tid=-1;
+/// interner Buffer fuer malloc_temp
+void *malloc_rotate_buffer[MALLOC_ROTATE_SIZE];
+
+/**
+ @brief malloc_tmp - Speicher initialisieren
+
+___[ Revision ]______________________________________________________________
+
+ ** 02.04.24 HS Erste Revision
+___________________________________________________________________________*/
+
+void malloc_temp_init(void)
+{
+    if (malloc_tid>=0) return;
+    for (malloc_tid=0;malloc_tid<_countof(malloc_rotate_buffer);malloc_tid++)
+    {
+        malloc_rotate_buffer[malloc_tid]=NULL;
+    }
+    malloc_tid=0;
+}
+
+
+/**
+ @brief malloc_tmp - Speicher freigeben
+
+___[ Revision ]______________________________________________________________
+
+ ** 02.04.24 HS Erste Revision
+___________________________________________________________________________*/
+
+void malloc_temp_free(void)
+{
+    int freeID;
+    malloc_temp_init();
+    for (freeID=0;freeID<_countof(malloc_rotate_buffer);freeID++)
+    {
+        if (malloc_rotate_buffer[freeID]) malloc_rotate_buffer[freeID]=free0(malloc_rotate_buffer[freeID]);
+    }
+    malloc_tid=0;
+}
+
+
+/**
+ @brief malloc_tmp - Speicher reservieren ( rotieren )
+ @return Zeiger auf den Speicher
+ @param sz GrÃ¶ÃŸe die benÃ¶tigt wird
+
+
+___[ Revision ]______________________________________________________________
+
+ ** 02.04.24 HS Erste Revision
+___________________________________________________________________________*/
+
+void *malloc_temp(size_t sz)
+{
+    if (malloc_tid<0) malloc_temp_init();
+    malloc_tid++;                                                               // Wenn Init dann bei 1 anfangen
+    if (malloc_tid>=_countof(malloc_rotate_buffer))                             // bei Ã¼berlauf mit 0 anfangen
+    {
+        //for (int soi=0; soi<MALLOC_ROTATE_SIZE; soi++) printf ("%i:%s\n", soi, strNotNULL(malloc_rotate_buffer[soi]));
+        malloc_tid=0;
+    }
+    //printf ("new memory %i: sz=%i\n",malloc_tid,sz);
+    if (malloc_rotate_buffer[malloc_tid])
+    {
+        malloc_rotate_buffer[malloc_tid] = free0(malloc_rotate_buffer[malloc_tid]);
+    }
+    if (sz>0) malloc_rotate_buffer[malloc_tid] = malloc0(sz+1);
+    return malloc_rotate_buffer[malloc_tid];
+}
+
+/**
+ @brief malloc_tmp - Speicher reservieren fÃ¼r Kette
+ @return Zeiger auf den neuen Speicher mit Kette
+ @param Kette String der dupliziert erzeugt wird
+
+___[ Revision ]______________________________________________________________
+
+ ** 02.04.24 HS Erste Revision
+___________________________________________________________________________*/
+
+char *malloc_temp_strcpy(char *Kette)
+{
+    char *malloc_rslt;
+    if (!Kette) return Kette;
+    malloc_rslt=malloc_temp(strlen(Kette)+2);
+    strcpy_ex(malloc_rslt,Kette);
+    return malloc_rslt;
+}
+
+/**
+ @brief malloc_tmp - Speicher zuordnen
+ @return Zeiger auf auf Kette
+ @param Kette String der im Speicher fertig ist
+
+___[ Revision ]______________________________________________________________
+
+ ** 02.04.24 HS Erste Revision
+___________________________________________________________________________*/
+
+char *malloc_temp_string(char *Kette)
+{
+    if (!Kette) return Kette;
+    malloc_temp(0);                             // ZÃ¤hler addieren; alten Speicher freigeben
+    malloc_rotate_buffer[malloc_tid] = Kette;   // der Buffer muÃŸ NULL sein
+    return malloc_rotate_buffer[malloc_tid];    // zurÃ¼ck mit Kette
 }
 
 /**
@@ -4708,7 +5186,7 @@ void* free0(void *Kette)
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.07.2022 HS Workaround für C11
+ ** 16.07.22 HS Workaround fÃ¼r C11
 _____________________________________________________________________________*/
 
 void *memset_ex(void *dest, int val, size_t len)
@@ -4718,6 +5196,13 @@ void *memset_ex(void *dest, int val, size_t len)
         *ptr++ = val;
     return dest;
 }
+
+#ifndef OS_WINDOWS
+void ZeroMemory(void *Destination, size_t Length)
+{
+    memset_ex(Destination,0,Length);
+}
+#endif // OS_WINDOWS
 
 /**
  @brief Speicher kopieren von src nach dest
@@ -4756,18 +5241,19 @@ void *memcpy_ex(void *dst, const char *src, size_t len)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *timeinfostr(time_t TIME)
 {
-    static char rslt[24];
+    char *rslt;
     struct tm *ti;
     ti=localtime(&TIME);
-    sprintf_ex (rslt, "%4.4i-%2.2i-%2.2i %2.2i:%2.2i:%2.2i",
+    rslt = strprintf ("%4.4i-%2.2i-%2.2i %2.2i:%2.2i:%2.2i",
             ti->tm_year+1900,ti->tm_mon+1,ti->tm_mday,
             ti->tm_hour,     ti->tm_min,ti->tm_sec);
-    return rslt;
+    return malloc_temp_string(rslt);
 }
 
 /**
@@ -4775,24 +5261,25 @@ char *timeinfostr(time_t TIME)
  @return String in der Form YYYY-MM-DD
  @param TIME Zeit im Unix Format
 
- Hier könnte eine Beschreibung stehen
+ Hier kÃ¶nnte eine Beschreibung stehen
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *datestr(time_t TIME)
 {
-    static char rslt[15];
+    char *rslt;
     struct tm *ti;
     ti=localtime(&TIME);
-    sprintf_ex (rslt, "%4.4i-%2.2i-%2.2i",
+    rslt = strprintf ("%4.4i-%2.2i-%2.2i",
              ti->tm_year+1900,
              ti->tm_mon+1,
              ti->tm_mday
             );
-    return rslt;
+    return malloc_temp_string(rslt);
 }
 
 /**
@@ -4802,22 +5289,23 @@ char *datestr(time_t TIME)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *timestamp(time_t TIME)
 {
-    static char rslt[15];
+    char *rslt;
     struct tm *ti;
     ti=localtime(&TIME);
-    sprintf_ex (rslt, "%2.2i%2.2i%2.2i%2.2i%2.2i%2.2i",
+    rslt = strprintf ("%2.2i%2.2i%2.2i%2.2i%2.2i%2.2i",
              ti->tm_mday,
              ti->tm_mon+1,
              (ti->tm_year+1900) % 100,
              ti->tm_hour,
              ti->tm_min,
              ti->tm_sec);
-    return rslt;
+    return malloc_temp_string(rslt);
 }
 
 /**
@@ -4827,18 +5315,19 @@ char *timestamp(time_t TIME)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *shorttimestr(time_t TIME)
 {
-    static char rslt[20];
+    char *rslt;
     struct tm *ti;
     ti=localtime(&TIME);
-    sprintf_ex (rslt, "%4.4i%2.2i%2.2i%2.2i%2.2i%2.2i",
+    rslt = strprintf ( "%4.4i%2.2i%2.2i%2.2i%2.2i%2.2i",
             ti->tm_year+1900,ti->tm_mon+1,ti->tm_mday,
             ti->tm_hour,     ti->tm_min,ti->tm_sec);
-    return rslt;
+    return malloc_temp_string(rslt);
 }
 
 /**
@@ -4847,7 +5336,7 @@ char *shorttimestr(time_t TIME)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 time_t unixtime(void)
@@ -4856,7 +5345,7 @@ time_t unixtime(void)
 }
 
 /**
- @brief gibt Zeit in sekunden seit 1.1.1970 zurück. Nutzt mktime()
+ @brief gibt Zeit in sekunden seit 1.1.1970 zurÃ¼ck. Nutzt mktime()
  @return time_t mit sekunden seit 1970
  @param  year Jahr
  @param  mon  Monat
@@ -4866,12 +5355,12 @@ time_t unixtime(void)
  @param  sec  Sekunden
  @param  isday DayLightSave wenn -1, dann wird es berechnet
 
- gibt Zeit in sekunden seit 1.1.1970 zurück. Nutzt mktime()
- isday wird mit übergeben oder bei -1 berechnet
+ gibt Zeit in sekunden seit 1.1.1970 zurÃ¼ck. Nutzt mktime()
+ isday wird mit Ã¼bergeben oder bei -1 berechnet
 
 ___[ Revision ]______________________________________________________________
 
- ** 13.11.2018 HS Create
+ ** 13.11.18 HS Create
 ___________________________________________________________________________*/
 
 time_t mktime_t(int year, int mon, int day, int hour, int min, int sec, int isday)
@@ -4927,19 +5416,19 @@ time_t mktime_t(int year, int mon, int day, int hour, int min, int sec, int isda
  @param [out] isSec     Sekunde
 
  Die Zeit in Sekunden seit 1.1.1970 wird in Integervariaablen aufgeteilt.
- Aufruf gewöhnlich über ...
+ Aufruf gewÃ¶hnlich Ã¼ber ...
    mktime_s(given, &yrs, &mon, &day, &hrs, &min, &res);
 
- Bei erfolgreicher Konvertierung wird EXIT_SUCCESS zurückgegeben.
- Ansonsten EXIT_FAILURE. Ist aber eher experimentel, Spätestens wenn
- das 2038 Jahr Problem sich dramatisiert muß hier nachgearbeitet werden.
+ Bei erfolgreicher Konvertierung wird EXIT_SUCCESS zurÃ¼ckgegeben.
+ Ansonsten EXIT_FAILURE. Ist aber eher experimentel, SpÃ¤testens wenn
+ das 2038 Jahr Problem sich dramatisiert muÃŸ hier nachgearbeitet werden.
 
 ___[ Revision ]______________________________________________________________
 
- ** 14.11.2018 HS Create
- ** 12.01.2019 HS Unix produziert einen Warning bei "unxtme <= -2147483648",
-                  mit LL wird das umgangen
- ** 13.02.2019 HS Nochmal umgebaut und stattdessen TIME_T_MAX ... _MIN verwendet
+ ** 14.11.18 HS Create
+ ** 12.01.19 HS Unix produziert einen Warning bei "unxtme <= -2147483648",
+                mit LL wird das umgangen
+ ** 13.02.19 HS Nochmal umgebaut und stattdessen TIME_T_MAX ... _MIN verwendet
 ___________________________________________________________________________*/
 
 
@@ -4971,7 +5460,7 @@ int mktime_s ( time_t unxtme, int *isYear, int *isMon, int *isDay, int *isHrs, i
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.11.2018 HS Create
+ ** 02.11.18 HS Create
 ___________________________________________________________________________*/
 
 int weekday(int year, int month, int day)
@@ -4992,19 +5481,19 @@ int weekday(int year, int month, int day)
 
 /**
  @brief Feststellen on Schaltjahr ist
- @return Rückgabe 1, wenn Schaltjahr ansonsten 0
+ @return RÃ¼ckgabe 1, wenn Schaltjahr ansonsten 0
  @param Year Jahr
 
  Die Regel lautet: Alles, was durch 4 teilbar ist, ist ein Schaltjahr.
  Es sei denn, das Jahr ist durch 100 teilbar, dann ist es keins.
  Aber wenn es durch 400 teilbar ist, ist es doch wieder eins.
 
- Rückgabe 1, wenn Schaltjahr ansonsten 0
+ RÃ¼ckgabe 1, wenn Schaltjahr ansonsten 0
   damit man mit dem Ergebnis direkt rechnen kann, ansonsten waere es true/false
 
 ___[ Revision ]______________________________________________________________
 
- ** 14.11.2018 HS Create
+ ** 14.11.18 HS Create
 ___________________________________________________________________________*/
 
 int isLeapYear(const int Year)
@@ -5018,13 +5507,13 @@ int isLeapYear(const int Year)
 
 /**
  @brief Feststellen wieviele Tage der aktuelle Monat hat
- @return letzter Tag ....[bei falschen Werten gibts es Chaos] nicht -1 wenn Datum fehlerhaft 4ist
+ @return letzter Tag ....[bei falschen Werten gibts es Chaos] nicht -1 wenn Datum fehlerhaft ist
  @param Year    Jahr
  @param month   Monat
 
 ___[ Revision ]______________________________________________________________
 
- ** 25.10.2020 HS Create
+ ** 25.10.20 HS Create
 ___________________________________________________________________________*/
 
 int DaysOfMonth(int Year, int month)
@@ -5036,7 +5525,7 @@ int DaysOfMonth(int Year, int month)
 }
 
 /**
- @brief Prüfung, ob angegebenes Datum in der Sommerzeit liegt
+ @brief PrÃ¼fung, ob angegebenes Datum in der Sommerzeit liegt
  @return true / false
  @param Year    Jahr
  @param month   Monat
@@ -5047,10 +5536,10 @@ int DaysOfMonth(int Year, int month)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.11.2018 HS Create
- ** 06.11.2018 HS Sicher gestellt das nur true oder false übergeben wird
-                  Struktur besser debugbar aufgebessert
- ** 31.03.2020 HS Mit Stunde 3 Uhr wird die Zeit umgestellt.
+ ** 02.11.18 HS Create
+ ** 06.11.18 HS Sicher gestellt das nur true oder false Ã¼bergeben wird
+                Struktur besser debugbar aufgebessert
+ ** 31.03.20 HS Mit Stunde 3 Uhr wird die Zeit umgestellt.
 ___________________________________________________________________________*/
 
 int Date_Is_DST (int Year, int month, int day, int hour)
@@ -5086,21 +5575,26 @@ int Date_Is_DST (int Year, int month, int day, int hour)
 }
 
 /**
- @brief Prüfung, ob angegebenes Datum (im time_t format) in der Sommerzeit liegt
- @return @return true / false
+ @brief PrÃ¼fung, ob angegebenes Datum (im time_t format) in der Sommerzeit liegt
+ @return true / false
  @param TIME Zeit im Unix Format
 
  @see Date_Is_DST
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.11.2018 HS Create
- ** 06.11.2018 HS tm_mon muss +1 sein sonst wären Monate nicht von 1-12
+ ** 02.11.18 HS Create
+ ** 06.11.18 HS tm_mon muss +1 sein sonst wÃ¤ren Monate nicht von 1-12
 ___________________________________________________________________________*/
 
 int time_tIsDST(time_t TIME)
 {
     struct tm *ti;
+    if (TIME==-1)
+    {
+        lprintf ("--debug-- TIME = -1 meand date out of range or else");
+        return false;
+    }
     ti=localtime(&TIME);
     return Date_Is_DST(ti->tm_year+1900,ti->tm_mon+1, ti->tm_mday, ti->tm_hour);
 }
@@ -5112,32 +5606,32 @@ static char *Monthnames_long[]  = {	"January", "February", "March", "April", "Ma
 
 /**
  @brief strftime <b>R</b>eplace
- @return -1 im Fehlerfall oder oder Größe von s
+ @return -1 im Fehlerfall oder oder GrÃ¶ÃŸe von s
  @param s           wohin soll das String
- @param maxsize     Maximale länge
+ @param maxsize     Maximale lÃ¤nge
  @param format      @ref strftimeR_formatbeschreibung Format Beschreibung
  @param t           Zeitbeschreibung
 
  @anchor strftimeR_formatbeschreibung
 
- Formatangaben für <b>strftimeR</b>
+ Formatangaben fÃ¼r <b>strftimeR</b>
 
  fmt       | Bezeichnung                                                       | Beispiel
 -----------|-------------------------------------------------------------------|-----
  \%A       | Voller Name des Wochentags                                        | Tuesday
- \%a 	   | Abgekürzter Name des Wochentags                                   | Tue
+ \%a 	   | AbgekÃ¼rzter Name des Wochentags                                   | Tue
  \%B 	   | Voller Name des Monats                                            | June
- \%b / \%h | Abgekürzter Name des Monats                                       | Jun
+ \%b / \%h | AbgekÃ¼rzter Name des Monats                                       | Jun
  \%C 	   | Darstellung von Datum und Zeit "%a %b %e %H:%M:%S %Y"             | Tue May  1 07:02:42 2018
  \%c 	   | Amerikanische Darstellung von Datum und Zeit "%m/%d/%y %H:%M:%S"  | 05/01/18 07:02:42
  \%D / \%x | Amerikanische Darstellung von Datum "%m/%d/%y"                    | 05/01/18
  \%d 	   | Tag im Monat (01-31)                                              | 01
- \%e 	   | Tag im Monat ( 1-31) jedoch mit Leerzeichen gefüllt               |  1
+ \%e 	   | Tag im Monat ( 1-31) jedoch mit Leerzeichen gefÃ¼llt               |  1
  \%H 	   | Stunde (00-23)                                                    | 07
  \%I 	   | Stunde (00-11)                                                    | 07
  \%j 	   | Tag im Jahr (001-366)                                             | 085
- \%k 	   | Stunde ( 0-23) jedoch mit Leerzeichen gefüllt                     |  7
- \%l 	   | Stunde ( 0-11) jedoch mit Leerzeichen gefüllt                     |  7
+ \%k 	   | Stunde ( 0-23) jedoch mit Leerzeichen gefÃ¼llt                     |  7
+ \%l 	   | Stunde ( 0-11) jedoch mit Leerzeichen gefÃ¼llt                     |  7
  \%M 	   | Minute (00-59)                                                    | 42
  \%m 	   | Monat (01-12)                                                     | 05
  \%n 	   | \\n                                                               | \\n
@@ -5151,12 +5645,12 @@ static char *Monthnames_long[]  = {	"January", "February", "March", "April", "Ma
  \%w 	   | Wochentag (0-6, Sonntag=0)                                        | 2
  \%y 	   | Jahr zweistellig (00-99)                                          | 18
  \%Y 	   | Jahr vierstellig (1900-)                                          | 2018
- \%\% 	   | Steht für \%                                                      | \%
+ \%\% 	   | Steht fÃ¼r \%                                                      | \%
 
 ___[ Revision ]______________________________________________________________
 
  ** 03.03.19 HS Create
- ** 25.03.20 HS Dokumentation vervollständigt
+ ** 25.03.20 HS Dokumentation vervollstÃ¤ndigt
 ___________________________________________________________________________*/
 
 size_t strftimeR(char *s,int maxsize, const char *format, const struct tm *t)
@@ -5170,20 +5664,21 @@ size_t strftimeR(char *s,int maxsize, const char *format, const struct tm *t)
 
 /**
  @brief String aus der Zeit machen
- @return Gibt einen String zurück mit der UnixZeit in Verbindung mit format
+ @return Gibt einen String zurÃ¼ck mit der UnixZeit in Verbindung mit format
  @param ltime   DatumZeit in Sekunden seit 1970
  @param format  Ausgabeformat der Zeitbeschreibung @ref strftimeR_formatbeschreibung "Format Beschreibung"
 
 ___[ Revision ]______________________________________________________________
 
- ** 08.08.2016 HS Create
- ** 03.03.2019 HS auf strftimeR umgestellt
+ ** 08.08.16 HS Create
+ ** 03.03.19 HS auf strftimeR umgestellt
+ ** 02.04.24 HS malloc_temp return, TSTR kann nicht mit malloc geholt werden
 ___________________________________________________________________________*/
 
 char *strstime(time_t ltime, char *format)
 {
-    static char TSTR[64];
-    struct tm      *tt;
+    static char TSTR[64];                                   // muss ein static char sein !!
+    struct tm *tt;
     if (format==NULL)
     {
         strcpy (TSTR, "nix");
@@ -5191,22 +5686,22 @@ char *strstime(time_t ltime, char *format)
     }
     tt = localtime(&ltime);
     tt->tm_isdst=0;
-    strftimeR (TSTR,sizeof(TSTR),format, tt);
-    return TSTR;
+    strftimeR (TSTR, 64, format, tt);
+    return malloc_temp_strcpy(TSTR);
 }
 
 /**
  @brief Schreibt in einen String ( in_out_pt ) die Zeit ( t ) nach den vorgegeben Angaben ( format)
- @return -1 Im Fehlerfa 0 im Erfolgsfall
+ @return -1 Im Fehlerfall 0 im Erfolgsfall
  @param format      Ausgabeformat der Zeitbeschreibung @ref strftimeR_formatbeschreibung "Format Beschreibung"
  @param t           Zeit
- @param in_out_pt   String der das Ergebnis enthält
- @param max         maximale Stringlänge
+ @param in_out_pt   String der das Ergebnis enthÃ¤lt
+ @param max         maximale StringlÃ¤nge
 
  Der eigentliche Worker
 
  - strftime Replace
- - strftime hatte mal einen "Mrz" statt Mar zurückgegeben
+ - strftime hatte mal einen "Mrz" statt Mar zurÃ¼ckgegeben
  - da flog die glibc_strftime raus und strftimeR kam rein
 
  Kann das Gleiche wie strftime, nur Fehlerfrei
@@ -5344,13 +5839,13 @@ int strftime_fmt(const char *format, const struct tm *t, char **in_out_pt, int *
 }
 /**
  @brief String aus der Zeit machen
- @return Gibt einen String zurück mit der UnixZeit in Verbindung mit format
+ @return Gibt einen String zurÃ¼ck mit der UnixZeit in Verbindung mit format
  @param ltime   DatumZeit in Sekunden seit 1970
  @param format  Ausgabeformat der Zeitbeschreibung @ref strtime_formatbeschreibung "Format Beschreibung"
 
  @anchor strtime_formatbeschreibung
 
- Wenn Format mit 0x100 geor wird, damm wird die gmt statt der localtime verwendet
+ Wenn Format mit 0x100 geor wird, dann wird die gmt statt der localtime verwendet
 
  num |  Beispielergebnis                    | Formatierung
  ----|--------------------------------------|----------------
@@ -5380,16 +5875,18 @@ int strftime_fmt(const char *format, const struct tm *t, char **in_out_pt, int *
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 08.08.2016 HS added 14
- ** 31.12.2016 HS added 15-19
- ** 10.04.2020 HS added 20
- ** 01.10.2022 HS added 21
+ ** 02.04.06 HS ReCreate
+ ** 08.08.16 HS added 14
+ ** 31.12.16 HS added 15-19
+ ** 10.04.20 HS added 20
+ ** 01.10.22 HS added 21
+ ** 02.04.24 HS malloc_temp statt static
 __________________________________________________________________________*/
 
 char *strtime(time_t ltime, int format)
 {
-    static char TSTR[64];
+    char *TSTR;
+    TSTR = malloc_temp(64);
 
     struct tm      *tt;
     time_t         nn;
@@ -5572,11 +6069,11 @@ char *strtime(time_t ltime, int format)
  @return Mitternacht in Sekunden seit 1970
  @param t Sekunden seit 1970
 
- return 00:00:00 für das Datum in time_t t
+ return 00:00:00 fÃ¼r das Datum in time_t t
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 time_t Midnight(time_t t)
@@ -5598,7 +6095,6 @@ time_t Midnight(time_t t)
 
     return (mktime (&tm));
 }
-
 
 static struct TYPE_MONNAMES MONNAMES[]=
 {
@@ -5622,7 +6118,7 @@ static struct TYPE_MONNAMES MONNAMES[]=
     {2,"Febuar"},
     {2,"Februar"},
     {3,"Maerz"},
-    {3,"März"},
+    {3,"MÃ¤rz"},
     {4,"April"},
     {5,"Mai"},
     {6,"Juni"},
@@ -5638,9 +6134,9 @@ static struct TYPE_MONNAMES MONNAMES[]=
   spanisch
   englisch
   italienisch
-  französisch
+  franzÃ¶sisch
   portugiesisch
-  niederländisch
+  niederlÃ¤ndisch
   esperanto
   latein
 */
@@ -5659,14 +6155,14 @@ static struct TYPE_MONNAMES MONNAMES[]=
     {2,"februarius"},
     {2,"februaro"},
     {2,"february"},
-    {2,"février"},
+    {2,"fÃ©vrier"},
     {3,"maart"},
     {3,"march"},
     {3,"mars"},
     {3,"martius"},
     {3,"marto"},
     {3,"marzo"},
-    {3,"março"},
+    {3,"marÃ§o"},
     {4,"abril"},
     {4,"aprile"},
     {4,"aprilis"},
@@ -5691,7 +6187,7 @@ static struct TYPE_MONNAMES MONNAMES[]=
     {7,"july"},
     {7,"luglio"},
     {8,"agosto"},
-    {8,"août"},
+    {8,"aoÃ»t"},
     {8,"augustus"},
     {8,"augusto"},
     {9,"septembre"},
@@ -5713,11 +6209,11 @@ static struct TYPE_MONNAMES MONNAMES[]=
     {12,"dezembro"},
     {12,"dicembre"},
     {12,"diciembre"},
-    {12,"décembre"},
+    {12,"dÃ©cembre"},
     {0,"NEVER REACHED"}
 };
 
-///@brief Wird in @ref ParseAnyDate benötigt
+///@brief Wird in @ref ParseAnyDate benÃ¶tigt
 struct TYPE_TZADD
 {
     char    *my_tzname; ///< Timezone Name
@@ -5730,6 +6226,7 @@ static struct TYPE_TZADD TZADD[]=
     { "UT"   ,  0 * 3600},
     { "UTC"  ,  0 * 3600},
     { "WET"  ,  0 * 3600},
+    { "WEZ"  ,  0 * 3600},
     { "Z"    ,  0 * 3600},
 
     { "A"    ,  1 * 3600},
@@ -5846,13 +6343,15 @@ static struct TYPE_TZADD TZADD[]=
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 time_t ParseAnyDate(char *ostr)
 {
     struct tm		tm;
     long		    offset;
+    long            tzadd;
+    long            tzdif;
     unsigned int	c0, c1, c2, c3;
 
 
@@ -6098,6 +6597,7 @@ parsetime:
     str +=2;
 
     strCL(str);
+
     switch (*str)
     {
     case 0:   return mktime(&tm);
@@ -6116,17 +6616,53 @@ parsetime:
               break;
     default:
               offset = 0;
+              for (c2=0;;c2++)
+              {
+                  if ( (str[c2]==0) ||
+                       (str[c2]=='+') ||
+                       (str[c2]=='-')
+                     ) break;
+              }
+
               for (c0=0;;c0++)
               {
                   if (TZADD[c0].my_tzname==NULL) break;
-                  if (!strcmp(TZADD[c0].my_tzname, &str[1]))
+                  c1 = strlen(TZADD[c0].my_tzname);
+                  if (c1!=c2) continue;
+                  if (strncasecmp(TZADD[c0].my_tzname, str, c1)) continue;
+
+                  offset = TZADD[c0].my_to_gmt;
+                  str += c1;
+                  if ( (*str=='+') || (*str=='-') )
                   {
-                      offset = TZADD[c0].my_to_gmt;
-                      break;
+                        tzdif = atoi(str);
+                        tzadd = 3600 * tzdif;
+                        offset = offset + tzadd;
                   }
+                  break;
               }
               break;
     }
+
+// 29.08.23 HS timezone steht mit UART nicht zur VerfÃ¼gung
+
+
+    long TZone = 0;
+#ifdef _UCRT
+    _get_timezone (&TZone);
+#else
+#ifdef _MSC_VER
+    TZone = _timezone;
+#else
+    TZone = timezone;
+#endif
+#endif
+    offset = offset - TZone;
+    offset = offset + mktime(&tm);
+    return offset; //mktime(&tm) + offset - timezone;
+
+#ifdef OLD_STUFF
+// timezone is depricated
 #ifdef _MSC_VER
     offset = offset - _timezone;
 #else
@@ -6135,6 +6671,7 @@ parsetime:
     offset = offset + mktime(&tm);
     //if (tm.tm_isdst) offset = offset + 3600;;
     return offset; //mktime(&tm) + offset - timezone;
+#endif
 }
 
 /**
@@ -6151,9 +6688,9 @@ parsetime:
  Beispiel:          012345678901
   t = ParseFmtTime("Mon Day yyyy","Apr 8 1999 Log Done", &date_len );
  @endcode
- t wird mit timt_t aus ParseFmtTime gefüllt außerdem wird date_len
- zurückgegeben und enthält die verarbeiteten Zeichen aus str. In diesem
- wären das 11 ( mit 0 wird begonnen). dh 12 Zeichen insgesamt
+ t wird mit timt_t aus ParseFmtTime gefÃ¼llt auÃŸerdem wird date_len
+ zurÃ¼ckgegeben und enthÃ¤lt die verarbeiteten Zeichen aus str. In diesem
+ wÃ¤ren das 11 ( mit 0 wird begonnen). dh 12 Zeichen insgesamt
 
  fmt kann folgende Zeichen enthalten:
 
@@ -6166,35 +6703,35 @@ parsetime:
    <b> </b>|<b> </b>
  Day oder dd | Tage im Monat (1, 31)
  mo   |     Monate seit Januar (1, 12)
- mon  |     Asc schreibweise des Monats. z.B. Apr kann auch december o.ä. sein
+ mon  |     Asc schreibweise des Monats. z.B. Apr kann auch december o.Ã¤. sein
  yy   |     Jahr 2 stelleig seit 2000
  yyyy |    Jahr, wobei erst seit 1970 was sinnvolles rauskommt
  no   |    Eintrag ignorieren
 
 ___[ Revision ]______________________________________________________________
 
- ** 08.04.2018 HS Create
+ ** 08.04.18 HS Create
 ___________________________________________________________________________*/
 
 
 time_t ParseFmtTime(const char *fmt,const char *str, int *len)
 {
-    struct tm		tm;                                         // zu füllender Zeitstruct
-    struct tm		*tm_now;                                    // für die aktuelle Zeit/Datum
+    struct tm		tm;                                         // zu fÃ¼llender Zeitstruct
+    struct tm		*tm_now;                                    // fÃ¼r die aktuelle Zeit/Datum
 
     char dup[128];                                              // fmt kann maximal 128 Zeichen umfassen
 
     char *chk;                                                  // Zeiger auf den aktuellen fmt-parameter
-    char *nxt;                                                  // Zeiger auf den nächsten fmt-parameter
+    char *nxt;                                                  // Zeiger auf den nÃ¤chsten fmt-parameter
     int data;                                                   // zeiger im str
-    int mode;                                                   // Zähler
+    int mode;                                                   // ZÃ¤hler
 
     time_t now;                                                 // aktuelle Zeit
 
     now = unixtime();                                           // aktuelle Zeit setzen
     tm_now = localtime(&now);                                   // und umwandeln
 
-    tm.tm_hour  = 0;                                            // Feld füllen
+    tm.tm_hour  = 0;                                            // Feld fÃ¼llen
     tm.tm_isdst = -1;                                           // dflt, damit keine Sommerzeit berechnet wird
     tm.tm_mday  = 0;
     tm.tm_min   = 0;
@@ -6205,14 +6742,14 @@ time_t ParseFmtTime(const char *fmt,const char *str, int *len)
     tm.tm_year  = tm_now->tm_year;                              // Jahr ist default
 
 
-    strncpy_ex (dup,fmt, sizeof(dup)-1);                           // Kopie erstellen , da immer wieder was dadrin geändert wird
+    strncpy_ex (dup,fmt, sizeof(dup)-1);                           // Kopie erstellen , da immer wieder was dadrin geÃ¤ndert wird
     dup[sizeof(dup)-1]=0;                                       // null setzen
     strlwr(dup);                                                // nur kleine Zeichen
 
     nxt = dup;                                                  // nxt auf den Anfang setzen
     for (data=0;;)
     {
-        chk=nxt;                                                // auf den nächsten Eintrag setzen
+        chk=nxt;                                                // auf den nÃ¤chsten Eintrag setzen
         if (*chk==0) break;                                     // wenn ende, dann ende
         for (;;nxt++)                                           // nxt setzen
         {
@@ -6253,7 +6790,7 @@ time_t ParseFmtTime(const char *fmt,const char *str, int *len)
             // special tm.tm_mon = atoi(&str[data]);
             //tm.tm_mon = 3;
 
-            for (mode=0;;mode++)                                // Hilfszähler
+            for (mode=0;;mode++)                                // HilfszÃ¤hler
             {
                 if (MONNAMES[mode].mon==0)
                 {
@@ -6304,17 +6841,18 @@ Quit_ParseFmtTime:
 /**
  @brief Parse ein Datum von Military in eine Lesbare Form yyyy-mm-dd -> dd.mm.yyyy
  @return String mit den Notation dd.mm.yyyy
- @param String Military Notation des Datums üblich ist yyyy-mm-dd
+ @param String Military Notation des Datums Ã¼blich ist yyyy-mm-dd
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *miltaryToHumanDate(char *String)
 {                                // 0123456789
                                  // 2001-09-17
-    static char r[16];
+    char r[16];
     if (strlen(String)!=10) return "01.01.2000";
     r[0]=String[8];
     r[1]=String[9];
@@ -6327,19 +6865,19 @@ char *miltaryToHumanDate(char *String)
     r[8]=String[2];
     r[9]=String[3];
     r[10]=0;
-    return r;
+    return malloc_temp_strcpy(r);
 }
 
 #ifdef OS_WINDOWS
 /**
  @brief time_Info timezone_Info mit aktuellen TICS
  @return immer 0
- @param time_Info wenn nicht NULL, dann wird der struct timeval gefüllt
- @param timezone_Info wenn nicht NULL, dann wird der struct timezone gefüllt
+ @param time_Info wenn nicht NULL, dann wird der struct timeval gefÃ¼llt
+ @param timezone_Info wenn nicht NULL, dann wird der struct timezone gefÃ¼llt
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.01.2009
+ ** 01.01.09
 ___________________________________________________________________________*/
 
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
@@ -6377,7 +6915,7 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 /**
  @addtogroup c_dumpfunc
  @{
- @brief Dumps aus allem möglichen erstellen
+ @brief Dumps aus allem mÃ¶glichen erstellen
 
 */ /**
  @brief Alles auf NULL setzen
@@ -6396,8 +6934,8 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 16.11.2016 HS Neue Listeverwaltung
+ ** 02.04.06 HS ReCreate
+ ** 16.11.16 HS Neue Listeverwaltung
 ___________________________________________________________________________*/
 
 void DumpInit( int DUMPMODE )
@@ -6416,7 +6954,7 @@ void DumpInit( int DUMPMODE )
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void DumpAddByte ( int byte )
@@ -6436,7 +6974,7 @@ void DumpAddByte ( int byte )
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void DumpAddString ( char *String )
@@ -6447,11 +6985,11 @@ void DumpAddString ( char *String )
 /**
  @brief Einen ganzen Buffer zum Buffer
  @param String Buffer dazu kommt
- @param Len mit dieser Länge
+ @param Len mit dieser LÃ¤nge
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void DumpAddBuffer ( char *String, int Len )
@@ -6468,8 +7006,8 @@ void DumpAddBuffer ( char *String, int Len )
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 16.11.2016 HS Neue Listeverwaltung
+ ** 02.04.06 HS ReCreate
+ ** 16.11.16 HS Neue Listeverwaltung
 ___________________________________________________________________________*/
 
 void DumpPrint(void)
@@ -6552,13 +7090,13 @@ void DumpPrint(void)
  @brief Ausgabe eines einzelnen Buffers
  @param DUMPMODE    mode siehe @ref DUMPMODES
  @param String      Eigentlich ein Pointer
- @param Len         Größe des Buffers
+ @param Len         GrÃ¶ÃŸe des Buffers
 
- @note Schnelle Lösung. Der Buffer wird überschrieben
+ @note Schnelle LÃ¶sung. Der Buffer wird Ã¼berschrieben
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 void DumpSingleBuffer(int DUMPMODE, char *String, int Len )
@@ -6572,36 +7110,30 @@ void DumpSingleBuffer(int DUMPMODE, char *String, int Len )
  @brief Holt eine Zeile aus dem Stringbuffer
  @return String; wenn nichs mehr da ist NULL
 
- Der nächste String wird aus dem Buffer geholt
+ Der nÃ¤chste String wird aus dem Buffer geholt
  Der String wird intern freigegeben; dh. kann nicht nochmal geholt werden.
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 16.11.2016 HS Neue Listeverwaltung
+ ** 02.04.06 HS ReCreate
+ ** 16.11.16 HS Neue Listeverwaltung
 ___________________________________________________________________________*/
 
 char *DumpString (void)
 {
     void *d;
     char *s;
-    static char rslt[( MAXDUMP * 3) + (( MAXDUMP / 8 ) * 2 ) + 8 + (MAXDUMP + ( MAXDUMP / 8 ) + 2 ) + 1];
-
+//    char rslt[( MAXDUMP * 3) + (( MAXDUMP / 8 ) * 2 ) + 8 + (MAXDUMP + ( MAXDUMP / 8 ) + 2 ) + 1];
     if ((dumpmode & DUMP_STRING)==0) return NULL;
     DumpPrint();
     // s = Node_GetFirst(NODE_HEAD);
-
     if (NODE_HEAD==NULL) return NULL;
     d = NODE_HEAD;
-    //s = LIST_Get(&LST_HEAD);
     s = Node_GetData(NODE_HEAD);
     NODE_HEAD = Node_GetNext(NODE_HEAD);
     free (d);
-
     if (!s) return NULL;
-    strcpy_ex (rslt,s);
-    free (s);
-    return rslt;
+    return malloc_temp_string(s);
 }
 
 /**
@@ -6613,7 +7145,7 @@ char *DumpString (void)
 
 ___[ Revision ]______________________________________________________________
 
- ** 19.07.2016 HS Create
+ ** 19.07.16 HS Create
 ___________________________________________________________________________*/
 
 char *DumpFullString(void)
@@ -6636,7 +7168,7 @@ char *DumpFullString(void)
 /**
  @addtogroup c_iofunc
  @{
- @brief Diese Funktionen sind oftmals je nach Betriebssystemen völlig unterschiedlich. Das Ergebnis sollte jedoch identisch sein.
+ @brief Diese Funktionen sind oftmals je nach Betriebssystemen vÃ¶llig unterschiedlich. Das Ergebnis sollte jedoch identisch sein.
 
  /////////////////////////////// I/O -Functions ///////////////////////////////
 
@@ -6646,7 +7178,7 @@ char *DumpFullString(void)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 int getach(void)
@@ -6692,15 +7224,14 @@ int getach(void)
  @return 0 OK -1 bei Fehlern
  @param Stream      Filestream
  @param Dest        Buffer wohin geshrieben werden soll
- @param MaxLen      maximale Länge
+ @param MaxLen      maximale LÃ¤nge
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 05.01.2018 HS Remove CR from String
-               NEW: Windows-Files im Binary-Mode wenn Sie als Text gelesen
-                    werden werden CR/LF im TextMode LF/LF returnen
-
+ ** 02.04.06 HS ReCreate
+ ** 05.01.18 HS Remove CR from String
+             NEW: Windows-Files im Binary-Mode wenn Sie als Text gelesen
+                  werden werden CR/LF im TextMode LF/LF returnen
 ___________________________________________________________________________*/
 
 int mgetline ( FILE *Stream, char *Dest, int MaxLen )
@@ -6714,7 +7245,7 @@ int mgetline ( FILE *Stream, char *Dest, int MaxLen )
 		switch ( Dest[i])
         {
           case 13: for (j=i;;j++)                                               // Remove CR from String
-                   {                                                            // *NEW Code since 05.01.2018
+                   {                                                            // *NEW Code since 05.01.18
                        Dest[j]=Dest[j+1];
                        if (Dest[j]==0) break;
                    }
@@ -6755,7 +7286,7 @@ int mgetline ( FILE *Stream, char *Dest, int MaxLen )
             Dest[i]=0;
             return (0);
         }
-        if (Dest[i]==13) continue;      // Special für Window CR/LF
+        if (Dest[i]==13) continue;      // Special fÃ¼r Window CR/LF
         Dest[i]=c;
         i++;
     }
@@ -6764,14 +7295,14 @@ int mgetline ( FILE *Stream, char *Dest, int MaxLen )
 #endif // 0
 
 /**
- @brief Prüfe, ob eine Datei exestiert
+ @brief PrÃ¼fe, ob eine Datei exestiert
  @return TRUE/FALSE (False kann auch kommen, wenn keine Zugriffberechtigung herrscht)
- @param name Filename der geprüft werden soll
+ @param name Filename der geprÃ¼ft werden soll
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 17.01.2017 HS FileOK ohne aka's
+ ** 02.04.06 HS ReCreate
+ ** 17.01.17 HS FileOK ohne aka's
 ___________________________________________________________________________*/
 
 int FileOK (char *name)
@@ -6784,14 +7315,14 @@ int FileOK (char *name)
 }
 
 /**
- @brief Prüfe, ob ein Verzeichnis exestiert
+ @brief PrÃ¼fe, ob ein Verzeichnis exestiert
  @return TRUE/FALSE (False kann auch kommen, wenn keine Zugriffberechtigung herrscht)
- @param name Dirname der geprüft werden soll
+ @param name Dirname der geprÃ¼ft werden soll
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 17.01.2017 HS DirOK ohne aka's
+ ** 02.04.06 HS ReCreate
+ ** 17.01.17 HS DirOK ohne aka's
 ___________________________________________________________________________*/
 
 int DirOK(char *name)
@@ -6805,15 +7336,15 @@ int DirOK(char *name)
 /**
  @addtogroup c_links
  @{
- @brief Diese Funktionen sind sehr Betriebssystemabhängig
+ @brief Diese Funktionen sind sehr BetriebssystemabhÃ¤ngig
 
- Prüfe, ob eine Datei ein Link ist. Dabei werden aus unabhängiger Sicht
+ PrÃ¼fe, ob eine Datei ein Link ist. Dabei werden aus unabhÃ¤ngiger Sicht
  nicht klar ob Soft- oder Hardlink. Auf Datei- und Filesystemschicht ist
  eine klare Trennung vorhanden.
 
  Hardlinks sind unter Windows, wie unter Linux, nicht vorhanden.
- Unter Linux werden die Nodes gezählt. Und eine zu löschende
- Datei wird bei 0 auch die anhängenden Daten löschen.
+ Unter Linux werden die Nodes gezÃ¤hlt. Und eine zu lÃ¶schende
+ Datei wird bei 0 auch die anhÃ¤ngenden Daten lÃ¶schen.
  Bei Windows gibt es immer die Orginaldaten auf die verwiesen wird.
  Es wird auch nur dort ein Flag gesetzt, das die Datei als Link ausweist.
 
@@ -6851,7 +7382,7 @@ ___________________________________________________________________________*/
 
 
 /**
- @brief Prüfe ob es ein Link ist
+ @brief PrÃ¼fe ob es ein Link ist
  @return -1 if Error 0 normal 1 IsLinkFlag
  @param name Filename oder Verzechnisname
 
@@ -6869,7 +7400,10 @@ int IsLink(char *name)
 int IsLink(char *name)
 {
     //if (IsSymbolicLink(name)) return 1;
-    return IsSoftLink(name);
+    return
+       ( IsSoftLink(name) ||
+         IsHardLink(name)
+       );
 }
 #endif
 
@@ -6905,11 +7439,11 @@ int IsSystem (char *name)
 /**
  @brief Ob es das Hauptverzeichnos ist
  @return 1 wenn wahr 0 wenn falsch
- @param name Zu prüfendes Verzeichnis / File
+ @param name Zu prÃ¼fendes Verzeichnis / File
 
 ___________________________________________________________________________*/
 
-#ifdef OS_WINDOWS
+#ifdef OS_FSYS_DRIVE
 int IsRoot (char *name)
 {
     if (name[0]=='\\')
@@ -6925,7 +7459,7 @@ int IsRoot (char *name)
     return 0;
 }
 #endif
-#ifdef OS_LINUX
+#ifdef OS_FSYS_PATH
 int IsRoot (char *name)
 {
     if (name[0]!='/')      return 0;
@@ -6936,22 +7470,26 @@ int IsRoot (char *name)
 
 /**
  @brief Ob es ein Softlink ist
- @param name Zu prüfendes Verzeichnis / File
  @return 1 wenn wahr 0 wenn falsch -1 wenn Fehler
+ @details name Ein zu pruefendes Verzeichnis / File
 
 ___________________________________________________________________________*/
 
 #ifdef OS_WINDOWS
-int IsSoftLink(char *name __attribute__ ((unused)) )
+int IsSoftLink(char *name)
 {
+    if (name) return 0;
     return 0;
 }
 #endif
+
 #ifdef OS_LINUX
 int IsSoftLink(char *name)
 {
     struct stat buf;
+
     if (lstat(name,&buf)==-1) return -1;
+    //lprintf ("S:name=%s  buf.st_mode=%i", name, buf.st_mode);
     if (S_ISLNK( buf.st_mode )) return 1;
     return 0;
 }
@@ -6960,7 +7498,7 @@ int IsSoftLink(char *name)
 /**
  @brief Ob es ein Hardlink ist
  @return 1 wenn wahr 0 wenn falsch -1 wenn Fehler
- @param name Zu prüfendes Verzeichnis / File
+ @param name Zu prÃ¼fendes Verzeichnis / File
 
 ___________________________________________________________________________*/
 #ifdef OS_WINDOWS
@@ -6985,13 +7523,13 @@ int IsSymbolicLink(char*name)
     if (fatt & FILE_ATTRIBUTE_REPARSE_POINT) return 1;
     return 0;
 }*/
-#endif // OS_WINDOWS
-
+#endif
 #ifdef OS_LINUX
 int IsHardLink(char *name)
 {
     struct stat buf;
     if (lstat(name,&buf)==-1) return -1;
+    //lprintf ("H:name=%s  buf.st_mode=%i", name, buf.st_mode);
     if (!S_ISREG( buf.st_mode )) return 0;
     return (buf.st_nlink>1);
 }
@@ -7003,14 +7541,14 @@ int IsHardLink(char *name)
 ///@}
 
 /**
- @brief Filegröße abfragen bei möglichen sehr großen Dateien
- @return Größe des Files oder -1 bei Fehler
+ @brief FilegrÃ¶ÃŸe abfragen bei mÃ¶glichen sehr groÃŸen Dateien
+ @return GrÃ¶ÃŸe des Files oder -1 bei Fehler
  @param name Filename
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 10.05.2020 HS st_size ist auf int64 long
+ ** 02.04.06 HS ReCreate
+ ** 10.05.20 HS st_size ist auf int64 long
 ___________________________________________________________________________*/
 
 long long filesize64(char *name)
@@ -7022,14 +7560,14 @@ long long filesize64(char *name)
 }
 
 /**
- @brief Filegröße abfragen
- @return Größe des Files oder -1 bei Fehler
+ @brief FilegrÃ¶ÃŸe abfragen
+ @return GrÃ¶ÃŸe des Files oder -1 bei Fehler
  @param name Filename
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 10.05.2020 HS st_size ist long/int
+ ** 02.04.06 HS ReCreate
+ ** 10.05.20 HS st_size ist long/int
 ___________________________________________________________________________*/
 
 long filesize(char *name)
@@ -7040,22 +7578,23 @@ long filesize(char *name)
     return buf.st_size;
 }
 
+#ifdef OS_WINDOWS_NOT_USED
+
 /**
  @brief Unixtime zu Windows Filetime korriegieren
  @return true / false ( aktuell immer true )
  @param tt [in]       zu konvertierende Zeit
- @param ft [out]      FILETIME die zu füllen ist
- @param cor_DST [in]  ob ggf. eine Anpasssung an Sommerzeit nötig ist
+ @param ft [out]      FILETIME die zu fÃ¼llen ist
+ @param cor_DST [in]  ob ggf. eine Anpasssung an Sommerzeit nÃ¶tig ist
 
 ___[ Revision ]______________________________________________________________
 
- ** 01.01.2018 HS Create
- ** 31.03.2020 HS Offenbar muss die Windowszeit angepasst werden, je nachdem
-                  ob man in Sommerzeit ist oder nicht und das File sich in
-                  einer anderen Zeitzone befindet
+ ** 01.01.18 HS Create
+ ** 31.03.20 HS Offenbar muss die Windowszeit angepasst werden, je nachdem
+                ob man in Sommerzeit ist oder nicht und das File sich in
+                einer anderen Zeitzone befindet
 ___________________________________________________________________________*/
 
-#ifdef OS_WINDOWS
 BOOL time_t2FileTime (time_t tt, FILETIME *ft, int cor_DST)
 {
     long long ll;
@@ -7091,16 +7630,16 @@ int LogPrintLastError(char* ExtraString1, char* ExtraString2)
 }
 
 /**
- @brief Filedatum setzen / ist unter Windows der Worker für copyfiletime
+ @brief Filedatum setzen / ist unter Windows der Worker fÃ¼r copyfiletime
  @return NOERROR(0) oder die mit GetLastError geholte errno
- @param F_name      zu änderndes File
+ @param F_name      zu Ã¤nderndes File
  @param F_create    0 oder Create meint nicht die Erstellungszeit, kann man aber modifizieren
  @param F_access    0 oder letzter Zugriff
- @param F_modif)    0 oder letzte Änderung
+ @param F_modif)    0 oder letzte Ã„nderung
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.11.2018 HS Implementierung auch für Windows
+ ** 02.11.18 HS Implementierung auch fÃ¼r Windows
 ___________________________________________________________________________*/
 
 
@@ -7168,31 +7707,48 @@ int filedate_set (char *F_name, time_t F_create, time_t F_access, time_t F_modif
  SetFileTime() unter Windows
  GetFileTime() unet Windows ???
 
+ utime RÃ¼ckgabewert
+ Diese Funktionen gibt 0 zurÃ¼ck, wenn die Datei-Modifikationszeit geÃ¤ndert wurde. Ein RÃ¼ckgabewert von -1
+ zeigt einen Fehler an. Wird ein ungÃ¼ltiger Parameter Ã¼bergeben, wird der invalid Parameter-Handler aufgerufen,
+ wie in der Parametervalidierung beschrieben. Wenn die AusfÃ¼hrung fortgesetzt werden darf, geben diese
+ Funktionen -1 zurÃ¼ck und errno ist auf einen der folgenden Werte gesetzt:
+
+ Wert   | Zustand
+ -------|-----------------------------------------------------------
+ EACCES | Path gibt Verzeichnis oder Nur-Lese-Datei an
+ EINVAL | Invalid timesArgument
+ EMFILE | Zu viele offene Dateien (die Datei muss geÃ¶ffnet werden, um ihre Ã„nderungszeit zu Ã¤ndern)
+ ENOENT | Pfad oder Dateiname nicht gefunden
+
+ Weitere Informationen zu RÃ¼ckgabecodes finden Sie unter errno, _doserrno, _sys_errlist, und _sys_nerr.
+
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 02.11.2018 HS Implementierung auch für Windows@date
- ** 27.09.2020 HS Rückgabewert zeigt Erfolg an
+ ** 02.04.06 HS ReCreate
+ ** 02.11.18 HS Implementierung auch fÃ¼r Windows@date
+ ** 27.09.20 HS RÃ¼ckgabewert zeigt Erfolg an
+ ** 04.10.23 HS copyfiletime jetzt mit utime fÃ¼r Windows (auf Probe)
 ___________________________________________________________________________*/
 
 int copyfiletime (char *from, char *dest)
 {
     struct stat buf;
     if (stat (from , &buf )==-1) return EXIT_FAILURE;
-#ifdef OS_LINUX
+#if (defined OS_LINUX) || (defined OS_WINDOWS)
     //if (S_ISDIR( buf.st_mode )) return EXIT_SUCCESS; // noch nicht getestet
     struct utimbuf ut ;
     ut.actime   = buf.st_atime;
     ut.modtime  = buf.st_mtime;
-    //return utime (dest, &ut);
     return utime (dest, &ut) ? EXIT_FAILURE : EXIT_SUCCESS;
 #endif
     //return utimbuf32
     //return utimbuf
 
 //lprintf ("X-Source Time: %s", timeinfostr(buf.st_mtime));
-#ifdef OS_WINDOWS
+#ifdef OS_WINDOWS_NOT_USED
     if (S_ISDIR( buf.st_mode )) return EXIT_SUCCESS; // noch nicht getestet
+    //if (buf.st_mtime==-1) return EXIT_FAILURE;
+
     if (filedate_set(dest, buf.st_ctime, buf.st_atime, buf.st_mtime ))
     {
         return EXIT_FAILURE;
@@ -7211,7 +7767,7 @@ int copyfiletime (char *from, char *dest)
 
 ___[ Revision ]______________________________________________________________
 
- ** 27.09.2020 HS Create
+ ** 27.09.20 HS Create
 ___________________________________________________________________________*/
 
 //int a __attribute__ ((unused)) ;
@@ -7240,7 +7796,7 @@ int copyFileOwner(char *from __attribute__ ((unused)), char *dest __attribute__ 
 
 ___[ Revision ]______________________________________________________________
 
- ** 27.09.2020 HS Create
+ ** 27.09.20 HS Create
 ___________________________________________________________________________*/
 
 int copyFileMod  (char *from __attribute__ ((unused)), char *dest __attribute__ ((unused)))
@@ -7259,12 +7815,12 @@ int copyFileMod  (char *from __attribute__ ((unused)), char *dest __attribute__ 
 
 /**
  @brief Filetime
- @return Gibt Filetime time_t in Unixtime oder 0 zurück
- @param name Zu prüfendes File
+ @return Gibt Filetime time_t in Unixtime oder 0 zurÃ¼ck
+ @param name Zu prÃ¼fendes File
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 time_t filedate(char *name)
@@ -7280,23 +7836,30 @@ time_t filedate(char *name)
  @return 0 bei Erfolg -1 bei Fehlern
  @param dirname Name des Verzeichnisses
 
- @note Unter Unix werden die Rechte auf 0x777
+ @note Unter Unix werden die Rechte auf 0x755 benutzt
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
 ___________________________________________________________________________*/
 
 int createdir(char *dirname)
 {
-#ifdef OS_LINUX
-    return (mkdir(dirname, 0x777));
+#if (defined OS_LINUX)
+    return (mkdir(dirname, 0755));
 #endif
-#ifdef OS_WINDOWS
+#if (defined OS_WINDOWS)
     return (mkdir(dirname));
 #endif
     return -1;
 }
+
+//int rc;
+//mode_t oldmask=umask(0);
+//rc= mkdir(dirname, 0755);
+//umask(oldmask);
+//return rc;
+
 
 /**
  @brief Namen von einem Pfad
@@ -7305,19 +7868,17 @@ int createdir(char *dirname)
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 11.11.2016 HS für den GDB Debuger muß auch Forslash drin stehen
+ ** 02.04.06 HS ReCreate
+ ** 11.11.16 HS fÃ¼r den GDB Debuger muÃŸ auch Forslash drin stehen
+ ** 21.03.24 HS modified
 ___________________________________________________________________________*/
 
 char *Cbasename (char *Kette)
 {
   char *base;
-  base = Kette;
-  while (*Kette)
+  for (base=Kette;*Kette;Kette++)
   {
-      if ( (*Kette == '\\') || (*Kette == '/') )
-        base = Kette + 1;
-      Kette++;
+      if ((*Kette == '\\') || (*Kette == '/')) base = Kette + 1;
   }
   return base;
 }
@@ -7329,7 +7890,7 @@ char *Cbasename (char *Kette)
 
 ___[ Revision ]______________________________________________________________
 
- ** 22.10.2018 HS Create
+ ** 22.10.18 HS Create
 ___________________________________________________________________________*/
 
 char *CfilenameExt(char *filename)
@@ -7350,25 +7911,25 @@ char *CfilenameExt(char *filename)
 
 ___[ Revision ]______________________________________________________________
 
- ** 22.10.2018 HS Create
+ ** 22.10.18 HS Create
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *CfilenameName(char *filename)
 {
     char *dot;
-    static char *rslt=NULL;
-    if (rslt==NULL) rslt=malloc0(PATH_MAX);
-    strcpy_ex (rslt, Cbasename(filename));
+    char *rslt;
+    rslt=malloc_temp_strcpy(Cbasename(filename));
     dot = strrchr(rslt, '.');
     if((!dot) || (dot == rslt)) return rslt;
-    dot[0] = 0;
+    *dot = '\0';
     return rslt;
 }
 
 /**
- @brief Environment-Variablen auflösen
+ @brief Environment-Variablen auflÃ¶sen
  @return mit malloc geholter String
- @param path String der aufgelöst werden soll
+ @param path String der aufgelÃ¶st werden soll
 
  @code
  Beispiel:
@@ -7380,17 +7941,19 @@ char *CfilenameName(char *filename)
 
 ___[ Revision ]______________________________________________________________
 
- ** 07.07.2020 HS War vorher nur in Cdirvault. Aber bereinigt für cfilevault
+ ** 07.07.20 HS War vorher nur in Cdirvault. Aber bereinigt fÃ¼r cfilevault
+ ** 02.04.24 HS malloc_temp statt static
 ___________________________________________________________________________*/
 
 char *univault(char *path)
 {
-    static char *buffer=NULL;
+    char *buffer;
     int i,o,p;
     char *env;
     char findname[PATH_MAX];
 
-    if (!buffer) buffer = malloc(PATH_MAX);
+    //lprintf ("char *univault(char *path=%s)", path);
+    buffer = malloc_temp(PATH_MAX);
 
     i=0;
     o=0;
@@ -7407,7 +7970,6 @@ char *univault(char *path)
         }
     }
 #endif // OS_LINUX
-
 
     // in out ptr
     for (p=-1;;i++)
@@ -7452,6 +8014,7 @@ char *univault(char *path)
         buffer[o]=path[i];
         o++;
     }
+    //lprintf ("return: univault %i %i %i %s",i,o,p, buffer);
     //printf ("%i %i %i %s\n",i,o,p, buffer);
     return buffer;
 }
@@ -7477,10 +8040,10 @@ char *univault(char *path)
 
 ___[ Revision ]______________________________________________________________
 
- ** 08.05.2018 HS Erweitertes Cdirname zu Cdirvault bereinigt Betriebssystemabhängig
-                  Slash und löst Varablennamen in % Zeichen auf. cdirname wird
-                  am Ende aufgerufen
- ** 07.07.2020 HS Herzroutine in eigene Routine verschoben
+ ** 08.05.18 HS Erweitertes Cdirname zu Cdirvault bereinigt BetriebssystemabhÃ¤ngig
+                Slash und lÃ¶st Varablennamen in % Zeichen auf. cdirname wird
+                am Ende aufgerufen
+ ** 07.07.20 HS Herzroutine in eigene Routine verschoben
 ___________________________________________________________________________*/
 
 
@@ -7494,57 +8057,55 @@ char *Cdirvault(char *path)
  @return String mit dem Verzeichnisnamen
  @param path pfad
 
- Wenn im Root, dann wird auf "Z:\\" aufgelöst. Ansonsten ist der letzte
- Buchstabe kein Slash. Cdirvault bereinigt Betriebssystemabhängig
+ Wenn im Root, dann wird auf "Z:\\" aufgelÃ¶st. Ansonsten ist der letzte
+ Buchstabe kein Slash. Cdirvault bereinigt BetriebssystemabhÃ¤ngig
  Slash
 
  @see Cdirvault
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 10.07.2016 HS ReWritten
- ** 04.01.2018 HS Reimplemented stoneage LinuxCode for Linux OS
- ** 16.12.2020 HS Windowsteil weitgehend neu
+ ** 02.04.06 HS ReCreate
+ ** 10.07.16 HS ReWritten
+ ** 04.01.18 HS Reimplemented stoneage LinuxCode for Linux OS
+ ** 16.12.20 HS Windowsteil weitgehend neu
+ ** 02.04.24 HS malloc_temp statt static
  ___________________________________________________________________________*/
 
 char *Cdirname (char *path)
 {
-    static char newpath[PATH_MAX];
+    char newpath[PATH_MAX];
     char *slash;
     int length;
 
 #ifdef OS_WINDOWS
+    char tmppath[PATH_MAX];
     char *curpath;
-    int curdrive;
+    int  curdrive;
     char chgRootDir[]="A:\\";
     char chgDrive[]="A:";
     char chgBack[]="A:";
 #endif // OS_WINDOWS
-
-    if (!path) return "";                       // Sicherheitsabfrage
+	if (path == NULL || *path == '\0')           // Sicherheitsabfrage
+    {
+		return malloc_temp_strcpy(".");
+	}
 
 #ifdef OS_LINUX
 //    if (DirOK(path))                            // Wenn es den Pfad wirklich so gibt, dann nicht hinterfragen
 //    {
 //        strcpy(newpath,path);
-//        return newpath;
+//        return newpath; // return not allowed here
 //    }
-    strReplace(newpath,'\\','/');               // Windows 2 Linux
+    strcpy_ex(newpath, path);
+    strReplace(newpath, OTHER_OS_cDIR_SEP,cDIR_SEP);// Windows 2 Linux
     strstrreplace(newpath,"//","/");            // Doppelte korrigieren
-
-    slash = strrchr (path, '/');
-    if (!slash)                                 // File ist im aktuellen Verzeichnis
-    {
-        path = ".";
-        length = 1;
-    }else{
-        while (slash > path && *slash == cDIR_SEP)// Führende slashes löschen
-           --slash;
-        length = slash - path + 1;
-    }
-    strncpy (newpath, path, length);
-    newpath[length] = 0;
+    slash = strrchr (newpath, '/');             // Rechts suchen
+    if (!slash) return malloc_temp_strcpy("."); // File ist im aktuellen Verzeichnis
+    while (slash > newpath && *slash == cDIR_SEP) --slash;// FÃ¼hrende slashes lÃ¶schen
+    length = slash - newpath + 1;               // Laenge ermitteln
+    newpath[length] = 0;                        // und kÃ¼rzen
+    return malloc_temp_strcpy(newpath);
 #endif // OS_LINUX
 
 #ifdef OS_WINDOWS
@@ -7552,7 +8113,8 @@ char *Cdirname (char *path)
 
     strReplace(newpath,'/','\\');               // Linux 2 Windows
     strstrreplace(newpath,"\\\\","\\");         // Doppelte korrigieren
-    curpath = strgetCWD();                      // aktuellen Pfad merken
+    GetCWD(tmppath);
+    curpath = tmppath;                          // aktuellen Pfad merken
     if (newpath[0]==0)                          // bei leerem Pfad aktuellen Pfad nehmen
     {
         strcpy_ex (newpath, curpath);
@@ -7569,7 +8131,11 @@ char *Cdirname (char *path)
             chgBack[0]  = toupper(curpath[0]);
             chgDrive[0] = curdrive;
             chgRootDir[0] = curdrive;
-            if (chdir(chgDrive)==EXIT_SUCCESS) curpath = strgetCWD();
+            if (chdir(chgDrive)==EXIT_SUCCESS)
+            {
+                GetCWD(tmppath);
+                curpath = tmppath;
+            }
             else curpath = chgRootDir;
             chdir (chgBack);
         }
@@ -7602,8 +8168,8 @@ char *Cdirname (char *path)
     }
     strins (newpath, "*:", 0);
     newpath[0]=curdrive;
+    return malloc_temp_strcpy(newpath);
 #endif // OS_WINDOWS
-    return newpath;
 }
 
 /**
@@ -7616,28 +8182,26 @@ char *Cdirname (char *path)
 
 ___[ Revision ]______________________________________________________________
 
- ** 07.07.2020 HS Create ( das meiste gab es schon in CDirvault
+ ** 07.07.20 HS Create ( das meiste gab es schon in CDirvault
  ___________________________________________________________________________*/
 
 char *CFilevault (char *path)
 {
     char *p;
-    static char *buffer=NULL;
-    if (!buffer) buffer = malloc(PATH_MAX);
+    char *buffer;
+    buffer = malloc_temp(PATH_MAX);
     p = univault(path);
-
     strcpy_ex (buffer, Cdirname(p));
     strcat_ex (buffer, DIR_SEP);
     strcat_ex (buffer, Cbasename(p));
-
     return buffer;
 }
 
 /**
  @brief Angegebenes Verzeichnis auf das aktuelle Betriebssystem anwenden
- @param path Zu ändernder Pfad - übergebener path wird geändert
+ @param path Zu Ã¤ndernder Pfad - Ã¼bergebener path wird geÃ¤ndert
 
- @note Ursprünglich nur im Source von HSsync
+ @note UrsprÃ¼nglich nur im Source von HSsync
 
 ___[ Revision ]______________________________________________________________
 
@@ -7676,23 +8240,26 @@ void CorrectPath(char *path)
     for(;;)
     {
         i = strright( path, '/');
-        if (i<=0) break; //?? i<=0 für root ????
+        if (i<=0) break; //?? i<=0 fÃ¼r root ????
         path[i]=0;
     }
 #endif
 }
 
 /**
- @brief Aktuelles Verzeichnis in übergebenen Pfad speichern
- @param Kette gibt das aktuelle Verzeichnis oder Leerzeichen zurück
+ @brief Aktuelles Verzeichnis in Ã¼bergebenen Pfad speichern
+ @param Kette gibt das aktuelle Verzeichnis oder Leerzeichen zurÃ¼ck
+ @return EXIT_SUCCESS wenn Erfolg
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
+ ** 02.04.06 HS ReCreate
+ ** 10.11.22 HS return added Code changed
 ___________________________________________________________________________*/
 
-void GetCWD ( char *Kette )
+int GetCWD ( char *Kette )
 {
+/*
     char *buffer;
     buffer = (char *) malloc ( PATH_MAX );
     if ( getcwd( buffer, PATH_MAX ) != NULL)
@@ -7702,26 +8269,36 @@ void GetCWD ( char *Kette )
         Kette[0]=0;
     }
     free (buffer);
+*/
+	if (getcwd(Kette, PATH_MAX) == NULL )
+	{
+		Kette[0]=0;
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
 }
 
 /**
- @brief Aktuelles Verzeichnis zurückgeben
- @return String  mit dem aktuellen Verzeichnis
+ @brief Aktuelles Verzeichnis zurÃ¼ckgeben
+ @return String  mit dem aktuellen Verzeichnis ( muss mit free freigegeben werden )
 
 ___[ Revision ]______________________________________________________________
 
- ** 10.07.2016 HS ReCreate
+ ** 10.07.16 HS ReCreate
+ ** 10.11.22 HS GetCWD statt getcwd buffer nicht mehr intern, sondern malloc
 ___________________________________________________________________________*/
 
-char *strgetCWD(void)
+char *strGetCWD(void)
 {
-    static char buffer[PATH_MAX];
-    if (getcwd( buffer, PATH_MAX ) == NULL) buffer[0]=0;
+    char *buffer;
+    buffer = (char *) malloc ( PATH_MAX );
+    if (GetCWD( buffer)) buffer[0]=0;
+    //if (getcwd( buffer, PATH_MAX ) == NULL) buffer[0]=0;
     return buffer;
 }
 
 /**
- @brief chdir mit Prüfung
+ @brief chdir mit PrÃ¼fung
  @return 0 wenn Erfolg, ansonsten Fehler
  @param path Pfad zu dem gewechselt wird
 
@@ -7730,39 +8307,42 @@ char *strgetCWD(void)
 
 ___[ Revision ]______________________________________________________________
 
- ** 15.11.2016 HS Create
+ ** 15.11.16 HS Create
 ___________________________________________________________________________*/
 
 int save_chdir(char *path)
 {
     int rc;
+    char *a;
     rc = chdir (path);
     if (rc) return (rc);
     rc=0;
 //    lprintf ("PAX = \"%s\"", path);
 //    lprintf ("PWX = \"%s\"", _getCWD());
-    if(strcmp(path,strgetCWD())) rc=99;
+    a=strGetCWD();
+    if(strcmp(path,a)) rc=99;
+    free(a);
     return rc;
 }
 
-/// Die Größe für den FileCopy :: jetzt dynamisch HS 28.09.20
+/// Die GrÃ¶ÃŸe fÃ¼r den FileCopy :: jetzt dynamisch HS 28.09.20
 // #define filecopybufferlen 16384
-/// Maximale Anzahl der Sterne in einer Reihe kann z.B. mit -DFILECOPY_MAX_PCT=40 überschrieben werden
+/// Maximale Anzahl der Sterne in einer Reihe kann z.B. mit -DFILECOPY_MAX_PCT=40 Ã¼berschrieben werden
 #ifndef FILECOPY_MAX_PCT
 #define FILECOPY_MAX_PCT 90
 #endif
 
 /**
- @brief Simple Anzeige für ein Filecopy
- @return diese display_filecopy kommt immer mit EXIT_SUCCESS zurück, wenn mit EXIT_FAILURE beendet wird bricht FileCopy ab
+ @brief Simple Anzeige fÃ¼r ein Filecopy
+ @return diese display_filecopy kommt immer mit EXIT_SUCCESS zurÃ¼ck, wenn mit EXIT_FAILURE beendet wird bricht FileCopy ab
  @param dummy   Dummy, wird nicht verwendet, zeigt auf den aktuellen Filenamen
  @param pct     zeigt wieviel Prozent insgesamt angezeigt wird.
 
 ___[ Revision ]______________________________________________________________
 
- ** 31.03.2020 HS Create
- ** 01.04.2020 HS Dokumentation
- ** 11.04.2020 HS verschoben nach tools.c
+ ** 31.03.20 HS Create
+ ** 01.04.20 HS Dokumentation
+ ** 11.04.20 HS verschoben nach tools.c
 ___________________________________________________________________________*/
 
 int display_filecopy (char *dummy __attribute__ ((unused)), int pct)
@@ -7773,14 +8353,14 @@ int display_filecopy (char *dummy __attribute__ ((unused)), int pct)
             //lprintf ("\rerror pct=%i\n", pct);
             pct=100;
     }
-    if (pct==0)                                             // bei 0 soll die Zeile gelöscht werden. Kann man machen, muss man aber nicht
+    if (pct==0)                                             // bei 0 soll die Zeile gelÃ¶scht werden. Kann man machen, muss man aber nicht
     {
         strsetto(show,' ',FILECOPY_MAX_PCT+15);             // Alle mit Leerzeichen
         printf ("\r%s\r", show);                            // Ausgeben und Cursor auf den Zeilenanfang positionieren
-        return EXIT_SUCCESS;                                // Zurück mit Erfolg
+        return EXIT_SUCCESS;                                // ZurÃ¼ck mit Erfolg
     }
     i = (pct*FILECOPY_MAX_PCT)/100;                         // Berechne Anzahl der Sterne
-    strsetto(show,'*',i);                                   // Soviele Sterne wie nötig
+    strsetto(show,'*',i);                                   // Soviele Sterne wie nÃ¶tig
     strsetto(&show[i],' ',FILECOPY_MAX_PCT-i+1);            // den Rest mit Leerzeichen
     show[i]='|';                                            // Erster Abstandsbalken
     show[FILECOPY_MAX_PCT]='|';                             // Zeiter Abstandsbalken
@@ -7790,7 +8370,7 @@ int display_filecopy (char *dummy __attribute__ ((unused)), int pct)
 #ifdef OS_LINUX
     fflush(stdout);
 #endif // OS_LINUX
-    return EXIT_SUCCESS;                                    // Zurück mit Erfolg
+    return EXIT_SUCCESS;                                    // ZurÃ¼ck mit Erfolg
 }
 //Function: int isatty (int filedes)
 //    This function returns 1 if filedes is a file descriptor associated with an open terminal device
@@ -7809,7 +8389,7 @@ int display_filecopy (char *dummy __attribute__ ((unused)), int pct)
 
 ___[ Revision ]______________________________________________________________
 
- ** 15.11.2016 HS ReCreate für HSsync
+ ** 15.11.16 HS ReCreate fÃ¼r HSsync
 ___________________________________________________________________________*/
 
 
@@ -7827,7 +8407,7 @@ int filecopy(char *Source, char *Dest)
  @param pct_start   prozent bei start
  @param pct_end     prozent ende
 
- Immer wenn eine Prozentänderung auftritt, dann wird die externe Routine (*func)
+ Immer wenn eine ProzentÃ¤nderung auftritt, dann wird die externe Routine (*func)
  aufgerufen.
 
  @see filecopy
@@ -7835,8 +8415,8 @@ int filecopy(char *Source, char *Dest)
 
 ___[ Revision ]______________________________________________________________
 
- ** 05.03.2020 HS FileCopy mit möglichlicher Prozentanzeige
- ** 28.09.2020 HS filecopybufferlen jetzt durch dynamische fblen ersetzt
+ ** 05.03.20 HS FileCopy mit mÃ¶glichlicher Prozentanzeige
+ ** 28.09.20 HS filecopybufferlen jetzt durch dynamische fblen ersetzt
 ___________________________________________________________________________*/
 
 int filecopy_pct (char *Source, char *Dest, int (*func) (char *, int), int pct_start, int pct_end)
@@ -7871,7 +8451,7 @@ int filecopy_pct (char *Source, char *Dest, int (*func) (char *, int), int pct_s
 //    fblen = 16384;
 //    if (fsize >   9400000LL ) fblen = 81920;
 //    if (fsize > 120000000LL ) fblen = 1048576;
-    fblen = fsize / 1638400;                            // 100 Durchläufe minimum
+    fblen = fsize / 1638400;                            // 100 DurchlÃ¤ufe minimum
     fblen *= 16384LL;                                   // Vielfaches von 16384
     if (fblen<16384LL) fblen = 16384LL;                 // Minimumsize
     if (fblen>1048576LL) fblen = 1048576LL;             // Maximumsize
@@ -7935,7 +8515,7 @@ int filecopy_pct (char *Source, char *Dest, int (*func) (char *, int), int pct_s
 
 ___[ Revision ]______________________________________________________________
 
- ** 23.07.2016 Wrapper
+ ** 23.07.16 Wrapper
 ___________________________________________________________________________*/
 
 unsigned long long diskfree (char *Kette)
@@ -7951,7 +8531,7 @@ unsigned long long diskfree (char *Kette)
 
 ___[ Revision ]______________________________________________________________
 
- ** 23.07.2016 Wrapper
+ ** 23.07.16 Wrapper
 ___________________________________________________________________________*/
 
 unsigned long long disktotal (char *Kette)
@@ -7967,7 +8547,7 @@ unsigned long long disktotal (char *Kette)
 
 ___[ Revision ]______________________________________________________________
 
- ** 23.07.2016 Wrapper
+ ** 23.07.16 Wrapper
 ___________________________________________________________________________*/
 
 unsigned long long diskused  (char *Kette)
@@ -7977,17 +8557,17 @@ unsigned long long diskused  (char *Kette)
 }
 
 /**
- @brief Der Worker für @ref diskfree @ ref disktotal @ref disktotal
+ @brief Der Worker fÃ¼r @ref diskfree @ ref disktotal @ref disktotal
  @return true / false
  @param Kette Pfad
 
 ___[ Revision ]______________________________________________________________
 
- ** 02.04.2006 HS ReCreate
- ** 23.07.2016 HS Diskstate spiegelt jetzt alle Informationen wieder
-               dazu sind 2 wrapper gekommen diskstate liefert(file) 0 (false)
-               im Fehlerfall, ansonsten ist hs_diskinfo gefüllt
- ** 05.07.2020 HS Für Windows GetDiskFreeSpaceExA statt der dos funktion
+ ** 02.04.06 HS ReCreate
+ ** 23.07.16 HS Diskstate spiegelt jetzt alle Informationen wieder
+                dazu sind 2 wrapper gekommen diskstate liefert(file) 0 (false)
+                im Fehlerfall, ansonsten ist hs_diskinfo gefÃ¼llt
+ ** 05.07.20 HS FÃ¼r Windows GetDiskFreeSpaceExA statt der dos funktion
 ___________________________________________________________________________*/
 
 int diskstate(char *Kette)
@@ -8054,124 +8634,323 @@ int diskstate(char *Kette)
     return true;
 #endif
 
-
-
 	return false;
 }
+
+/// Verzeichnisse in den @ref RCdir_ENUM opt_RCdir zu finden sind
+typedef struct {
+    int  optValue;
+    char *dest;
+}t_opt;
+/// Verzeichnisse2 in den @ref RCdir_ENUM opt_RCdir zu finden sind
+#if 0
+t_opt db_opt[]={
+    { opt_RCdir_PathFile , "" },
+#ifdef OS_WINDOWS
+    { opt_RCdir_PRG      , "%ARG0%" },
+    { opt_RCdir_CFGDIR   , "%CFGDIR%" },
+    { opt_RCdir_root_etc , "%APPDATA%/hs" },
+    { opt_RCdir_root_etcd, "%APPDATA%/hs/%prgname%" },
+    { opt_RCdir_HSDIR_etc, "%HSDIR%/etc" },
+    { opt_RCdir_user_cfg , "%APPDATA%/hs" },
+
+    { opt_RCdir_HSDIR_var, "%HSDIR%/var" },
+    { opt_RCdir_root_var , "%APPDATA%/hs" },
+#else //OS_LINUX
+    { opt_RCdir_PRG      , NULL },
+    { opt_RCdir_CFGDIR   , "%CFGDIR%" },
+    { opt_RCdir_root_etc , "/etc" },
+    { opt_RCdir_root_etcd, "/etc/%prgname%.d" },
+    { opt_RCdir_HSDIR_etc, "%HSDIR%/etc" },
+    { opt_RCdir_user_cfg , "%HOME%" },
+//    { opt_RCdir_userc_cfg, "%HOME%/.config" },
+
+    { opt_RCdir_root_var , "/var/%prgname%" },
+    { opt_RCdir_HSDIR_var, "%HSDIR%/var" },
+#endif
+    { 0, NULL }
+};
+#endif
+
+t_opt db_opt[]={
+    { opt_RCdir_PathFile , "" },
+#ifdef OS_WINDOWS
+    { opt_RCdir_PRG      , "%ARG0%" },
+    { opt_RCdir_CFGDIR   , "%CFGDIR%" },
+    { opt_RCdir_root_etc , "%APPDATA%/hs" },
+    { opt_RCdir_root_etcd, "%APPDATA%/hs/%prgname%" },
+    { opt_RCdir_HSDIR_etc, "%HSDIR%/etc" },
+    { opt_RCdir_user_cfg , "%APPDATA%/hs" },
+    { opt_RCdir_uconfig_cfg, "%APPDATA%/hs" },
+
+    { opt_RCdir_HSDIR_var, "%HSDIR%/var" },
+    { opt_RCdir_root_var , "%APPDATA%/hs" },
+#else //OS_LINUX
+    { opt_RCdir_PRG      , "" },
+    { opt_RCdir_CFGDIR   , "%CFGDIR%" },
+    { opt_RCdir_root_etc , "/etc" },
+    { opt_RCdir_root_etcd, "/etc/%prgname%.d" },
+    { opt_RCdir_HSDIR_etc, "%HSDIR%/etc" },
+    { opt_RCdir_user_cfg , "%HOME%" },
+    { opt_RCdir_uconfig_cfg, "%HOME%/.config" },
+
+    { opt_RCdir_HSDIR_var, "%HSDIR%/var" },
+    { opt_RCdir_root_var , "/var/%prgname%" },
+#endif
+    { 0, NULL }
+};
 
 
 /**
  @brief eine RC-Datei lesen und den Inhalt im Speicher ablegen
  @return pointer auf tabelle mit den werten ( kann NULL sein )
+ @param opt Optionen sind weiter unten gelistet
+ @param rcreadfile NULL oder zeigt auf einen buffer, wohin der aktuelle ConfigFilename kopiert wird
  @param filename datei die gelesen werden soll
 
- filename lesen und als NodeTable zurückgeben
+ - *opt* besteht aus optionen, wie den nodefault, siehe @ref RCdir_ENUM opt_RCdir
+ - *readfile* KANN NULL sein. Wenn nicht zeigt readfile auf einen  Speicher, der den
+    Filenamen mit Pfad aufnehmen kann. Ist reafile nicht NULL und es trat
+    ein Fehler auf, dann ist readfile ein LeerString "".
+ - *filename* Im Normalfall ein Filename. Dieser kann nartÃ¼rlich auch Macros (SYSTEMVARIABLEN)
+   enthalten. Auch NULL ist nachtbar, dann wird _programmname_.rc angenommen. Auch Teilpfade
+   oder komplette Pfade sein moeglich. Ein Parameter opt_RCdir_PathFile ist dafuer vorgesehen.
+
+ Ist eine RC-Datei gefunden, werden alle Daten in eine einfach verkettete Liste bereitgestellt.
+
+ Sectionen wie [Privat] werden nur bei entsprechenden Flag mitgelesen.
+
+
+| flags/optionen       | Beschreibung Linux/Windows                ||
+| -------------------- | ----------------------------|-------------|
+| opt_RCdir_silence    | silence ist ohne LogOutput                ||
+| opt_RCdir_Sections   | Beim Lesen sind [Section] erlaubt         ||
+| opt_RCdir_nodflt     | keine defaults                            ||
+| opt_RCdir_must_exist | File muss beim Suchen existieren          ||
+| <b> </b>             | **Linux**             | **Windows**       |
+| opt_RCdir_PathFile   | Pfad und Filename in filename uebergeben  ||
+| opt_RCdir_PRG        | not Allowed           | ./.**             |
+| opt_RCdir_CFGDIR     | from /etc/hsrc        | \%HSDIR%/etc/hsrc or \%APPDATA%/hs/hsrc |
+| opt_RCdir_root_etc   | /etc/.**              | \%APPDATA%/hs/.** |
+| opt_RCdir_root_etcd  | /etc/\%prgname%.d/.** | \%APPDATA%/hs/%prgname%/.** |
+| opt_RCdir_HSDIR_etc  | <b>beide:</b> \%HSDIR%/etc/.**            ||
+| opt_RCdir_user_cfg   | \%HOME%/.**           | \%APPDATA%/hs/.** |
+| opt_RCdir_HSDIR_var  | <b>beide:</b> \%HSDIR%/var/.**            ||
+| opt_RCdir_root_var   | /var/\%prgname%/.**   | \%APPDATA%/hs/.** |
 
 ___[ Revision ]______________________________________________________________
 
- ** 20.10.2020 HS Start
- ** 29.11.2020 HS Das finden des Dateinamens, wenn er fehlt überarbeitet
+ ** 20.10.20 HS Start
+ ** 29.11.20 HS Das finden des Dateinamens, wenn er fehlt Ã¼berarbeitet
+ ** 11.11.22 HS opt und rcreadfile Ã¼bertragen, wenn angegeben
+ ** 15.11.22 HS Pfade nicht mehr einzeln auswerten, sonden ueber die Tabelle
+ ** 18.11.22 HS Nochmal komplett Ueberarbeitet. PCreadPath
 ___________________________________________________________________________*/
 
-void *RCread(char *filename)
+void *RCread(int opt, char *rcreadfile, char *filename)
 {
     void *tab;
-    char cfg_Filename[PATH_MAX];
     char Line[PATH_MAX];
+    char Section[PATH_MAX];
+    char *rc_Filename;
+//    char rc_Fullname[PATH_MAX];
     FILE *cfg;
-    int d,s;
-    char *cfgdir;
+    int  d,s;
 
-    tab = NULL;
-
-    if (filename)                                                               // wenn filename übergeben, dann den benutzen
+    if (rcreadfile!=NULL) rcreadfile[0]=0;
+    rc_Filename = RCFileNameCreate(filename);                                   // Filename in "uebersetzter Form"
+    if (RCreadPath (opt|opt_RCdir_must_exist, RCFullName, NULL, rc_Filename))
     {
-        //lprintf ("read*0 %s", filename);
-        strcpy_ex (cfg_Filename, univault (filename));
-        //lprintf ("read*1 %s", cfg_Filename);
-    }else{                                                                      // ansonsten suchen wir einfach ein bischen
-#ifdef OS_LINUX
-        sprintf_ex (cfg_Filename,"/etc/%s.rc", m_PRGNAME);                      // unter Linux in /etc
-        strlwr  (cfg_Filename);
-        if (!FileOK(cfg_Filename)) cfg_Filename[0]=0;                           // cfg_Filename[0] zeigt einen gültigen Filenamen an
+        d=1<<31;
+        if (!(opt & opt_RCdir_nodflt))
+        {
+#ifdef OS_WINDOWS
+            sprintf ( RCFullName, "%s\\%s", RCunivault("%ARG0%"), rc_Filename);
 #else
-        cfg_Filename[0]=0;
-#endif // OS_LINUX
-
-        if (cfg_Filename[0]==0)                                                 // nach %CFGDIR%/%PRG%.rc suchen
-        {
-            cfgdir = RCfind(RConfig, "CFGDIR");
-            if (cfgdir)
-            {
-                sprintf_ex (cfg_Filename,"%s" DIR_SEP "%s.rc", cfgdir, m_PRGNAME);        // versuchen den filenamen zu bilden aus cfgdir und dem programmnamen
-                if (!FileOK(cfg_Filename)) cfg_Filename[0]=0;
-            }
+            sprintf ( RCFullName, "%s/%s", RCunivault("%HOME%"), rc_Filename);
+#endif
+			if (FileOK(RCFullName)) d=0;
         }
-        if (cfg_Filename[0]==0)                                                 // nach %HSDIR%/etc/%PRG%.rc suchen
+        if (d)
         {
-            if (HSDIR[0]!=0)
-            {
-                sprintf_ex (cfg_Filename,"%s" DIR_SEP "etc" DIR_SEP "%s.rc", HSDIR, m_PRGNAME);
-                if (!FileOK(cfg_Filename)) cfg_Filename[0]=0;
-            }
+            if (!(opt & opt_RCdir_silence))  lprintf ("RCread can't load: %s", rc_Filename);
+            free(rc_Filename);
+            return NULL; //(void *)
         }
-        if (cfg_Filename[0]==0) return NULL;
     }
+    free(rc_Filename);                                                       // kann schon mal free'ed werden
 
-    if(( cfg = fopen(cfg_Filename,"rt")) == NULL ) return NULL;
+    if(( cfg = fopen(RCFullName,"rt")) == NULL ) return NULL;                   // Datei oeffnen
+    if (rcreadfile!=NULL) strcpy_ex (rcreadfile, RCFullName);                   // fall noetig, Fullname kopieren
+    tab = NULL;                                                                 // Start festlegen
+    Section[0]=0;
     while ( 1 )
     {
         if (mgetline(cfg,Line,sizeof(Line)-3)!=0) break;                        // Zeile einlesen
         CL(Line);                                                               // bereinigen
         if (Line[0]==0) continue;
         if (Line[0]=='#') continue;                                             // Kommentarzeilen
+        if (Line[0]=='[')
+        {
+            Section[0]=0;
+            if ( (opt & opt_RCdir_Sections) || (opt & opt_RCdir_imSections) )
+            {
+                for (d=0,s=1;;s++)
+                {
+                    Section[d]=0;
+                    if (Line[s]==0) break;
+                    if (Line[s]==']')
+                    {
+                        Line[s+1]=0;
+                        if (!(opt & opt_RCdir_imSections)) tab = Node_Add(tab,strdup(Line),Node_Add_Append);
+                        break; // -> nextline
+                    }
+                    if (!isprint(Line[s])) break;
+                    Section[d]=Line[s];
+                    d++;
+                }
+            }
+            continue;
+        }
 
-        //var finden vor dem = wird nur 0-9;a-z;A-Z gelesen äö und jeder Spacer wird überlesen
+        //var finden vor dem = wird nur 0-9;a-z;A-Z gelesen Ã¤Ã¶ und jeder Spacer wird Ã¼berlesen
         for (d=0,s=0;;s++)
         {
             if (Line[s]==0) break;
             //Line[d]=tolower(Line[s]);
             Line[d]=Line[s];
             if (Line[s]=='=') break;
-            if ( (isalpha(Line[d])) || (isdigit(Line[d])) ) d++;
+            if ((isalpha(Line[d])) || (isdigit(Line[d])))
+            {
+                d++;
+            }else{ // 17.03.24 HS auch unterstriche und minus erlauben
+                if (opt&opt_RCdir_isExpVars)
+                {
+                    if ( (Line[d]=='@') ||
+                         (Line[d]=='_') ||
+                         (Line[d]=='.') ||
+                         (Line[d]=='-')
+                        ) d++;
+                }
+            }
         }
-        if (Line[s]==0) break;
+
+        if (Line[s]==0)
+        {
+            break;
+//            if (!(opt & opt_RCdir_ignoEqual)) break;
+//            s=-1;
+        }
+
         // Leerzeichen und Tabs nach dem = entfernen
         for (s++;;s++)
         {
             if (!isspace(Line[s])) break;
         }
-        // Alles hinterher übernehmen
+        // Alles hinterher Ã¼bernehmen
         for (d++;;s++)
         {
+            if (isspace(Line[s])) Line[s]=' ';
             Line[d]=Line[s];
             if (Line[s]==0) break;
             if (isprint(Line[d])) d++;
         }
-        tab = Node_Add(tab,strdup(Line),0);
+        if ( (opt & opt_RCdir_imSections) && (Section[0]) )
+        {
+            strins(Line,".",0);
+            strins(Line,Section,0);
+        }
+
+        tab = Node_Add(tab,strdup(Line),1);
     }
     fclose (cfg);
     return tab;
 }
 
 /**
- @brief eine im Speicher befindene RC-Datei lesen und den Inhalt einer Variablen zurückgeben
- @return pointer auf variable ( kann NULL sein )
- @param RCNodes Nodes, die durchsucht werden sollen
- @param var Variable die gefunden werden soll
+ @brief Einzelnen Pfad herausarbeiten
+ @return EXIT_FAILURE / EXIT_SUCCESS
+ @param opt opt_RC.. siehe @ref RCread
+ @param rc_Fullname Zeiger auf einen Speicher fuer eine erfolgreiche Rueckgabe
+ @param subpath  Verzeichnis statt programmnamen verwenden
+ @param filename Filename wird nur gebraucht, wenn opt_RCdir_must_exists gesetzt ist
 
- im Speicher nach RC-Wert suchen und die Value zurückgeben; wenn nicht vorhanden, dann NULL
+ Filenamen aus der Tabelle suchen und ggef. auf vorhandensein suchen
 
 ___[ Revision ]______________________________________________________________
 
- ** 20.10.2020 HS Start
+ ** 18.11.22 HS Ausgekoppelt bei RCread
+ ** 17.03.24 HS opt_RCdir_isrc deutlicher
 ___________________________________________________________________________*/
 
-char *RCfind(void *RCNodes, char *var)
+int RCreadPath(int opt, char *rc_Fullname, char *subpath, char *filename)
+{
+    char *rc_Pathname;
+    int i;
+    int rc_opt;
+
+    //TODO: abfangen? vielleicht in HS_DEBUG?, waere dann ein "interner Assert"
+    // if ((opt&opt_RCdir_must_exist) && (!filename)) then ERROR
+
+    if (!rc_Fullname) return EXIT_FAILURE;                                      // if (!rc_Fullname) then ERROR
+    rc_Fullname[0]=0;
+    rc_opt = (opt | (opt_RCdir_start-1)) - (opt_RCdir_start-1);                 // bits unterhalb von start loeschen
+//    if (!rc_opt) rc_opt=(1<<31);                                              // opt nicht angegeben ? muss aber nicht sein
+    for (i=0;;i++)                                                              // rc_opt ist auf jedenfall wertig im Notfall 1<<31
+    {
+        if (db_opt[i].optValue==0) break;                                       // Ende der tabelle
+        if (rc_opt & db_opt[i].optValue)                                        // opt und tabelle stimmen ueberein
+        {
+            rc_Pathname = RCdirvault(db_opt[i].dest, subpath);                  // Uebersetze den Teil damit keine Variablen mehr vorhanden sind
+            if (!rc_Pathname) break;                                            // kann nur _nicht_ sein, wenn ...dest schon NULL war. Also eher nicht!
+            if (filename)
+            {
+                if ( (opt & opt_RCdir_PathFile) && (subpath) && (filename))
+                {
+                    sprintf ( rc_Fullname, "%s" DIR_SEP "%s" DIR_SEP "%s", rc_Pathname, subpath, filename); // Keine Leerstrings
+                }else{
+                    if (rc_Pathname[0]) sprintf ( rc_Fullname, "%s" DIR_SEP "%s", rc_Pathname, filename);
+                    else                strcpy  ( rc_Fullname, filename);       // Ansonsten ist ja kein Pfad drin oder sogar gewollt
+                }
+                strstrreplace(rc_Fullname, DIR_SEP DIR_SEP, DIR_SEP);
+
+                if (opt & opt_RCdir_isrc) strcat ( rc_Fullname, ".rc");
+                if (opt & opt_RCdir_must_exist)
+                {
+                    if (!FileOK(rc_Fullname)) continue;                         // Wenn nicht Datei existiert, dann weiter suchen
+                }
+            }else{
+                strcpy(rc_Fullname, rc_Pathname);
+                if ((opt & opt_RCdir_must_exist) && (!DirOK(rc_Fullname))) return EXIT_FAILURE;               // Wenn nicht Datei existiert, dann weiter suchen
+            }
+            return EXIT_SUCCESS;
+        }
+    }
+    return EXIT_FAILURE;
+}
+
+
+/**
+ @brief eine im Speicher befindene RC-Datei lesen und den Inhalt einer Variablen zurÃ¼ckgeben
+ @return pointer auf variable ( kann NULL sein )
+ @param RCNodes Nodes, die durchsucht werden sollen
+ @param var Variable die gefunden werden soll
+ @param num die wievielte Variablenfundstelle gefunden werden soll
+
+ im Speicher nach RC-Wert suchen und die Value zurÃ¼ckgeben; wenn nicht vorhanden, dann NULL
+
+___[ Revision ]______________________________________________________________
+
+ ** 20.10.20 HS Start
+___________________________________________________________________________*/
+
+char *RCfindNum(void *RCNodes, char *var, int num)
 {
     void *RCtab;
     char *z;
     int  p;
+    int  found;
+    found = -1;
     for (RCtab = RCNodes;;RCtab=Node_GetNext(RCtab))
     {
         if (!RCtab) break;
@@ -8179,10 +8958,302 @@ char *RCfind(void *RCNodes, char *var)
         p = strchrpos(z,'=',0);
         if (p<0) continue;
         if (strncmp(z,var,p)) continue;
+        found ++;
+        if (found != num) continue;
         return &z[p+1];
     }
     return NULL;
 }
+
+/**
+ @brief eine im Speicher befindene RC-Datei lesen und den Inhalt einer Bezeichners und Variablen zurÃ¼ckgeben
+ @return EXIT_FAILURE / EXIT_SUCCESS, dann mean und value gesetzt
+ @param RCNodes Nodes, die durchsucht werden sollen
+ @param mean ziel fÃ¼r den Inhalt _vor_ dem '='
+ @param value ziel fÃ¼r den Inhalt _nach_ dem '='
+ @param num die wievielte Variable gefunden werden soll
+
+ im Speicher nach einem RC-Wert suchen (Nummer) und die Bezeichner und Value zurÃ¼ckgeben
+ im Fehlerfall oder wenn num zu gross, dann EXIT_FAILURE
+
+___[ Revision ]______________________________________________________________
+
+ ** 21.02.24 HS Start
+___________________________________________________________________________*/
+
+int RCValuesNum(void *RCNodes, char *mean, char *value, int num)
+{
+    void *RCtab;
+    char *z;
+    int  p;
+    int  found;
+    found = -1;
+    for (RCtab = RCNodes;;RCtab=Node_GetNext(RCtab))
+    {
+        if (!RCtab) break;
+        z = (char*)Node_GetData(RCtab);
+        p = strchrpos(z,'=',0);
+        if (p<0) continue;
+        found ++;
+        if (found != num) continue;
+        memset_ex(mean,0,p+1);
+        memcpy(mean,z,p);
+        strcpy(value, &z[p+1]);
+        return EXIT_SUCCESS;
+    }
+    return EXIT_FAILURE;
+}
+
+/**
+ @brief Es wurd RCFindNum aufgerufen mit num=0
+ @param RCNodes Nodes, die durchsucht werden sollen
+ @param var Variable die gefunden werden soll
+ @return pointer auf variable ( kann NULL sein )
+
+ @code
+    return RCfindNum(RCNodes, var, 0);
+ @endcode
+
+___[ Revision ]______________________________________________________________
+
+ ** 20.10.20 HS Start
+ ** 21.02.24 HS erweitert auf num und verschoben
+___________________________________________________________________________*/
+
+char *RCfind(void *RCNodes, char *var)
+{
+    return RCfindNum(RCNodes, var, 0);
+}
+
+
+
+/**
+@brief              Tauscht zusaetzlich zum zu den Systemvariablen
+@param filename     Filename welcher auch SystemVariablen enthalten kann
+@return             String mit dem einem Filenamen
+
+Tauscht zusaetzlich zu den Systemvariablen auch
+
+ - %%prgname%    in den aktuellen Programmnamen
+ - %%ARG0%       in den Pfad des aktuellen Programmes
+ - %%CFGDIR%     "CFGDIR=" aus der hsrc, sofern vorhanden
+
+___[ Revision ]______________________________________________________________
+
+ ** 14.11.22 HS Implementiert
+___________________________________________________________________________*/
+
+char *RCunivault(const char *filename)
+{
+    char *Kette;                                                                // dummy
+    char fnn[PATH_MAX];                                                         // Buffer fÃ¼r manipolierbare Pfad
+    if (!filename) return NULL;
+    strcpy (fnn, filename);                                                     // Pfad in den Buffer laden
+               strstrreplace(fnn,"%prgname%",m_PRGNAME);                        // da ist auch Platz...ist PATH_MAX lang
+    Kette = Cdirname(m_PRG_arguv[0]);                                           // ProgrammPfad ?
+    if (Kette) strstrreplace(fnn,"%ARG0%",Kette);
+    Kette = RCfind(RConfig, "CFGDIR");                                          // Pfad vorgegeben ?
+    if (Kette) strstrreplace(fnn,"%CFGDIR%",Kette);
+    return univault(fnn);                                                       // zeigt auf einen malloctierten Bereich von univault
+}
+
+/**
+@brief              Tauscht zusaetzlich zum zu den Systemvariablen
+@param mask         Mit dieser Maske einen neuen Verzeicnisnamen bilden
+@param prgname      kann NULL sein, dann argv0 ansonsten Verzeichnisergaenzung
+@return             String mit dem einem Dirnamen
+
+Tauscht zusaetzlich zum zu den Systemvariablen auch
+
+ - %%prgname%    in den aktuellen Programmnamen oder prgnamen
+ - %%ARG0%       in den Pfad des aktuellen Programmes
+ - %%CFGDIR%     config aus dem jeweiligen Hostsystem
+
+___[ Revision ]______________________________________________________________
+
+ ** 14.11.22 HS Implementiert
+___________________________________________________________________________*/
+
+char *RCdirvault(char *mask, char *prgname)
+{
+    char *Kette;                                                                // dummy
+    char fnn[PATH_MAX];                                                         // Buffer fÃ¼r manipolierbare Pfad
+    if (!mask) return NULL;
+
+    if (prgname!=NULL)  Kette = prgname;
+    else                Kette = Cdirname(m_PRG_arguv[0]);                       // ProgrammPfad !
+    strcpy (fnn, mask);                                                         // Pfad in den Buffer laden
+    if (Kette) strstrreplace(fnn,"%ARG0%",Kette);
+    if (Kette) strstrreplace(fnn,"%prgname%",Kette);                        // da ist auch Platz...ist PATH_MAX lang
+    if (strstr(fnn,"%CFGDIR%"))
+    {
+#ifdef OS_WINDOWS
+    //Kette = strdup_ex("/Users/%USERNAME%/.config/");
+        Kette = strdup("%APPDATA%");
+        stradd( Kette, DIR_SEP );
+#else
+        Kette = strdup("%HOME%/.config/");
+#endif // OS_WINDOWS
+        if (prgname==NULL) stradd( Kette, m_PRGNAME );
+        else               stradd( Kette, prgname );
+        strstrreplace(fnn,"%CFGDIR%", Kette);
+        free(Kette);
+    }
+    return univault(fnn);                                                       // zeigt auf einen malloctierten Bereich von univault
+}
+//
+//->"%APPDATA%/hs/%prgname%"
+//
+//
+//
+//
+//    Kette = Cdirname(m_PRG_arguv[0]);                                           // ProgrammPfad ?
+//    Kette = RCfind(RConfig, "CFGDIR");                                          // Pfad vorgegeben ?
+//    if (Kette) strstrreplace(fnn,"%CFGDIR%",Kette);
+
+
+/**
+@brief  Einen Filenamen fuer RCread aufloesen
+@param  filename     Filename als String oder NULL
+@return              malloctierten Speicher mit dem aufgeloesten filenamen
+
+filename kann Variablen oder auch Unterverzeichnisse enthalten kann
+Speicher _muss_ freigegeben werden
+
+___[ Revision ]______________________________________________________________
+
+ ** 13.11.22 HS Implementiert
+___________________________________________________________________________*/
+
+char *RCFileNameCreate(const char *filename)
+{
+    if (filename)
+    {
+        return strdup(RCunivault(filename));                          			// mit einer Kopie des Speicher zurueckkommen
+    }
+    return strdup(RCunivault("%prgname%.rc"));                    				// default
+}
+
+/**
+ @brief Speicher fÃ¼r einen fread_all breitstellen
+ @return NULL bei Fehlern oder Pointer auf gelesenen fread_all
+ @param filename zu Ã¶ffnendes File
+
+ Das File wird komplett in den Speicher geladen "rb". Derzeit getestet mit
+ einem 19 GB langen Textfile.
+
+
+
+ frall_t       | Bezeichnung
+ --------------|------------
+ rs->line      | Aktuelle Zeile
+ rs->sz        | grÃ¶ÃŸe des Streams
+ rs->flags     | fra_isEOF zeigt ende des Streams
+ rs->file      | das gesammte File, wie mit fopen gelesen
+ rs->pointer   | aktueller pointer fÃ¼r getline ( nicht aktuelle Zeile )
+ rs->nextline  | aktuelle Zeile
+
+___[ Revision ]______________________________________________________________
+
+ ** 27.01.24 HS Create
+ ** 27.01.24 HS fopen_readall gibt *char bei erfolg oder NULL fopen_getline
+___________________________________________________________________________*/
+
+frall_t *fread_all(const char* filename)
+{
+    FILE *F;
+    frall_t *rs;
+    long int rsz;
+    if((F = fopen (filename,"rb"))==NULL) return NULL;                          // File muss vorhanden sein, sonst Fehler
+    rs = malloc0(sizeof (frall_t));                                             // Speicher fÃ¼r Funktion
+    if (!rs) { fclose (F); return NULL; }                                       // Sollte vorhanden sein 2 x int + 2 x *char irgendwas bei unter 32 Byte
+    rs->line = 0;                                                               // Wir haben noch nichts gelesen
+    rs->flags = 0;                                                              // Default
+    if (fseek(F, 0, SEEK_END) < 0) { free (rs); fclose (F); return NULL; }      // Ans Ende Positionieren
+    rs->sz  =ftell(F);                                                          // FilelÃ¤nge speichern
+    rs->file=malloc0(rs->sz+1);                                                 // Das ist mind. 1 Byte, selbst bei FilelÃ¤nge 0
+    if (!rs->file) { free (rs); fclose (F); return NULL; }                      // Auch dieser Speicher muss gehen, hier kann das mal fehlschlagen, weil File zu gross ist
+    fseek(F, 0, SEEK_SET);
+    rsz = fread(rs->file, 1, rs->sz, F);                                        // Alles in einem Rutsch einlesen ... geht das oder kann das mal ein Teilpaket werden ?
+    fclose (F);                                                                 // Dateihandle wieder schliessen
+    rs->nextline=NULL;                                                          // Zur Zeit kein Zeile im Speicher
+    rs->pointer=rs->file;                                                       // nÃ¤chste Zeile=start
+    if (rsz!=rs->sz)                                                            // Das muss immer passen oder nacharbeiten
+    {
+        lprintf("Error: fread_all sz not rsz %lld != %lld", rs->sz, rsz);       // Anzahl der gelesenen muss mit der FilelÃ¤nge Ã¼bereinstimmen ( bis 19GB getestet )
+        fread_all_close(rs);                                                    // beenden
+        return NULL;                                                            // Nix gelesen
+    }
+    if (rs->sz==0) rs->flags=rs->flags|fra_isEOF;
+    return rs;                                                                  // rs und rs->file wurden mit malloc geholt
+}
+
+/**
+ @brief Speicher eine fread_all wieder freigeben
+ @param rs Pointer zu einem fread_all struct
+
+___[ Revision ]______________________________________________________________
+
+ ** 27.01.24 HS Create
+___________________________________________________________________________*/
+
+void fread_all_close(frall_t *rs)
+{
+    if (rs->nextline) free(rs->nextline);
+    if (rs->file) free (rs->file);
+    free (rs);
+}
+
+/**
+ @brief Eine Zeile nach rs->nextline sichern. CR werden Ã¼berlesen
+ @return EXIT_FAILURE / EXIT_SUCCESS
+ @param rs Pointer zu einem fread_all struct
+
+___[ Revision ]______________________________________________________________
+
+ ** 27.01.24 HS Create
+___________________________________________________________________________*/
+
+#define FRA_SIZE 256                                                            /// DefaultgrÃ¶ÃŸe einer Zeile
+int fread_all_getline(frall_t *rs)
+{
+    unsigned char c;                                                            // Zeichenbuffer
+    int lz;                                                                     // aktueller Zeiger in der neuen Zeile
+    int sz=FRA_SIZE;                                                            // GrÃ¶ÃŸe des Buffer
+
+    if (rs->nextline) free(rs->nextline);                                       // Alte Zeile ggf. Freigeben
+    rs->nextline=malloc0(FRA_SIZE+16);                                          // und neuen Speicher reservieren
+    if (rs->flags&fra_isEOF) return EXIT_FAILURE;                               // Wenn Ende bereits markiert, dann ende
+    if (!rs->pointer) return EXIT_FAILURE;                                      // Sicherheitsabfrage, damit kein segfault kommen kann
+
+    for (lz=0;;lz++)                                                            // Neue Zeile starten
+    {
+        if (lz>=sz)                                                             // Buffer VergrÃ¶ÃŸerung nÃ¶tig
+        {
+            rs->nextline=realloc(rs->nextline,sz+FRA_SIZE+16);                  // Speicher erweitern
+            memset(rs->nextline+sz,0,FRA_SIZE);                                 // Speicher mit 0 vollschreiben
+            sz=sz+FRA_SIZE;                                                     // Neue grÃ¶ÃŸe merken
+        }
+fra_no_read_cr:
+        c = (unsigned char) rs->pointer[0];                                     // Zeichen aus dem SpeicherStream
+        rs->pointer++;                                                          // pointer aufaddieren
+        if (c==13) goto fra_no_read_cr; // ignore CR's                          // CR aus Windows wird simple ignoriert
+        if (c==0) rs->flags=rs->flags|fra_isEOF;                                // Ende, Wenn Stream endet ohne LF
+        if (c=='\n')                                                            // wenn LF, dann Zeilenende
+        {
+            if (rs->pointer[0]==0) rs->flags=rs->flags|fra_isEOF;               // Wenn nach den LF StreamEnde, dann EOF setzen
+            c=0;                                                                // EOL ist 0
+        }
+        rs->nextline[lz]=c;                                                     // Zeichen oder Zeilenende merken
+//        if (c>127)
+//            if ((rs->flags&fra_noTranslate) == 0)
+//                fread_all_getline_translate
+        if (c!=0) continue;                                                     // NÃ¤chstes Zeichen wenn nicht Zeilenden
+        rs->line++;                                                             // Zeilencounter erhÃ¶hen
+        return EXIT_SUCCESS;
+    }
+}
+
 ///@}
 
 
@@ -8191,10 +9262,10 @@ char *RCfind(void *RCNodes, char *var)
 // Listenverwaltung einer einfach verketteten Liste
 //_____________________________________________________________________________
 //
-// 11.07.2016 HS ReCreate
+// 11.07.16 HS ReCreate
 //_____________________________________________________________________________
 //
-// Ganze Liste löschen
+// Ganze Liste lÃ¶schen
 //_____________________________________________________________________________
 
 void LIST_Clear(struct LST_NODE *NODE)
@@ -8205,13 +9276,13 @@ void LIST_Clear(struct LST_NODE *NODE)
     {
         nxt = NODE->NEXT;
         if (!nxt) break;                        // Kopf ist jetzt leer; ende
-        NODE->NEXT = nxt->NEXT;                 // nächsten zeiger holen
+        NODE->NEXT = nxt->NEXT;                 // nÃ¤chsten zeiger holen
         if (nxt->TEXT) free (nxt->TEXT);        // aktuellen freigeben
         free (nxt);
     }
 }
 //
-// Neuen Text anhängen
+// Neuen Text anhÃ¤ngen
 //_____________________________________________________________________________
 
 void LIST_Add   (struct LST_NODE *NODE, char *txt)
@@ -8225,10 +9296,10 @@ void LIST_Add   (struct LST_NODE *NODE, char *txt)
         if (!nxt->NEXT) break;
         nxt = nxt->NEXT;                        // durchhangeln
     }
-    newNode = malloc (sizeof(struct LST_NODE)); // Speicher holen für Node
+    newNode = malloc (sizeof(struct LST_NODE)); // Speicher holen fÃ¼r Node
     if (!newNode) return;                       // uups out of mem
 
-    newNode->NEXT = NULL;                       // neuen struct füllen
+    newNode->NEXT = NULL;                       // neuen struct fÃ¼llen
     newNode->TEXT = malloc(strlen(txt)+1);      // Speicher holen Text
     if (!newNode->TEXT)                         // uups out of mem
     {                                           // Sollte besser nicht passieren
@@ -8240,8 +9311,8 @@ void LIST_Add   (struct LST_NODE *NODE, char *txt)
 }
 
 8//
-// ersten Text lesen und löschen
-// Der zurückgegeben String muß mit free() freigegeben werden !!!
+// ersten Text lesen und lÃ¶schen
+// Der zurÃ¼ckgegeben String muÃŸ mit free() freigegeben werden !!!
 // im fehlerfall gibts NULL
 //_____________________________________________________________________________
 
@@ -8251,12 +9322,12 @@ char *LIST_Get(struct LST_NODE *NODE)
     struct LST_NODE *nxt;
 
     if (!NODE->NEXT) return (NULL);             // Im Head sollte ein Node stehen
-    nxt = NODE->NEXT;                           // ansonsten haben wir einen gültigen Record
+    nxt = NODE->NEXT;                           // ansonsten haben wir einen gÃ¼ltigen Record
     NODE->NEXT = nxt->NEXT;                     // Head korrigieren
 
-    rslt = nxt->TEXT;                           // Rückgabewert merken
+    rslt = nxt->TEXT;                           // RÃ¼ckgabewert merken
     free (nxt);                                 // Node freigeben
-    return rslt;                                // Text zurückgeben (free() nicht vergessen !!)
+    return rslt;                                // Text zurÃ¼ckgeben (free() nicht vergessen !!)
 }
 */
 
@@ -8269,23 +9340,23 @@ char *LIST_Get(struct LST_NODE *NODE)
 
 ___[ Revision ]______________________________________________________________
 
- ** 11.07.2016 HS ReCreate
- ** 15.11.2016 HS Create Void Pointer
- ** 16.11.2016 HS Alles auf Void Pointer umgestellt und universeller gemacht
- ** 24.11.2016 HS neu Node_DelFirstNode und Node_Count
- ** 11.10.2018 HS neu Node_DelOne
+ ** 11.07.16 HS ReCreate
+ ** 15.11.16 HS Create Void Pointer
+ ** 16.11.16 HS Alles auf Void Pointer umgestellt und universeller gemacht
+ ** 24.11.16 HS neu Node_DelFirstNode und Node_Count
+ ** 11.10.18 HS neu Node_DelOne
 ___________________________________________________________________________*/
 
 /**
- @brief Neuen Text anhängen
+ @brief Neuen Text anhÃ¤ngen
  @return Neuen ListenStartNode
  @param StartNode   ListenStartNode
- @param Data        Buffer der die Daten enthält
- @param direction   Legt fest ob die Daten vorgehängt werden (false) - schneller oder ans Ende der Liste angehängt werden
+ @param Data        Buffer der die Daten enthÃ¤lt
+ @param direction   Legt fest ob die Daten vorgehÃ¤ngt werden (false) - schneller oder ans Ende der Liste angehÃ¤ngt werden
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 void *Node_Add (void* StartNode, void *Data, int direction)
@@ -8298,7 +9369,7 @@ void *Node_Add (void* StartNode, void *Data, int direction)
     my_IDX = malloc (sizeof (struct n_Node));
     my_IDX->n_DATA=Data;
 
-    if (direction==false)
+    if (direction==false) // TODO (HS): Node_Add_Insert (false und true loesung?)
     {
         my_IDX->n_NEXT = StartNode;
         return my_IDX;
@@ -8325,13 +9396,13 @@ void *Node_Add (void* StartNode, void *Data, int direction)
 }
 
 /**
- @brief Ersten Datensatz löschen ohne Daten !!!
+ @brief Ersten Datensatz lÃ¶schen ohne Daten !!!
  @return Neuen ListenStartNode
  @param StartNode   ListenStartNode
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 void *Node_DelFirstNode(void *StartNode)
@@ -8348,14 +9419,14 @@ void *Node_DelFirstNode(void *StartNode)
 }
 
 /**
- @brief Einen bestimmten Datenknoten löschen ohne Daten !!!
+ @brief Einen bestimmten Datenknoten lÃ¶schen ohne Daten !!!
  @return Neuen ListenStartNode
  @param StartNode   ListenStartNode
- @param NodeToDel   Datenknoten der gelöscht werden soll
+ @param NodeToDel   Datenknoten der gelÃ¶scht werden soll
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 void *Node_DelOne(void *StartNode, void *NodeToDel)
@@ -8384,20 +9455,20 @@ void *Node_DelOne(void *StartNode, void *NodeToDel)
 }
 
 /**
- @brief Einen Node nach einem anderen einfügen
+ @brief Einen Node nach einem anderen einfÃ¼gen
  @return Neuen ListenStartNode
  @param StartNode   ListenStartNode
+ @param After       Hinter welchen Node soll eingefÃ¼gt werden
+ @param Data        Daten
 
- xxxGanze Liste löschen incl. Datenxxx
-
-___[ Revision ]______________________________________________________________
+ ___[ Revision ]______________________________________________________________
 
  ** 31.10.22 HS
 ___________________________________________________________________________*/
 
 //node_insert_after (head,before?after,node)
 //head = node_insert_after (head, node);
-void *Node_Add_After(void *StartNode, void *After, void*Data)
+void *Node_Add_After(void *StartNode, void *After, void *Data)
 {
     struct n_Node *my_IDX;
     struct n_Node *after_IDX;
@@ -8419,15 +9490,15 @@ void *Node_Add_After(void *StartNode, void *After, void*Data)
 }
 
 /**
- @brief Ganze Liste löschen
+ @brief Ganze Liste lÃ¶schen
  @return Neuen ListenStartNode, der ist NULL
  @param StartNode   ListenStartNode
 
- Ganze Liste löschen incl. Daten
+ Ganze Liste lÃ¶schen incl. Daten
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 void *Node_DelAll(void *StartNode)
@@ -8448,13 +9519,13 @@ void *Node_DelAll(void *StartNode)
 }
 
 /**
- @brief Nächsten Pointer holen
- @return Nächsten ListenNode; kann NULL sein !!
+ @brief NÃ¤chsten Pointer holen
+ @return NÃ¤chsten ListenNode; kann NULL sein !!
  @param StartNode   ListenNode
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 void *Node_GetNext(void *StartNode)
@@ -8465,13 +9536,13 @@ void *Node_GetNext(void *StartNode)
 }
 
 /**
- @brief Datensatz zurückgegeben
+ @brief Datensatz zurÃ¼ckgegeben
  @return Daten vom ListenNode
  @param StartNode   ListenNode
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 void *Node_GetData(void *StartNode)
@@ -8483,13 +9554,37 @@ void *Node_GetData(void *StartNode)
 }
 
 /**
- @brief Anzahl Datensaetze zurückgegeben
+ @brief Daten neu setzen; wenn Daten vorhanden, dann verwerfen
+ @param Node   zu bearbeitender Knoten
+ @param Data   neu zu setzende Daten ) alte Daten werden freigegeben
+ @param freeOldData Default war die alten Daten freizugeben
+
+___[ Revision ]______________________________________________________________
+
+ ** 30.11.22 HS
+ ** 18.03.24 HS new: freeOldData was default im Prinzip 1 ist
+___________________________________________________________________________*/
+
+void Node_SetData(void *Node, void *Data, int freeOldData)
+{
+    struct n_Node *my_IDX;
+    if (Node==NULL) return;
+    my_IDX = Node;
+    if (freeOldData)
+    {
+        if (my_IDX->n_DATA) free(my_IDX->n_DATA);
+    }
+    my_IDX->n_DATA = Data;
+}
+
+/**
+ @brief Anzahl Datensaetze zurÃ¼ckgegeben
  @return Anzahl der Knoten
  @param StartNode   ListenStartNode
 
 ___[ Revision ]______________________________________________________________
 
- ** 16.11.2016 HS
+ ** 16.11.16 HS
 ___________________________________________________________________________*/
 
 int Node_Count(void *StartNode)
@@ -8522,7 +9617,7 @@ int Node_Count(void *StartNode)
  Es wird vom Anfang der Liste zum Ende immer eine Exhange-Variable zum
  Tauschen genommen, dann die kleinste Variable genommen und mittels
  "Tausch" an den Anfang gestellt. Dann wird die Liste am Anfang um eines
- "gekürzt" und dann der nächste "Kleinere" gesucht, bis nichts mehr da ist.
+ "gekÃ¼rzt" und dann der nÃ¤chste "Kleinere" gesucht, bis nichts mehr da ist.
 
  Um die Liste zu sortieren muss es eine Vergleichsfunktion geben, die
  ist fogendermassen definiert.
@@ -8531,13 +9626,12 @@ int Node_Count(void *StartNode)
     typedef int (*Nodecompfn)(const void*, const void*);
  @endcode
 
- Es werden die beiden Daten der Knoten übergeben. Im einfachsten Fall <em>strcmp</em>
+ Es werden die beiden Daten der Knoten Ã¼bergeben. Im einfachsten Fall <em>strcmp</em>
 
 ___[ Revision ]______________________________________________________________
 
  ** 05.07.18 HS Create
 ___________________________________________________________________________*/
-
 
 void *Node_Sort(void *Stck, Nodecompfn Compare)
 {
@@ -8551,18 +9645,18 @@ void *Node_Sort(void *Stck, Nodecompfn Compare)
     struct n_Node *chain;                   // Zeiger auf den "aktuellen" Datensatz
 
     szIdx = Node_Count(Stck);               // Anzahl Nodes
-    if (szIdx<2) return (Stck);             // muß 2 oder größer sein
+    if (szIdx<2) return (Stck);             // muÃŸ 2 oder grÃ¶ÃŸer sein
 
     exchg = Stck;                           // Beim ersten Mal auch den Anfnag der Liste
 #ifdef HS_DEBUG
-    NodesSortChanges = 0;                   // Wird nur im Debug definiert undn gezählt
+    NodesSortChanges = 0;                   // Wird nur im Debug definiert undn gezÃ¤hlt
 #endif // HS_DEBUG
     for (;;)
     {
         smallest = exchg;                   // Auf den ersten
         chain    = exchg;                   // Auch den auf Anfang
         for (;;)
-        {                                   // Compare wird übergeben, kann also auch negativ sortiert sein
+        {                                   // Compare wird Ã¼bergeben, kann also auch negativ sortiert sein
             cmprslt = Compare(smallest->n_DATA, chain->n_DATA);
             if (cmprslt>0) smallest = chain;// ggfls. ist das das kleinste SET
             if (chain->n_NEXT==NULL) break; // und das solange bis wir am Ende sind
@@ -8588,6 +9682,7 @@ void *Node_Sort(void *Stck, Nodecompfn Compare)
 #ifdef  __cplusplus
 }
 #endif
+//echo | gcc -dM -E -| sort | grep 64
 //int a __attribute__ ((unused)) ;
 //printf("The file %s a symbolic link\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
 //void *data   -> Node_Delete ( *First, *Node ) null if not deleted !!!
@@ -8602,6 +9697,3 @@ void *Node_Sort(void *Stck, Nodecompfn Compare)
 #endif // __GNUC__ >= 7
 and then I use FALL_THROUGH; in code
 */
-
-
-

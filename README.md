@@ -18,7 +18,7 @@ Jedesmal wenn eine Datei geaendert wurde, dann wird die eingestellte Funktion, b
 title: hswatchd
 section: 8
 header: hswatchd - copyright Hesti
-footer: hswatchd 2.13.1 Beta
+footer: hswatchd 2.15.0 Finale
 date: 24.04.2024
 ---
 

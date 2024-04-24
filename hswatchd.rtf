@@ -297,9 +297,12 @@ systemctl start hswatchd.service
 systemctl status hswatchd</code></pre>
 <h1 id="hswatchd.rc">hswatchd.rc</h1>
 <div class="line-block"><strong>Parameter:</strong></div>
-<p>: Zeilen, die mit ‘#’ beginnen, sind Kommentare und werden
-entsprechend ignoriert. # Server Einstellungen</p>
 <dl>
+<dt># Server Einstellungen</dt>
+<dd>
+Zeilen, die mit ‘#’ beginnen, sind Kommentare und werden entsprechend
+ignoriert. Uebrigens auch Leerzeilen
+</dd>
 <dt>port = 8080</dt>
 <dd>
 Portangabe. hswatchd kann über http abgefragt werden
@@ -342,9 +345,9 @@ er in der Liste zu stehen hat. Und es wird eine neue Wartezeit bestimmt.
 Diese Informationen koennen auch über http abgerufen werden !!</p>
 <div class="line-block">Konfigurations-Datei erstellen<br />
 :/etc/hswatchd.rc</div>
-<div class="line-block">Beispiel:</div>
+<h3 id="beispiel">Beispiel:</h3>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode hswatchd.rc"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a># systemweite hswatchd - Configurationsdatei</span>
+class="sourceCode hswatchd.rc"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a># systemweite hswatchd - Konfigurationsdatei</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>port        = 8080</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>time        = 1</span>
@@ -357,19 +360,32 @@ class="sourceCode hswatchd.rc"><code class="sourceCode xml"><span id="cb3-1"><a 
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts /etc/hosts</span></code></pre></div>
 <h1 id="http-service">HTTP-Service</h1>
-<p>: hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen
+<p>hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen
 sich ein paar Informationen abrufen. Der Port ist in der
 <em>hswatchd.rc</em> zu definiert.</p>
-<ul>
-<li><p>server:8080/reload.cgi wird hswatchd dazu veranlassen die
-hswatchd.rc neu zu laden.</p></li>
-<li><p>server:8080//date.cgi gibt das aktuelle datum mit der Zeit aus.
-Das war nur zum Testen drin, aber es stoert ja auch niemanden.</p></li>
-<li><pre><code>   }else if (!strncasecmp(rs-&gt;nextline,&quot;/drive.cgi?&quot;,11))</code></pre></li>
-<li><pre><code>   }else if (!strcasecmp(rs-&gt;nextline,&quot;/nextwatch.html&quot;))</code></pre></li>
-<li><pre><code>   }else if (!strcasecmp(rs-&gt;nextline,&quot;&quot;))</code></pre></li>
-<li><pre><code>   }else if (!strcasecmp(rs-&gt;nextline,&quot;&quot;))</code></pre></li>
-</ul>
+<dl>
+<dt><em>server:8080/reload.cgi</em></dt>
+<dd>
+wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
+</dd>
+<dt><em>server:8080//date.cgi</em></dt>
+<dd>
+gibt das aktuelle datum mit der Zeit aus. Das war nur zum Testen drin,
+aber es stoert ja auch niemanden.
+</dd>
+<dt><em>server:8080//nextwatch.html</em></dt>
+<dd>
+Eine ausfuerliche Seite, welche Dateien als naechstes geprueft werden
+und eine kurze Uebersicht welche Parameter mit wirken.
+</dd>
+<dt><em>server:8080//drive.cgi?</em></dt>
+<dd>
+Gefolgt von dem Mount-Point gibt ein paar Informationen ueber gemountete
+Laufwerke auf dem Server preis. Diese koennen so gezielt gesammelt
+werden. Ein Aufruf wie <em>server:8080//drive.cgi?&amp;boot</em> wird
+die RootPartition und die boot-Partition ausgeben.
+</dd>
+</dl>
 <p>#EOF</p>
 <h1 id="authors">AUTHORS</h1>
 <p>Heiko Stoevesandt - alias Hesti - <a

@@ -110,10 +110,11 @@ systemctl status hswatchd
 .SH hswatchd.rc
 .PP
 \f[B]Parameter:\f[R]
-.PP
-: Zeilen, die mit `#' beginnen, sind Kommentare und werden entsprechend
-ignoriert.
+.TP
 # Server Einstellungen
+Zeilen, die mit `#' beginnen, sind Kommentare und werden entsprechend
+ignoriert.
+Uebrigens auch Leerzeilen
 .TP
 port = 8080
 Portangabe.
@@ -158,12 +159,11 @@ Konfigurations-Datei erstellen
 .P
 .PD
 :/etc/hswatchd.rc
-.PP
-Beispiel:
+.SS Beispiel:
 .IP
 .nf
 \f[C]
-# systemweite hswatchd - Configurationsdatei
+# systemweite hswatchd - Konfigurationsdatei
 
 port        = 8080
 time        = 1
@@ -179,47 +179,27 @@ file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts 
 .fi
 .SH HTTP-Service
 .PP
-: hswatchd verf\[:u]gt eine rudiment\[:a]re html-Schnittstelle.
+hswatchd verf\[:u]gt eine rudiment\[:a]re html-Schnittstelle.
 Hier lassen sich ein paar Informationen abrufen.
 Der Port ist in der \f[I]hswatchd.rc\f[R] zu definiert.
-.IP \[bu] 2
-server:8080/reload.cgi wird hswatchd dazu veranlassen die hswatchd.rc
-neu zu laden.
-.IP \[bu] 2
-server:8080//date.cgi gibt das aktuelle datum mit der Zeit aus.
+.TP
+\f[I]server:8080/reload.cgi\f[R]
+wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
+.TP
+\f[I]server:8080//date.cgi\f[R]
+gibt das aktuelle datum mit der Zeit aus.
 Das war nur zum Testen drin, aber es stoert ja auch niemanden.
-\[bu] .RS 2
-.IP
-.nf
-\f[C]
-   }else if (!strncasecmp(rs->nextline,\[dq]/drive.cgi?\[dq],11))
-\f[R]
-.fi
-.RE
-\[bu] .RS 2
-.IP
-.nf
-\f[C]
-   }else if (!strcasecmp(rs->nextline,\[dq]/nextwatch.html\[dq]))
-\f[R]
-.fi
-.RE
-\[bu] .RS 2
-.IP
-.nf
-\f[C]
-   }else if (!strcasecmp(rs->nextline,\[dq]\[dq]))
-\f[R]
-.fi
-.RE
-\[bu] .RS 2
-.IP
-.nf
-\f[C]
-   }else if (!strcasecmp(rs->nextline,\[dq]\[dq]))
-\f[R]
-.fi
-.RE
+.TP
+\f[I]server:8080//nextwatch.html\f[R]
+Eine ausfuerliche Seite, welche Dateien als naechstes geprueft werden
+und eine kurze Uebersicht welche Parameter mit wirken.
+.TP
+\f[I]server:8080//drive.cgi?\f[R]
+Gefolgt von dem Mount-Point gibt ein paar Informationen ueber gemountete
+Laufwerke auf dem Server preis.
+Diese koennen so gezielt gesammelt werden.
+Ein Aufruf wie \f[I]server:8080//drive.cgi?&boot\f[R] wird die
+RootPartition und die boot-Partition ausgeben.
 .PP
 #EOF
 .SH AUTHORS

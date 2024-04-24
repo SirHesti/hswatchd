@@ -106,8 +106,8 @@ systemctl status hswatchd
 
 | **Parameter:**
 
-: Zeilen, die mit '#' beginnen, sind Kommentare und werden entsprechend ignoriert.
-# Server Einstellungen
+\# Server Einstellungen
+: Zeilen, die mit '#' beginnen, sind Kommentare und werden entsprechend ignoriert. Uebrigens auch Leerzeilen
 
 port        = 8080
 : Portangabe. hswatchd kann über http abgefragt werden
@@ -139,10 +139,10 @@ bestimmt. Diese Informationen koennen auch über http abgerufen werden !!
 | Konfigurations-Datei erstellen
 | :/etc/hswatchd.rc
 
-| Beispiel:
+### Beispiel:
 
 ``` hswatchd.rc
-# systemweite hswatchd - Configurationsdatei
+# systemweite hswatchd - Konfigurationsdatei
 
 port        = 8080
 time        = 1
@@ -157,22 +157,21 @@ file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts 
 ```
 
 # HTTP-Service
-: hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen sich ein paar Informationen abrufen.
+hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen sich ein paar Informationen abrufen.
 Der Port ist in der _hswatchd.rc_ zu definiert. 
 
-* server:8080/reload.cgi
-wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
+_server:8080/reload.cgi_
+: wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
 
-* server:8080//date.cgi
-gibt das aktuelle datum mit der Zeit aus. Das war nur zum Testen drin, aber es stoert ja auch niemanden.
+_server:8080//date.cgi_
+: gibt das aktuelle datum mit der Zeit aus. Das war nur zum Testen drin, aber es stoert ja auch niemanden.
 
+_server:8080//nextwatch.html_
+: Eine ausfuerliche Seite, welche Dateien als naechstes geprueft werden und eine kurze Uebersicht welche Parameter mit wirken.
 
-*        }else if (!strncasecmp(rs->nextline,"/drive.cgi?",11))
-*        }else if (!strcasecmp(rs->nextline,"/nextwatch.html"))
-*        }else if (!strcasecmp(rs->nextline,""))
-*        }else if (!strcasecmp(rs->nextline,""))
-
-
+_server:8080//drive.cgi?_
+: Gefolgt von dem Mount-Point gibt ein paar Informationen ueber gemountete Laufwerke auf dem Server preis. Diese koennen so
+gezielt gesammelt werden. Ein Aufruf wie _server:8080//drive.cgi?&boot_ wird die RootPartition und die boot-Partition ausgeben.
 
 #EOF
 

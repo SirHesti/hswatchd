@@ -154,13 +154,13 @@ Der Port ist in der _hswatchd.rc_ zu definiert.
 _server:8080/reload.cgi_
 : wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
 
-_server:8080//date.cgi_
+_server:8080/date.cgi_
 : gibt das aktuelle datum mit der Zeit aus. Das war nur zum Testen drin, aber es stoert ja auch niemanden.
 
-_server:8080//nextwatch.html_
+_server:8080/nextwatch.html_
 : Eine ausfuerliche Seite, welche Dateien als naechstes geprueft werden und eine kurze Uebersicht welche Parameter mit wirken.
 
-_server:8080//drive.cgi?_
+_server:8080/drive.cgi?_
 : Gefolgt von dem Mount-Point gibt ein paar Informationen ueber gemountete Laufwerke auf dem Server preis. Diese koennen so
 gezielt gesammelt werden. Ein Aufruf wie _server:8080//drive.cgi?&boot_ wird die RootPartition und die boot-Partition ausgeben.
 

@@ -298,19 +298,41 @@ systemctl status hswatchd</code></pre>
 <h1 id="hswatchd.rc">hswatchd.rc</h1>
 <div class="line-block"><strong>Parameter:</strong></div>
 <p>: Zeilen, die mit ‘#’ beginnen, sind Kommentare und werden
-entsprechend ignoriert. # Server Einstellungen port = 8080 : Portangabe.
-hswatchd kann über http abgefragt werden : siehe Anschnitt: **HTTP* time
-= ### : Defaultangabe zum verweilen zwischen einer Pruefeinheit. Ist
-nicht so wichtig, da die Zeit automatisch errechnet wird. cache =
-<em>true</em> oder <em>false</em> : Die Benutzung des Caches
-erlauben/verbieten cachepath = <em>Pfad_zur_Cachedatei</em> : Der Pfad
-für eine chache-Datei. Es wird in dieser Datei die sekundengenaue Zeit
-der letzten Pruefung jedes File gespeichert. Gefolgt von dem Dateinamen.
-infoupdate = 3600 : In diesem Fall wird alle 3600 Sekunden ein Infofile
-erstellt. infofile = <em>File_fuer_InfoFile</em> : Der vollständige Pfad
-zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown
-formatierbar. Diese Angabe kann auch leer sein (oder besser
-auskommentiert) werden.</p>
+entsprechend ignoriert. # Server Einstellungen</p>
+<dl>
+<dt>port = 8080</dt>
+<dd>
+Portangabe. hswatchd kann über http abgefragt werden
+</dd>
+<dd>
+siehe Anschnitt: **HTTP*
+</dd>
+<dt>time = ###</dt>
+<dd>
+Defaultangabe zum verweilen zwischen einer Pruefeinheit. Ist nicht so
+wichtig, da die Zeit automatisch errechnet wird.
+</dd>
+<dt>cache = <em>true</em> oder <em>false</em></dt>
+<dd>
+Die Benutzung des Caches erlauben/verbieten
+</dd>
+<dt>cachepath = <em>Pfad_zur_Cachedatei</em></dt>
+<dd>
+Der Pfad für eine chache-Datei. Es wird in dieser Datei die
+sekundengenaue Zeit der letzten Pruefung jedes File gespeichert. Gefolgt
+von dem Dateinamen.
+</dd>
+<dt>infoupdate = 3600</dt>
+<dd>
+In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.
+</dd>
+<dt>infofile = <em>File_fuer_InfoFile</em></dt>
+<dd>
+Der vollständige Pfad zur Datei. Es wird eine reine Textdatei
+geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein
+(oder besser auskommentiert) werden.
+</dd>
+</dl>
 <p>Jeder Eintrag mit “file ….” in der hswatchd.rc wird in eine einfach
 verkettete Liste sortiert, nach naechster Bearbeitungszeit, aufgenommen.
 Dadurch wird erreicht das der naechste zu verarbeitende Datensatz ganz

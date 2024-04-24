@@ -99,17 +99,23 @@ systemctl status hswatchd
 
 : Zeilen, die mit '#' beginnen, sind Kommentare und werden entsprechend ignoriert.
 ### Server Einstellungen
+
 port        = 8080
 : Portangabe. hswatchd kann über http abgefragt werden
 : siehe Anschnitt: **HTTP*
+
 time        = \#\#\#
 : Defaultangabe zum verweilen zwischen einer Pruefeinheit. Ist nicht so wichtig, da die Zeit automatisch errechnet wird.
+
 cache       = _true_ oder _false_
 : Die Benutzung des Caches erlauben/verbieten
+
 cachepath   = _Pfad_zur_Cachedatei_
 : Der Pfad für eine chache-Datei. Es wird in dieser Datei die sekundengenaue Zeit der letzten Pruefung jedes File gespeichert. Gefolgt von dem Dateinamen.
+
 infoupdate  = 3600
 : In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.
+
 infofile    = _File_fuer_InfoFile_
 : Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser
 auskommentiert) werden.

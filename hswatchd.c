@@ -65,6 +65,9 @@ Konfiguration:
 : siehe Anschnitt: **hswatchd.rc**
 
 # SYSTEMD
+Sicher gibt es viele Wege um einen Daemon zu laufen zu bekommen. Derzeit wird aber SYSTEMD ueberall verwendet.
+
+Achtung. Zum grossen Teil werden ROOT-Rechte noetig sein.
 
 | Datei erstellen
 | :/etc/systemd/system/hswatchd.service
@@ -102,24 +105,30 @@ systemctl status hswatchd
 # hswatchd.rc
 
 | **Parameter:**
-set time = \#\#\#
+
+: Zeilen, die mit '#' beginnen, sind Kommentare und werden entsprechend ignoriert.
+# Server Einstellungen
+port        = 8080
+: Portangabe. hswatchd kann über http abgefragt werden
+: siehe Anschnitt: **HTTP*
+time        = \#\#\#
 : Defaultangabe zum verweilen zwischen einer Pruefeinheit. Ist nicht so wichtig, da die Zeit automatisch errechnet wird.
-
-set cache = _true_ oder _false_
+cache       = _true_ oder _false_
 : Die Benutzung des Caches erlauben/verbieten
-
-set cachepath = _Pfad_zur_Cachedatei_
-: Der Pfad für "hswatchd.cache". Es wird in dieser Datei die sekundengenaue Zeit der letzten Pruefung jedes file gespeichert. *Nur* der Pfad, die Datei heisst .hswatchd.cache.
-
-set infofile = _File_fuer_InfoFile_
-: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar
+cachepath   = _Pfad_zur_Cachedatei_
+: Der Pfad für eine chache-Datei. Es wird in dieser Datei die sekundengenaue Zeit der letzten Pruefung jedes File gespeichert. Gefolgt von dem Dateinamen.
+infoupdate  = 3600
+: In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.
+infofile    = _File_fuer_InfoFile_
+: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser
+auskommentiert) werden.
 
 Jeder Eintrag mit "file ...." in der hswatchd.rc wird in eine einfach verkettete Liste
 sortiert, nach naechster Bearbeitungszeit, aufgenommen. Dadurch wird erreicht das der
 naechste zu verarbeitende Datensatz ganz oben steht. Die Diff-Zeit wird auch genommen,
 um die naechste Wartezeit zu setzen. Ist so ein Datensatz abgearbeitet, wird neu
 entschieden, wo er in der Liste zu stehen hat. Und es wird eine neue Wartezeit
-bestimmt.
+bestimmt. Diese Informationen koennen auch über http abgerufen werden !!
 
 | Konfigurations-Datei erstellen
 | :/etc/hswatchd.rc
@@ -129,14 +138,36 @@ bestimmt.
 ``` hswatchd.rc
 # systemweite hswatchd - Configurationsdatei
 
-set time = 5
-set cache = true
-set cachepath = /var/opt
-set infofile = /pub/www/data/watch.txt
+port        = 8080
+time        = 1
+cache       = true
+cachepath   = /var/hswatchd/files.cache
+infoupdate  = 3600
+infofile    = /srv/pub/www/data/watch-debug-hesti.txt
 
+# File - Section
 file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff
 file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts /etc/hosts
 ```
+
+# HTTP-Service
+: hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen sich ein paar Informationen abrufen.
+Der Port ist in der _hswatchd.rc_ zu definiert. 
+
+* server:8080/reload.cgi
+wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
+
+* server:8080//date.cgi
+gibt das aktuelle datum mit der Zeit aus. Das war nur zum Testen drin, aber es stoert ja auch niemanden.
+
+
+*        }else if (!strncasecmp(rs->nextline,"/drive.cgi?",11))
+*        }else if (!strcasecmp(rs->nextline,"/nextwatch.html"))
+*        }else if (!strcasecmp(rs->nextline,""))
+*        }else if (!strcasecmp(rs->nextline,""))
+
+
+
 #EOF
 
 # AUTHORS
@@ -163,13 +194,31 @@ infofile    = /srv/pub/www/data/watch-debug-hesti.txt
 # ----------------------------------------------------------------------------------------------------------------------------------
 #
 file = /srv/pub/share/network/hswatchd-hesti.rc                 10 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
-file = /var/habsnicht.cfg                   					12 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
-file = /srv/pub/share/sys-crons/syssh.export					25 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
+file = /var/habsnicht.cfg                                       12 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
+file = /srv/pub/share/sys-crons/syssh.export                    25 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 file = /srv/pub/share/network/hosts                             15 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 file = /srv/pub/share/network/hs-logs.export                    35 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 #file = no
 # ----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-[ ende ----------- ]
 
  kill -s USR1 $(pidof hswatchd)
@@ -212,15 +261,15 @@ enum mainLoop {
     LOOP_NORMAL,                        // Normaler Durchlauf mit Connect/Writejobs/ChangeDetect
     LOOP_STOP,                          // Exit mainloop
     LOOP_RELOAD,                        // Reload Config
-	LOOP_INFOMODE                       // Write Infofile to Text
+    LOOP_INFOMODE                       // Write Infofile to Text
 };
 
 typedef struct t_file {
-    char *file;					        // file das zu prüfen ist
-    char *execute;				        // Kommando, das ausgeführt werden soll
-    time_t last_modif;			        // letzte modifizierung des Files
-    time_t last_check;			        // wann zuletzt geprüft
-    int interval;				        // wie oft zu prüfen
+    char *file;                         // file das zu prüfen ist
+    char *execute;                      // Kommando, das ausgeführt werden soll
+    time_t last_modif;                  // letzte modifizierung des Files
+    time_t last_check;                  // wann zuletzt geprüft
+    int interval;                       // wie oft zu prüfen
 } t_file;
 
 void    *LST = NULL;                    // Liste von File mit t_file beschrieben
@@ -299,7 +348,7 @@ void  *hsPthreadDone(int p);
 signed int main(int argc, char *argv[])
 {
     int rc;
-	if (InitTools(argc , argv, "%d%v%t%m", I_MAJOR, I_MINOR, I_BUILD, I_BETA, LOG_LOGFILE | LOG_SYSLLOG)) return -1;
+    if (InitTools(argc , argv, "%d%v%t%m", I_MAJOR, I_MINOR, I_BUILD, I_BETA, LOG_LOGFILE | LOG_SYSLLOG)) return -1;
     lprintf("%s",m_PRG_INFO);
 #ifdef HS_DEBUG
     LogType = LogType | LOG_STDERR;
@@ -346,12 +395,12 @@ int runMainLoop(void)
             break;
         }
         if (loopState == LOOP_INFOMODE)
-		{
-			//lprintf ("WriteInfo()");
-			infoupdate = now;
-			hsGetFreePthread(WriteInfo, NULL);
-			loopState = LOOP_NORMAL;
-		}
+        {
+            //lprintf ("WriteInfo()");
+            infoupdate = now;
+            hsGetFreePthread(WriteInfo, NULL);
+            loopState = LOOP_NORMAL;
+        }
         if (loopState == LOOP_RELOAD )
         {
 #ifdef HS_DEBUG
@@ -413,26 +462,26 @@ int runMainLoop(void)
 // kill -s KILL received
 void m_sig(int sig)
 {
-	switch (sig)
-	{
+    switch (sig)
+    {
 #ifdef OS_LINUX
-		case SIGHUP:	// kill -s KILL received
-    	case SIGKILL:
-    	case SIGINT:
-    	case SIGQUIT:
-			loopState = LOOP_STOP;
-			break;
-    	case SIGUSR1:	// kill -s USR1 received
-			loopState = LOOP_RELOAD;
-			break;
-    	case SIGUSR2:	// kill -s USR2 received
-			loopState = LOOP_INFOMODE;
-			break;
+        case SIGHUP:    // kill -s KILL received
+        case SIGKILL:
+        case SIGINT:
+        case SIGQUIT:
+            loopState = LOOP_STOP;
+            break;
+        case SIGUSR1:   // kill -s USR1 received
+            loopState = LOOP_RELOAD;
+            break;
+        case SIGUSR2:   // kill -s USR2 received
+            loopState = LOOP_INFOMODE;
+            break;
 #endif // OS_LINUX
-		default:
-		    lprintf("rvd: %i", sig);
-			break;
-	}
+        default:
+            lprintf("rvd: %i", sig);
+            break;
+    }
 }
 
 //delete the complete Config
@@ -502,7 +551,7 @@ int cfg_filecmd(char *Line)
     }
     newNode = malloc (sizeof (struct n_Node));
     newNode->n_DATA=DTA;
-	return AddIDXByDate(newNode);
+    return AddIDXByDate(newNode);
     //LST = Node_Add(LST, DTA, false);
     //return EXIT_SUCCESS;
 }
@@ -799,21 +848,21 @@ int open_connection(void)
             return 102;
         }
         break;
-	}
+    }
 
-	list = listen(sock, MAX_BACKLOG); // MAX_BACKLOG = maximum length to which the queue
+    list = listen(sock, MAX_BACKLOG); // MAX_BACKLOG = maximum length to which the queue
 #ifdef connHS_DEBUG
     lprintf ("open_connection -> listen (%i) ", list);
 #endif // HS_DEBUG
-	if (list < 0)
-	{
-		lprintf ("Error: listen - %s", strerror(errno));
+    if (list < 0)
+    {
+        lprintf ("Error: listen - %s", strerror(errno));
         return 103;
-	}
+    }
 #ifdef connHS_DEBUG
     lprintf ("open_connection -> FD_SET_DUO");
 #endif // HS_DEBUG
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 void close_connection(void)
@@ -946,12 +995,12 @@ void* WriteInfo(void* data)
     void    *LNXT;
     t_file  *DTA;
     FILE *cf;
-	int i;
-	int sz_file;
-	int len_file;
+    int i;
+    int sz_file;
+    int len_file;
 
-	char da_modif[32];
-	char da_check[32];
+    char da_modif[32];
+    char da_check[32];
 
     int p;
     pthread_t pthread_id;
@@ -977,32 +1026,32 @@ void* WriteInfo(void* data)
         return hsPthreadDone(p);
     }
 
-	sz_file = 26;
-	for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
+    sz_file = 26;
+    for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
     {
-		if (!LNXT) break;
-		DTA = Node_GetData(LNXT);
-		len_file = strlen(DTA->file);
-		if (len_file>=sz_file) sz_file=len_file+1;
-	}
+        if (!LNXT) break;
+        DTA = Node_GetData(LNXT);
+        len_file = strlen(DTA->file);
+        if (len_file>=sz_file) sz_file=len_file+1;
+    }
 
-	fprintf (cf, "s=%ld tipwaittime=%ld retry98=%i\n", cfgTime, tipwaittime, cfgRetry98);
-	fprintf (cf, "LastCheck: %s\n", strtime(now,2));
-	fprintf (cf, "%-*s | sec | Date:Modif          | Date:checked        | next | Execute\n", sz_file, "File");
-	for (i=0;i<sz_file;i++)
-	    fprintf (cf, "-");
-	fprintf (cf, "-|-----|---------------------|---------------------|------|--------\n");
-	for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
+    fprintf (cf, "s=%ld tipwaittime=%ld retry98=%i\n", cfgTime, tipwaittime, cfgRetry98);
+    fprintf (cf, "LastCheck: %s\n", strtime(now,2));
+    fprintf (cf, "%-*s | sec | Date:Modif          | Date:checked        | next | Execute\n", sz_file, "File");
+    for (i=0;i<sz_file;i++)
+        fprintf (cf, "-");
+    fprintf (cf, "-|-----|---------------------|---------------------|------|--------\n");
+    for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
     {
         if (!LNXT) break;
         DTA = Node_GetData(LNXT);
         //fprintf (cf, TIME_STR_LD ",%s\n",DTA->last_modif, DTA->file);
-		strcpy (da_modif, strtime(DTA->last_modif,2));
-		strcpy (da_check, strtime(DTA->last_check,2));
-		fprintf (cf, "%-*s |%4i | %s | %s |%5i | %s\n", sz_file, DTA->file, DTA->interval, da_modif, da_check, (int)(DTA->last_check+((time_t)DTA->interval)-now),  DTA->execute);
+        strcpy (da_modif, strtime(DTA->last_modif,2));
+        strcpy (da_check, strtime(DTA->last_check,2));
+        fprintf (cf, "%-*s |%4i | %s | %s |%5i | %s\n", sz_file, DTA->file, DTA->interval, da_modif, da_check, (int)(DTA->last_check+((time_t)DTA->interval)-now),  DTA->execute);
     }
     fclose (cf);
-	lprintf ("InfoFile ready: %s", cfgInfoFile);
+    lprintf ("InfoFile ready: %s", cfgInfoFile);
     return hsPthreadDone(p);
 }
 
@@ -1040,7 +1089,7 @@ int mainProcess(void)
         }
 
         //tipwaittime = cfgTime;
-        DTA->last_check = now;			    								        // letzte pruefzeit(check) uebertragen
+        DTA->last_check = now;                                                      // letzte pruefzeit(check) uebertragen
     //    DTA->last_modif=0;
         if (stat (DTA->file ,&st )==0)                                              // Wenn File gültig, und das File nicht gelöscht wurde
         {
@@ -1053,20 +1102,20 @@ int mainProcess(void)
                 bb=st.st_mtime;
 //            char *cc=strprintf(strtime(()))
 #endif
-                if (DTA->last_modif != st.st_mtime)         							// gemerkte mtime(modif) geandert, ja?
+                if (DTA->last_modif != st.st_mtime)                                     // gemerkte mtime(modif) geandert, ja?
                 {
 #ifdef HS_DEBUG
                     printConfig();
 #endif
                     lprintf ("Change modif detect: %s (%lld/%lld) ==> execute : %s", DTA->file, DTA->last_modif, st.st_mtime, DTA->execute);  // file changed detect
-                    DTA->last_modif = st.st_mtime;										// mtime(modif) geandert merken
+                    DTA->last_modif = st.st_mtime;                                      // mtime(modif) geandert merken
 #ifdef HS_DEBUG
                     lprintf ("system execute : %s", DTA->execute);
 #else
                     hsGetFreePthread(SystemExecute, (DTA->execute));
-                    //if (system (DTA->execute)) lprintf ("system failure %s", DTA->execute);	// kann auch schiefgehem
+                    //if (system (DTA->execute)) lprintf ("system failure %s", DTA->execute);   // kann auch schiefgehem
 #endif
-                    if (cfgUseCache) WriteOutCache();										// cache noch schreiben
+                    if (cfgUseCache) WriteOutCache();                                       // cache noch schreiben
                 }
             }
         }
@@ -1091,7 +1140,7 @@ void* SystemExecute(void* data)
     {
         if (system((char *)data))
         {
-            lprintf ("system failure %s", (char *)data);	// kann auch schiefgehem
+            lprintf ("system failure %s", (char *)data);    // kann auch schiefgehem
         }
     }
     return hsPthreadDone(p);
@@ -1119,7 +1168,7 @@ int WriteOutCache(void)
     t_file  *DTA;
     FILE *cf;
     //lprintf ("try Cache wrote: %s", cfgCacheFile);
-	if (!cfgCacheFile) return EXIT_FAILURE;
+    if (!cfgCacheFile) return EXIT_FAILURE;
     if(( cf = fopen(cfgCacheFile,"wt")) == NULL )
     {
         lprintf ("Cache not ready to write: %s", cfgCacheFile);
@@ -1360,20 +1409,20 @@ char *GetWatchInfoHtml(void)
     char *r;
     void    *LNXT;
     t_file  *DTA;
-	char da_modif[32];
-	char da_check[32];
-	char tmpstr[512];
+    char da_modif[32];
+    char da_check[32];
+    char tmpstr[512];
 
     r = GetHtmlHead("Watch Info");
     r = GetHtmlHeadTable(r);
     stradd(r,HtmlBody);
     // r = GetTableStyle(r);
 
-	sprintf (tmpstr, "<br>tipwaittime=%ld<br><br>\r\n", tipwaittime);
-	stradd (r,tmpstr);
+    sprintf (tmpstr, "<br>tipwaittime=%ld<br><br>\r\n", tipwaittime);
+    stradd (r,tmpstr);
 
-	// config dump
-	stradd (r,"<table>\r\n");
+    // config dump
+    stradd (r,"<table>\r\n");
     sprintf (tmpstr, "<tr><td></td><td>StartTime</td><td>%s</td><td></td></tr>\r\n", strtime(starttime,2)); stradd (r,tmpstr);
     sprintf (tmpstr, "<tr><td></td><td>ReloadTime</td><td>%s</td><td></td></tr>\r\n", strtime(reloadtime,2)); stradd (r,tmpstr);
     sprintf (tmpstr, "<tr><td></td><td>cfgPORT</td><td>%i</td><td></td></tr>\r\n", cfgPORT); stradd (r,tmpstr);
@@ -1385,20 +1434,20 @@ char *GetWatchInfoHtml(void)
     sprintf (tmpstr, "<tr><td></td><td>cfgInfoFile</td><td>%s</td><td></td></tr>\r\n", cfgInfoFile); stradd (r,tmpstr);
     stradd (r,"</table><br>\r\n");
 
-	sprintf (tmpstr, "LastCheck: %s<br><br>\r\n", strtime(now,2));
-	stradd (r,tmpstr);
+    sprintf (tmpstr, "LastCheck: %s<br><br>\r\n", strtime(now,2));
+    stradd (r,tmpstr);
 
-	stradd (r,"<table>\r\n");
+    stradd (r,"<table>\r\n");
     stradd (r,"<tr><th> File </th><th> sec </th><th> Date:Modif </th><th> Date:checked </th><th> next </th><th> Execute</th></tr>\r\n");
-	for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
+    for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
     {
         if (!LNXT) break;
         DTA = Node_GetData(LNXT);
         //fprintf (cf, TIME_STR_LD ",%s\n",DTA->last_modif, DTA->file);
-		strcpy (da_modif, strtime(DTA->last_modif,2));
-		strcpy (da_check, strtime(DTA->last_check,2));
-		sprintf (tmpstr, "<tr><td> %s </td><td> %4i </td><td> %s </td><td> %s </td><td> %5i </td><td> %s </td></tr>\r\n", DTA->file, DTA->interval, da_modif, da_check, (int)(DTA->last_check+((time_t)DTA->interval)-now), DTA->execute);
-		stradd (r,tmpstr);
+        strcpy (da_modif, strtime(DTA->last_modif,2));
+        strcpy (da_check, strtime(DTA->last_check,2));
+        sprintf (tmpstr, "<tr><td> %s </td><td> %4i </td><td> %s </td><td> %s </td><td> %5i </td><td> %s </td></tr>\r\n", DTA->file, DTA->interval, da_modif, da_check, (int)(DTA->last_check+((time_t)DTA->interval)-now), DTA->execute);
+        stradd (r,tmpstr);
     }
     stradd (r,"</table>\r\n");
     stradd (r, HtmlFooter);
@@ -1460,14 +1509,14 @@ char *GetDriveInfoText(char *req)
     stradd (r, next);
     free (next);
     stradd (r, "# ------------------\r\n");                                     // Zur bessseren Lesbarkeit
-	F = setmntent(mtabfile, "r");                                               // normalerweise /etc/mtab
-	if (!F)                                                                     // Datei lesen
+    F = setmntent(mtabfile, "r");                                               // normalerweise /etc/mtab
+    if (!F)                                                                     // Datei lesen
     {
-		lprintf("%s cant open: %s", mtabfile, strerror(errno));
-		stradd(r,"#missing mtabfile; see logfile");
+        lprintf("%s cant open: %s", mtabfile, strerror(errno));
+        stradd(r,"#missing mtabfile; see logfile");
         return r;
-	}
-	for (;;)                                                                    // Alle Einträge lesen
+    }
+    for (;;)                                                                    // Alle Einträge lesen
     {
         fs = getmntent(F);
         if (!fs) break;

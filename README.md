@@ -56,6 +56,9 @@ Konfiguration:
 : siehe Anschnitt: **hswatchd.rc**
 
 ### SYSTEMD
+Sicher gibt es viele Wege um einen Daemon zu laufen zu bekommen. Derzeit wird aber SYSTEMD ueberall verwendet.
+
+Achtung. Zum grossen Teil werden ROOT-Rechte noetig sein.
 
 | Datei erstellen
 | :/etc/systemd/system/hswatchd.service
@@ -93,24 +96,30 @@ systemctl status hswatchd
 ### hswatchd.rc
 
 | **Parameter:**
-set time = \#\#\#
+
+: Zeilen, die mit '#' beginnen, sind Kommentare und werden entsprechend ignoriert.
+### Server Einstellungen
+port        = 8080
+: Portangabe. hswatchd kann über http abgefragt werden
+: siehe Anschnitt: **HTTP*
+time        = \#\#\#
 : Defaultangabe zum verweilen zwischen einer Pruefeinheit. Ist nicht so wichtig, da die Zeit automatisch errechnet wird.
-
-set cache = _true_ oder _false_
+cache       = _true_ oder _false_
 : Die Benutzung des Caches erlauben/verbieten
-
-set cachepath = _Pfad_zur_Cachedatei_
-: Der Pfad für "hswatchd.cache". Es wird in dieser Datei die sekundengenaue Zeit der letzten Pruefung jedes file gespeichert. *Nur* der Pfad, die Datei heisst .hswatchd.cache.
-
-set infofile = _File_fuer_InfoFile_
-: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar
+cachepath   = _Pfad_zur_Cachedatei_
+: Der Pfad für eine chache-Datei. Es wird in dieser Datei die sekundengenaue Zeit der letzten Pruefung jedes File gespeichert. Gefolgt von dem Dateinamen.
+infoupdate  = 3600
+: In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.
+infofile    = _File_fuer_InfoFile_
+: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser
+auskommentiert) werden.
 
 Jeder Eintrag mit "file ...." in der hswatchd.rc wird in eine einfach verkettete Liste
 sortiert, nach naechster Bearbeitungszeit, aufgenommen. Dadurch wird erreicht das der
 naechste zu verarbeitende Datensatz ganz oben steht. Die Diff-Zeit wird auch genommen,
 um die naechste Wartezeit zu setzen. Ist so ein Datensatz abgearbeitet, wird neu
 entschieden, wo er in der Liste zu stehen hat. Und es wird eine neue Wartezeit
-bestimmt.
+bestimmt. Diese Informationen koennen auch über http abgerufen werden !!
 
 | Konfigurations-Datei erstellen
 | :/etc/hswatchd.rc
@@ -120,14 +129,36 @@ bestimmt.
 ``` hswatchd.rc
 ### systemweite hswatchd - Configurationsdatei
 
-set time = 5
-set cache = true
-set cachepath = /var/opt
-set infofile = /pub/www/data/watch.txt
+port        = 8080
+time        = 1
+cache       = true
+cachepath   = /var/hswatchd/files.cache
+infoupdate  = 3600
+infofile    = /srv/pub/www/data/watch-debug-hesti.txt
 
+### File - Section
 file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff
 file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts /etc/hosts
 ```
+
+### HTTP-Service
+: hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen sich ein paar Informationen abrufen.
+Der Port ist in der _hswatchd.rc_ zu definiert. 
+
+* server:8080/reload.cgi
+wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
+
+* server:8080//date.cgi
+gibt das aktuelle datum mit der Zeit aus. Das war nur zum Testen drin, aber es stoert ja auch niemanden.
+
+
+*        }else if (!strncasecmp(rs->nextline,"/drive.cgi?",11))
+*        }else if (!strcasecmp(rs->nextline,"/nextwatch.html"))
+*        }else if (!strcasecmp(rs->nextline,""))
+*        }else if (!strcasecmp(rs->nextline,""))
+
+
+
 #EOF
 
 ### AUTHORS

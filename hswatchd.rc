@@ -15,10 +15,28 @@ infofile    = /srv/pub/www/data/watch-debug-hesti.txt
 # ----------------------------------------------------------------------------------------------------------------------------------
 #
 file = /srv/pub/share/network/hswatchd-hesti.rc                 10 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
-file = /var/habsnicht.cfg                   					12 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
-file = /srv/pub/share/sys-crons/syssh.export					25 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
+file = /var/habsnicht.cfg                                       12 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
+file = /srv/pub/share/sys-crons/syssh.export                    25 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 file = /srv/pub/share/network/hosts                             15 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 file = /srv/pub/share/network/hs-logs.export                    35 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs/src/cons/hsrelated/hsrelated-test.sh
 #file = no
 # ----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

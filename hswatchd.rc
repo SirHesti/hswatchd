@@ -4,7 +4,6 @@
 # ----------------------------------------------------------------------------------------------------------------------------------
 port        = 8080
 time        = 1
-#retry98     = 120 not longer needed, but left inside: i dont no why
 cache       = true
 cachepath   = /var/hswatchd/files-debug.cache
 infoupdate  = 3600

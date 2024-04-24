@@ -12,14 +12,14 @@ s/$DATE/%DATE%/g
 *I would like to point out that I always document my software in German.*
 a daemon for monitoring files
 hswatchd is designed for the lowest possible CPU performance. It is started via the *systemd*. If you want, feel free to create an init solution.
-All parameters are entered in **_/etc/hswatchd.rc_**.
+All parameters are entered in **_/etc/hswatchd.rc_**. An example is included or can be copied from [github](https://github.com/SirHesti/hswatchd).
 Each time a file has been changed, the function or file is executed.
 
 ## German / Deutsch
 Ein Daemon zum Ueberwachen von Dateien
 hswatchd ist ausgelegt auf kleinst moegliche CPU-Performance. Er wird ueber den *systemd* gestartet. Wer moechte kann sich gerne auch eine init-Loesung schreiben.
-Alle Parameter werden in der **_/etc/hswatchd.rc_** eingetragen.
-Jedesmal wenn eine Datei geaendert wurde, dann wird die eingestellte funktion, bzw. Datei ausgefuehrt.
+Alle Parameter werden in der **_/etc/hswatchd.rc_** eingetragen. Eine Beispiel wird mitgeliefert oder kann auf von [github](https://github.com/SirHesti/hswatchd) kopiert werden.
+Jedesmal wenn eine Datei geaendert wurde, dann wird die eingestellte Funktion, bzw. Datei ausgefuehrt.
 
 #-[ hswatchd.man
 
@@ -45,7 +45,7 @@ Daemonen werden ueber "systemd" gestartet. Dieser ueberwacht Dateien auf Aenderu
 **\-\-version **
 :die aktuelle Version ausgeben lassen. Das Programm wird allerdings dann beendet.
 
-Da hswatchd als Daemon gestartet wird, gibt es fuer den Betrieb keine Optionen.
+Da hswatchd als Daemon gestartet wird, gibt es fuer den Betrieb keine Optionen. Dafür wird eine hswatchd.rc erwartet.
 
 # SIGNALS
 **SIGHUP,SIGKILL,SIGINT**
@@ -152,7 +152,6 @@ Fehler (auch in dieser Manpage) unbedingt bitte melden
 # ----------------------------------------------------------------------------------------------------------------------------------
 port        = 8080
 time        = 1
-#retry98     = 120 not longer needed, but left inside: i dont no why
 cache       = true
 cachepath   = /var/hswatchd/files-debug.cache
 infoupdate  = 3600

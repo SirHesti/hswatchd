@@ -1,0 +1,83 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \qc \f0 \sa180 \li0 \fi0 \b \fs36 hswatchd\par}
+{\pard \qc \f0 \sa180 \li0 \fi0  24.04.2024\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 NAME\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b hswatchd} - Ein Daemon zum Ueberwachen von Dateien\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 SYNOPSIS\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Daemonen werden ueber \u8220"systemd\u8221" gestartet. Dieser ueberwacht Dateien auf Aenderung und fuehrt, wenn vorhanden, einen Befehl aus.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 DESCRIPTION\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 hswatchd ist ausgelegt auf kleinst moegliche CPU-Performance. Er wird ueber den {\i systemd} gestartet. Wer moechte kann sich gerne auch eine init-Loesung schreiben.\line Alle Parameter werden in der {\b {\i /etc/hswatchd.rc}} eingetragen.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 OPTIONS\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b --version } :die aktuelle Version ausgeben lassen. Das Programm wird allerdings dann beendet.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Da hswatchd als Daemon gestartet wird, gibt es fuer den Betrieb keine Optionen. Daf\u252?r wird eine hswatchd.rc erwartet.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 SIGNALS\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 {\b SIGHUP,SIGKILL,SIGINT}\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Der Daemon wird beendet\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 {\b SIGUSR1}\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 reload der hswatchd.rc\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 {\b SIGUSR2}\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 ausgabe der Infodatei\sa180\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 ENVIRONMENT\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 Starten, stopppen, service:\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 siehe Anschnitt: {\b SYSTEMD}\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 Konfiguration:\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 siehe Anschnitt: {\b hswatchd.rc}\sa180\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 SYSTEMD\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Datei erstellen\line :/etc/systemd/system/hswatchd.service\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Inhalt:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 [Unit]\line
+Description=hswatchd - demon watching files for changing\line
+After=network.target\line
+\line
+[Service]\line
+ExecStart=/usr/sbin/hswatchd\line
+ExecStop=/bin/kill -HUP $MAINPID\line
+ExecReload=/bin/kill -USR1 $MAINPID\line
+\line
+StandardOutput=null\line
+#StandardOutput=/root/out.txt\line
+#Restart=on-failure\line
+\line
+[Install]\line
+WantedBy=multi-user.target\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 #EOF\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Service einrichten (einmalig, started danach automatisch mit):\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 systemctl daemon-reload\line
+systemctl enable hswatchd.service\line
+systemctl start hswatchd.service\line
+systemctl status hswatchd\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 hswatchd.rc\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 {\b Parameter:}\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 set time = ###\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Defaultangabe zum verweilen zwischen einer Pruefeinheit. Ist nicht so wichtig, da die Zeit automatisch errechnet wird.\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 set cache = {\i true} oder {\i false}\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Die Benutzung des Caches erlauben/verbieten\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 set cachepath = {\i Pfad_zur_Cachedatei}\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Der Pfad f\u252?r \u8220"hswatchd.cache\u8221". Es wird in dieser Datei die sekundengenaue Zeit der letzten Pruefung jedes file gespeichert. {\i Nur} der Pfad, die Datei heisst .hswatchd.cache.\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 set infofile = {\i File_fuer_InfoFile}\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Der vollst\u228?ndige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar\sa180\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Jeder Eintrag mit \u8220"file \u8230?.\u8221" in der hswatchd.rc wird in eine einfach verkettete Liste sortiert, nach naechster Bearbeitungszeit, aufgenommen. Dadurch wird erreicht das der naechste zu verarbeitende Datensatz ganz oben steht. Die Diff-Zeit wird auch genommen, um die naechste Wartezeit zu setzen. Ist so ein Datensatz abgearbeitet, wird neu entschieden, wo er in der Liste zu stehen hat. Und es wird eine neue Wartezeit bestimmt.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Konfigurations-Datei erstellen\line :/etc/hswatchd.rc\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Beispiel:\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1 # systemweite hswatchd - Configurationsdatei\line
+\line
+set time = 5\line
+set cache = true\line
+set cachepath = /var/opt\line
+set infofile = /pub/www/data/watch.txt\line
+\line
+file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff\line
+file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts /etc/hosts\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 #EOF\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 AUTHORS\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Heiko Stoevesandt - alias Hesti - {\field{\*\fldinst{HYPERLINK "mailto:hstools@t-online.de"}}{\fldrslt{\ul
+hstools@t-online.de
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 FEHLER\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Fehler (auch in dieser Manpage) unbedingt bitte melden\par}
+}

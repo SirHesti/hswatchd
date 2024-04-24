@@ -1,4 +1,4 @@
-# 24.04.2024 10:52:05 Genrated by cbp2cmake V2.4.0 Finale X86 
+# 24.04.2024 10:52:51 Genrated by cbp2cmake V2.4.0 Finale X86 
 project(hswatchd LANGUAGES C)
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 set (CMAKE_INSTALL_PREFIX /usr )

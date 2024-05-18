@@ -158,7 +158,7 @@ file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts 
 
 # HTTP-Service
 hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen sich ein paar Informationen abrufen.
-Der Port ist in der _hswatchd.rc_ zu definiert. 
+Der Port ist in der _hswatchd.rc_ zu definiert.
 
 _server:8080/reload.cgi_
 : wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.
@@ -207,23 +207,6 @@ file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs
 #file = no
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #-[ ende ----------- ]
 
  kill -s USR1 $(pidof hswatchd)
@@ -249,6 +232,7 @@ file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs
  01.03.24 HS Erste Html-Pages mit Tabellen
  03.03.24 HS Im EchtTest aus dem Nas und bei mir (hsmake und install angepasst)
  07.03.24 HS Remote-drive jetzt über HTTP gelöst
+ 18.05.24 HS retry98 ist wieder aktiv und über eine Wrapperfunktion gelöst
 
  -------------------------------------------------------------------------------
 */
@@ -261,6 +245,9 @@ file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs
 #include <pthread.h>
 
 #define MAX_BACKLOG 16
+#ifdef HS_DEBUG
+#define connHS_DEBUG
+#endif // HS_DEBUG
 
 enum mainLoop {
     LOOP_NORMAL,                        // Normaler Durchlauf mit Connect/Writejobs/ChangeDetect
@@ -291,6 +278,7 @@ struct  sockaddr * sin_addr;
 socklen_t sin_len;
 
 void  m_sig(int sig);
+int   open_connection_with_retry(void);
 int   open_connection(void);
 void  close_connection(void);
 
@@ -327,7 +315,7 @@ int       cfgUseCache   = False;        // filedaten nicht lesen, sondern einen 
 char*     cfgCacheFile  = NULL;         // welches file nutzen zum cachen
 int       cfgInfoUpdate = -1;           // wie oft soll ein infofile geschrieben werden, wenn selbst addressiert, dann frisch generiert und -1 OK
 char*     cfgInfoFile   = NULL;         // wohin soll ein update geschrieben werden
-int       cfgRetry98    = 0;            // seconds to retry 98-Error; after an error 98 on bind, wait 5 seconds an try again
+int       cfgRetry98    = 60;           // seconds to retry 98-Error; after an error 98 on bind, wait 5 seconds an try again
 
 #ifndef NUM_THREADS
 #define NUM_THREADS 12
@@ -354,12 +342,11 @@ signed int main(int argc, char *argv[])
 {
     int rc;
     if (InitTools(argc , argv, "%d%v%t%m", I_MAJOR, I_MINOR, I_BUILD, I_BETA, LOG_LOGFILE | LOG_SYSLLOG)) return -1;
-    lprintf("%s",m_PRG_INFO);
+    lprintf("%s on pid %i",m_PRG_INFO, getpid());
 #ifdef HS_DEBUG
     LogType = LogType | LOG_STDERR;
 #endif // HS_DEBUG
     starttime=unixtime();
-
     rc = ReadConfig();
     if (rc) return rc;
     hsInitPthreads(1);
@@ -373,8 +360,8 @@ signed int main(int argc, char *argv[])
     signal(SIGUSR1, m_sig);
     signal(SIGUSR2, m_sig);
 #endif
-
-    if ((rc = open_connection())) return rc;
+    rc = open_connection_with_retry();
+    if (rc) return rc;
 
     rc = runMainLoop();
     hsDestroyPthreads(150); // 15 sec to wait
@@ -416,7 +403,7 @@ int runMainLoop(void)
             hsInitPthreads(0);
             if ((rc = cleanup())) break;
             if ((rc = ReadConfig())) break;
-            if ((rc = open_connection())) break;
+            if ((rc = open_connection_with_retry())) break;
             loopState = LOOP_NORMAL;
         }
 
@@ -447,6 +434,7 @@ int runMainLoop(void)
         if (loopState == LOOP_NORMAL)
         {
             int b=getach();
+            if ( b=='r' ) loopState = LOOP_RELOAD;
             if ( (b==27) || (b=='*') )
             {
                 b=getach();
@@ -629,7 +617,11 @@ int ReadConfig(void)
     ConfigTab = RCread(opt,NULL,m_PRGNAME);
     if (!ConfigTab)
     {
-        lprintf("Config can't load from %s", RCFullName);
+        #ifdef HS_DEBUG
+            lprintf("Missing hswatchd.rc ??? %s", RCFullName);
+        #else
+            lprintf("Config can't load from %s", RCFullName);
+        #endif // HS_DEBUG
         return EXIT_FAILURE;
     }
     //return allNodes(ConfigTab);
@@ -797,11 +789,31 @@ int UpdateFromCache(void)
     return EXIT_SUCCESS;
 }
 
+int open_connection_with_retry(void)
+{
+    int rc;
+    time_t start;
+
+    start=unixtime();
+    for (;;)
+    {
+        rc = open_connection();
+        if (rc != 98) return rc;
+        close_connection();
+        now = unixtime();
+        if (now > (start + (time_t)cfgRetry98)) break;
+#ifdef connHS_DEBUG
+        lprintf ("can't bind sock, retry while %i %s", rc, strerror(rc));
+#endif
+        sleep (5);
+    }
+    return 98;
+}
+
 int open_connection(void)
 {
     int err;
     int list;
-    time_t start;
 
     memset_ex(&sock_in.sin_zero, 0, sizeof(sock_in.sin_zero));
     sock_in.sin_family      = AF_INET;          // ip4
@@ -811,8 +823,6 @@ int open_connection(void)
     sin_addr = (struct sockaddr *) &sock_in;
     sin_len  = (socklen_t) sizeof(sock_in);
 
-    for (start=unixtime();;)
-    {
 #ifdef connHS_DEBUG
         lprintf ("open_connection -> sock");
 #endif // HS_DEBUG
@@ -837,23 +847,10 @@ int open_connection(void)
         if ((bind(sock, (struct sockaddr *)&sock_in, sizeof(sock_in))) < 0)
         {
             err = errno;
-            if (err==98)
-            {
-                now = unixtime();
-                if (now < (start + (time_t)cfgRetry98))
-                {
-                    close_connection();
-                    lprintf ("can't bind sock, retry while %i %s", err, strerror(err));
-                    sleep (3);
-                    continue;
-                }
-            }
-            //errno == 98 ????
-            lprintf ("Error: bind socket -%i %s", errno, strerror(errno));
+            if (err==98) return 98;
+            lprintf ("Error: bind socket errno: %i %s", errno, strerror(errno));
             return 102;
         }
-        break;
-    }
 
     list = listen(sock, MAX_BACKLOG); // MAX_BACKLOG = maximum length to which the queue
 #ifdef connHS_DEBUG
@@ -1408,7 +1405,7 @@ char *GetHtmlHeadTable(char *begin)
     return r;
 }
 
-
+// 25.04.24 HS neben Lastcheck auch FROM und im debug Datum/Uhrzeit des compilierens
 char *GetWatchInfoHtml(void)
 {
     char *r;
@@ -1439,8 +1436,13 @@ char *GetWatchInfoHtml(void)
     sprintf (tmpstr, "<tr><td></td><td>cfgInfoFile</td><td>%s</td><td></td></tr>\r\n", cfgInfoFile); stradd (r,tmpstr);
     stradd (r,"</table><br>\r\n");
 
-    sprintf (tmpstr, "LastCheck: %s<br><br>\r\n", strtime(now,2));
+    sprintf_ex (tmpstr, "LastCheck: %s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;%s", strtime(now,2), m_PRG_INFO);
     stradd (r,tmpstr);
+#ifdef HS_DEBUG
+    sprintf (tmpstr, " ( %s - %s )", __DATE__, __TIME__ );
+    stradd (r,tmpstr);
+#endif
+    stradd (r,"<br><br>\r\n");
 
     stradd (r,"<table>\r\n");
     stradd (r,"<tr><th> File </th><th> sec </th><th> Date:Modif </th><th> Date:checked </th><th> next </th><th> Execute</th></tr>\r\n");

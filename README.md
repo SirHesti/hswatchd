@@ -18,8 +18,8 @@ Jedesmal wenn eine Datei geaendert wurde, dann wird die eingestellte Funktion, b
 title: hswatchd
 section: 8
 header: hswatchd - copyright Hesti
-footer: hswatchd 2.15.0 Finale
-date: 24.04.2024
+footer: hswatchd 2.21.1 Beta
+date: 18.05.2024
 ---
 
 ### NAME
@@ -149,7 +149,7 @@ file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts 
 
 ### HTTP-Service
 hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen sich ein paar Informationen abrufen.
-Der Port ist in der _hswatchd.rc_ zu definiert. 
+Der Port ist in der _hswatchd.rc_ zu definiert.
 
 _server:8080/reload.cgi_
 : wird hswatchd dazu veranlassen die hswatchd.rc neu zu laden.

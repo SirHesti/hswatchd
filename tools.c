@@ -3160,29 +3160,64 @@ char *strstrarg (char *STRING, int arg, char STRARG_DEL)
 /**
  @brief String in umkehren
  @param str der gekehrt werden soll
+ @return str aber umgekehrt, orginalstr wird zerstört
 
 ___[ Revision ]______________________________________________________________
 
  ** 23.07.16 HS ReCreate
+ ** 04.05.24 HS return pointer of str
 ___________________________________________________________________________*/
 
-void revstr (char *str)
+char* revstr (char *str)
 {
     int l,r;
     char d;
 
-    if (!str) return;
+    if (!str) return NULL;
     r = strlen(str);
-    if (r<2) return;
+    if (r<2) return str;
     r--;
     for (l=0;;l++,r--)
     {
-        if (l>r) return;
+        if (l>r) return str;
         d = str[l];
         str[l]=str[r];
         str[r]=d;
     }
+    return str;
 }
+
+/**
+ @brief memory umkehren
+ @param mem der gekehrt werden soll
+ @return mem aber umgekehrt, orginal wird zerstört
+
+___[ Revision ]______________________________________________________________
+
+ ** 04.05.24 HS founded
+___________________________________________________________________________*/
+
+void *revmem (void *mem, size_t sz)
+{
+    int l;
+    int r;
+    unsigned char *src;
+    unsigned char *rslt;
+    if (!mem) return NULL;
+    r = sz;
+    if (r<2) return mem;
+    r--;
+    src = mem;
+    rslt = malloc_temp(sz+1);
+    for (l=0;;l++,r--)
+    {
+        if (l>r) return rslt;
+        rslt[l] = src[r];
+        rslt[r] = src[l];
+    }
+    return rslt;
+}
+
 ///@}
 
 /* *******************************************************************************************************************/
@@ -3726,6 +3761,35 @@ char *strtohexstr(char* from, size_t size, size_t bytes_per_line, int format )
         if (format!=0) stradd (rslt,"\n");                                      // Zeilen Ende!!
     }
     return malloc_temp_string(rslt);
+}
+
+/**
+ @brief Konvertiert einen String in einen HexString
+ @return hexconverted string
+ @param string Die zu bearbeitende Zeichenkette
+
+___[ Revision ]______________________________________________________________
+
+ **  04.05.24 HS Create
+___________________________________________________________________________*/
+
+const char hexstatic[17] = "0123456789abcdef";
+char *strhex(void *str, size_t sz)
+{
+    unsigned int v;
+    int p,i;
+    char *rslt;
+    char *src;
+    rslt = malloc_temp((sz*2)+1);
+    src = str;
+    for (i = sz-1; i >= 0; i--)
+    {
+        p = i * 2;
+        v = (unsigned char) src[i];
+        rslt[p + 1] = hexstatic[v % 16];
+        rslt[p + 0] = hexstatic[v / 16];
+    }
+    return rslt;
 }
 
 /**
@@ -8686,7 +8750,7 @@ t_opt db_opt[]={
     { opt_RCdir_HSDIR_var, "%HSDIR%/var" },
     { opt_RCdir_root_var , "%APPDATA%/hs" },
 #else //OS_LINUX
-    { opt_RCdir_PRG      , "" },
+    { opt_RCdir_PRG      , "%ARG0%" },
     { opt_RCdir_CFGDIR   , "%CFGDIR%" },
     { opt_RCdir_root_etc , "/etc" },
     { opt_RCdir_root_etcd, "/etc/%prgname%.d" },
@@ -8729,7 +8793,7 @@ t_opt db_opt[]={
 | opt_RCdir_must_exist | File muss beim Suchen existieren          ||
 | <b> </b>             | **Linux**             | **Windows**       |
 | opt_RCdir_PathFile   | Pfad und Filename in filename uebergeben  ||
-| opt_RCdir_PRG        | not Allowed           | ./.**             |
+| opt_RCdir_PRG        | ./.** [.rc] zB /opt/xxx | ./.**             |
 | opt_RCdir_CFGDIR     | from /etc/hsrc        | \%HSDIR%/etc/hsrc or \%APPDATA%/hs/hsrc |
 | opt_RCdir_root_etc   | /etc/.**              | \%APPDATA%/hs/.** |
 | opt_RCdir_root_etcd  | /etc/\%prgname%.d/.** | \%APPDATA%/hs/%prgname%/.** |
@@ -8745,6 +8809,8 @@ ___[ Revision ]______________________________________________________________
  ** 11.11.22 HS opt und rcreadfile übertragen, wenn angegeben
  ** 15.11.22 HS Pfade nicht mehr einzeln auswerten, sonden ueber die Tabelle
  ** 18.11.22 HS Nochmal komplett Ueberarbeitet. PCreadPath
+ ** 25.04.24 HS Linux: opt_RCdir_PRG kann im Verzeichnis des Programs liegen
+                zB. beim Test oder falls das Programm in /opt gestartet wird
 ___________________________________________________________________________*/
 
 void *RCread(int opt, char *rcreadfile, char *filename)

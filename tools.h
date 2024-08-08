@@ -256,6 +256,7 @@ usw.
 #include <unistd.h>
 #include <utime.h>
 #include <syslog.h>
+//#include <termios.h>
 #endif // OS_LINUX
 
 
@@ -355,7 +356,6 @@ extern "C" {
 #ifndef FALSE
 #define FALSE false
 #endif
-
 #ifndef TRUE
 #define TRUE true
 #endif

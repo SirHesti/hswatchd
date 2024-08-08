@@ -14,7 +14,7 @@
 . ftr VB CB
 . ftr VBI CBI
 .\}
-.TH "hswatchd" "8" "18.05.2024" "hswatchd 2.21.1 Beta" "hswatchd - copyright Hesti"
+.TH "hswatchd" "8" "08.08.2024" "hswatchd 2.50.2 Beta" "hswatchd - copyright Hesti"
 .hy
 .SH NAME
 .PP
@@ -142,6 +142,12 @@ Der vollst\[:a]ndige Pfad zur Datei.
 Es wird eine reine Textdatei geschrieben.
 Ist Markdown formatierbar.
 Diese Angabe kann auch leer sein (oder besser auskommentiert) werden.
+.TP
+favicon = /srv/pub/share/hswatchd/pc-hesti.png
+Pfad zu einem FAV-Icon f\[:u]r die html-funktion.
+Wer keines m\[:o]chte l\[:a]st es weg.
+F\[:u]r jeden im eigenen Netz laufenden hswatchd l\[:a]sst sich damit
+ein anderers ICON realisieren
 .PP
 Jeder Eintrag mit \[lq]file \&....\[rq] in der hswatchd.rc wird in eine
 einfach verkettete Liste sortiert, nach naechster Bearbeitungszeit,
@@ -171,6 +177,7 @@ cache       = true
 cachepath   = /var/hswatchd/files.cache
 infoupdate  = 3600
 infofile    = /srv/pub/www/data/watch-debug-hesti.txt
+favicon     = /srv/pub/share/hswatchd/pc-hesti-debug.png
 
 # File - Section
 file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff

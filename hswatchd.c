@@ -126,8 +126,10 @@ infoupdate  = 3600
 : In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.
 
 infofile    = _File_fuer_InfoFile_
-: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser
-auskommentiert) werden.
+: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser auskommentiert) werden.
+
+favicon     = /srv/pub/share/hswatchd/pc-hesti.png
+: Pfad zu einem FAV-Icon für die html-funktion. Wer keines möchte läst es weg. Für jeden im eigenen Netz laufenden hswatchd lässt sich damit ein anderers ICON realisieren
 
 Jeder Eintrag mit "file ...." in der hswatchd.rc wird in eine einfach verkettete Liste
 sortiert, nach naechster Bearbeitungszeit, aufgenommen. Dadurch wird erreicht das der
@@ -150,6 +152,7 @@ cache       = true
 cachepath   = /var/hswatchd/files.cache
 infoupdate  = 3600
 infofile    = /srv/pub/www/data/watch-debug-hesti.txt
+favicon     = /srv/pub/share/hswatchd/pc-hesti-debug.png
 
 # File - Section
 file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff
@@ -192,6 +195,7 @@ cache       = true
 cachepath   = /var/hswatchd/files-debug.cache
 infoupdate  = 3600
 infofile    = /srv/pub/www/data/watch-debug-hesti.txt
+favicon     = /srv/pub/share/hswatchd/hswatchd.png
 #
 #
 # File - Section
@@ -233,6 +237,10 @@ file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs
  03.03.24 HS Im EchtTest aus dem Nas und bei mir (hsmake und install angepasst)
  07.03.24 HS Remote-drive jetzt über HTTP gelöst
  18.05.24 HS retry98 ist wieder aktiv und über eine Wrapperfunktion gelöst
+ 23.05.24 HS HSwatchd läuft weiter während noch ggf. der Socket für html geöffnet wird
+ 25.05.24 HS ptreads verworfen
+ 26.05.24 HS html auswertung neu
+ 12.07.24 HS favicon neu
 
  -------------------------------------------------------------------------------
 */
@@ -242,18 +250,19 @@ file = /srv/pub/share/sys-crons/systemd-startup-hesti.conf      58 /bin/bash /hs
 #include <mntent.h>
 #include <signal.h>
 #include <fcntl.h>
-#include <pthread.h>
+
+#include <linux/unistd.h>               // Alle drei für sysinfo
+#include <linux/kernel.h>
+#include <sys/sysinfo.h>
 
 #define MAX_BACKLOG 16
-#ifdef HS_DEBUG
-#define connHS_DEBUG
-#endif // HS_DEBUG
 
 enum mainLoop {
     LOOP_NORMAL,                        // Normaler Durchlauf mit Connect/Writejobs/ChangeDetect
     LOOP_STOP,                          // Exit mainloop
     LOOP_RELOAD,                        // Reload Config
-    LOOP_INFOMODE                       // Write Infofile to Text
+    LOOP_INFOMODE,                      // Write Infofile to Text
+    LOOP_FIRSTRUN                       // Erster Schleifendurchlauf
 };
 
 typedef struct t_file {
@@ -272,6 +281,7 @@ long    tipwaittime;
 time_t infoupdate;                      // Wann gabs den letzten WriteInfo configurierbar in cfgInfoTime
 time_t starttime;                       // Serverstart
 time_t reloadtime;                      // wann wurden die letzten Variablen gelesen
+time_t retry98start;                    // start einer missglueckten connection
 
 struct  sockaddr_in sock_in;            // Buffer / Pointer um Connect aufzubauen
 struct  sockaddr * sin_addr;
@@ -280,7 +290,7 @@ socklen_t sin_len;
 void  m_sig(int sig);
 int   open_connection_with_retry(void);
 int   open_connection(void);
-void  close_connection(void);
+int   close_connection(void);
 
 int   runMainLoop(void);                // Dauerschleife um alles am Laufen zu halten
 int   mainProcess(void);                // ChangeDetect
@@ -295,13 +305,8 @@ int   UpdateFromCache(void);            // Nächstes Execute anhand des Caches b
 
 int ConnectProcess(void);               // Connect aufbauen, wenn Erfolg, dann neuen Prozess mit der Abarbeitung bestimmen
                                         // kommt immer zurück und kann dann auch keinen Fehler haben
-
-void* WriteInfo(void* data);            // Daten als Text Schreiben
-void* SystemExecute(void* data);        // ein Commando als "Task" mit system() ausfüren
-void* ConnectExecute(void* data);       // wird in ConnectProcess() gestartet und führt einen Connect aus und bearbeitet ihn
-
-char *GetWatchInfoHtml(void);           // WatchInfo nicht als Text sondern als html
-char *GetDriveInfoText(char *req);      // todo: make
+void WriteInfo(void);                   // Daten als Text Schreiben
+void ConnectExecute(void);              // wird in ConnectProcess() gestartet und führt einen Connect aus und bearbeitet ihn
 
 #ifdef HS_DEBUG
 void  printConfig(void);                // zum Debuggen
@@ -315,28 +320,20 @@ int       cfgUseCache   = False;        // filedaten nicht lesen, sondern einen 
 char*     cfgCacheFile  = NULL;         // welches file nutzen zum cachen
 int       cfgInfoUpdate = -1;           // wie oft soll ein infofile geschrieben werden, wenn selbst addressiert, dann frisch generiert und -1 OK
 char*     cfgInfoFile   = NULL;         // wohin soll ein update geschrieben werden
-int       cfgRetry98    = 60;           // seconds to retry 98-Error; after an error 98 on bind, wait 5 seconds an try again
+int       cfgRetry98    = 3600;         // seconds to retry 98-Error; after an error 98 on bind, wait 5 seconds an try again 10 Minuten lang
 
-#ifndef NUM_THREADS
-#define NUM_THREADS 12
-#endif
+// FavIcon
+char*     cfgFavIcon    = NULL;         // Config für das favicon
+time_t    FavIconTime;                  // Für eine mögliche änderung
+char*     FavIconBuffer = NULL;         // das eigendliche FavIcon in binaer
+size_t    FavIconBufSz;                 // und wieviel Speicher es in Anspruch nimmt
 
-struct s_pthread_use{
-        pthread_t thread;
-        int status;
-};
+/* *****************************************************************************
 
-struct s_pthread_use pthread_field[NUM_THREADS];
-pthread_mutex_t mutex;
-pthread_attr_t attr;
+    Starter
 
-int    hsIdFromPthreadid(pthread_t pID);
-void   hsIdsetStatus(int point, int state);
-int    hsGetPthreadNum(void);
-void   hsDestroyPthreads(int waitsteps);;
-void   hsInitPthreads(int init);
-int    hsGetFreePthread(void *(*sub_routine) (void *), void* data);
-void  *hsPthreadDone(int p);
+****************************************************************************** */
+
 
 signed int main(int argc, char *argv[])
 {
@@ -345,11 +342,10 @@ signed int main(int argc, char *argv[])
     lprintf("%s on pid %i",m_PRG_INFO, getpid());
 #ifdef HS_DEBUG
     LogType = LogType | LOG_STDERR;
-#endif // HS_DEBUG
+#endif
     starttime=unixtime();
     rc = ReadConfig();
     if (rc) return rc;
-    hsInitPthreads(1);
 
 #if defined (OS_LINUX) && (!defined (HS_DEBUG))
     signal(SIGABRT, m_sig);
@@ -360,13 +356,15 @@ signed int main(int argc, char *argv[])
     signal(SIGUSR1, m_sig);
     signal(SIGUSR2, m_sig);
 #endif
+//    rc = open_connection_with_retry();
+//    if (rc) return rc;
+    sock = -1;
     rc = open_connection_with_retry();
+    if (rc==98) rc = close_connection(); // close_connection kommt immer mit 0 zurück
     if (rc) return rc;
-
     rc = runMainLoop();
-    hsDestroyPthreads(150); // 15 sec to wait
-    lprintf( "%s hat sich beendet", m_PRGNAME);
     close_connection();
+    lprintf( "%s hat sich beendet", m_PRGNAME);
     cleanup();
     return rc;
 }
@@ -375,32 +373,42 @@ int runMainLoop(void)
 {
     int rc;
     rc = 0;
-    loopState = LOOP_INFOMODE;
+    loopState = LOOP_FIRSTRUN;
     now = unixtime();
     infoupdate = now;
     for (;;)
     {
+        now = unixtime();
         if (loopState == LOOP_STOP)
         {
             lprintf ("close requested");
             rc = EXIT_SUCCESS;
             break;
         }
+
+        if (loopState == LOOP_FIRSTRUN)
+        {
+            if ((rc=mainProcess())) break;
+            loopState = LOOP_INFOMODE;
+        }
+
         if (loopState == LOOP_INFOMODE)
         {
-            //lprintf ("WriteInfo()");
+#ifdef HS_DEBUG
+            lprintf ("WriteInfo()");
+#endif
             infoupdate = now;
-            hsGetFreePthread(WriteInfo, NULL);
+            WriteInfo();
             loopState = LOOP_NORMAL;
         }
+
         if (loopState == LOOP_RELOAD )
         {
 #ifdef HS_DEBUG
             lprintf ("loop -> RELOAD execute");
 #endif
-            hsDestroyPthreads(150);
             close_connection();
-            hsInitPthreads(0);
+
             if ((rc = cleanup())) break;
             if ((rc = ReadConfig())) break;
             if ((rc = open_connection_with_retry())) break;
@@ -409,19 +417,34 @@ int runMainLoop(void)
 
         if (loopState == LOOP_NORMAL)
         {
-            if (rc==0)
-            {
+            rc=mainProcess();               // Tabelle abarbeiten
+            if (rc) break;
+
 //#ifdef HS_DEBUG
 //            loopState=LOOP_STOP;
 //            break;
 //            if (tipwaittime>5L) tipwaittime=7L;
 //#endif
+
 #ifdef HS_DEBUG
-                lprintf ("mainloop %ld", tipwaittime);
+//                char mainloopstr[128];
+//                sprintf_ex(mainloopstr, "mainloop %ld", tipwaittime);
+//                lprintf("%s", mainloopstr);
+            int tempLogType = LogType;
+            LogType &=~ LOG_SYSLLOG;
+            lprintf("mainloop %ld", tipwaittime);
+            LogType = tempLogType;
 #endif
-                ConnectProcess();
-                if ((rc=mainProcess())) break; // Tabelle abarbeiten
+        }
+
+        if (loopState == LOOP_NORMAL)
+        {
+            if (sock<0)
+            {
+                rc = open_connection_with_retry();
+                if (rc == 98) rc=close_connection();
             }
+            if (sock>=1) ConnectProcess();
             if (rc==0)
             {
                 if (cfgInfoUpdate>0)
@@ -441,12 +464,6 @@ int runMainLoop(void)
                 loopState = LOOP_STOP;
             }
         }
-#endif // HS_DEBUG
-#ifdef HS_DEBUG
-//        strcpy(buffer, "GET /index.php this is some word you need to see it or not my pony is green");
-//        rc = executeBuffer(STDOUT_FILENO, buffer);
-        //hsGetFreePthread(WriteInfo, NULL);
-        //loopState = LOOP_STOP;
 #endif
     }
     return rc;
@@ -496,10 +513,12 @@ int cleanup(void)
         }
         free (my_IDX);
     }
-    if (cfgCacheFile) free(cfgCacheFile);
-    if (cfgInfoFile) free(cfgInfoFile);
-    cfgCacheFile = NULL;
-    cfgInfoFile = NULL;
+
+    if (FavIconBuffer) FavIconBuffer=free0(FavIconBuffer);
+    if (cfgFavIcon)    cfgFavIcon   =free0(cfgFavIcon);
+    if (cfgCacheFile)  cfgCacheFile =free0(cfgCacheFile);
+    if (cfgInfoFile)   cfgInfoFile  =free0(cfgInfoFile);
+
     cfgTime = 10L;
     cfgUseCache = -1;
     loopState = LOOP_NORMAL;
@@ -614,6 +633,7 @@ int ReadConfig(void)
 #else
     opt = opt | opt_RCdir_root_etc;
 #endif
+    retry98start=unixtime();
     ConfigTab = RCread(opt,NULL,m_PRGNAME);
     if (!ConfigTab)
     {
@@ -621,7 +641,7 @@ int ReadConfig(void)
             lprintf("Missing hswatchd.rc ??? %s", RCFullName);
         #else
             lprintf("Config can't load from %s", RCFullName);
-        #endif // HS_DEBUG
+        #endif
         return EXIT_FAILURE;
     }
     //return allNodes(ConfigTab);
@@ -635,10 +655,10 @@ int ReadConfig(void)
         {
             int s;
             s = atoi(v);
-            if ( (s< -1) || (s>600) )
+            if ( (s< -1) || (s>43200) )
             {
                 cfgRetry98=-1;
-                lprintf ("cfgRetry98 range must set >=-1 <600");
+                lprintf ("cfgRetry98 range must set >=-1 <43200");
                 rc = EXIT_FAILURE;
             }else{
                 cfgRetry98 = s;
@@ -723,6 +743,15 @@ int ReadConfig(void)
             continue;
         }
 
+        if (!strcasecmp(a,"favicon"))
+        {
+            if (FavIconBuffer) FavIconBuffer=free0(FavIconBuffer);
+            if (cfgFavIcon)    cfgFavIcon   =free0(cfgFavIcon);
+            cfgFavIcon = strdup_ex(v);
+            FavIconTime = 0;
+            continue;
+        }
+
         if (strcasecmp(a,"file"))
         {
             // unknown a
@@ -789,210 +818,11 @@ int UpdateFromCache(void)
     return EXIT_SUCCESS;
 }
 
-int open_connection_with_retry(void)
-{
-    int rc;
-    time_t start;
-
-    start=unixtime();
-    for (;;)
-    {
-        rc = open_connection();
-        if (rc != 98) return rc;
-        close_connection();
-        now = unixtime();
-        if (now > (start + (time_t)cfgRetry98)) break;
-#ifdef connHS_DEBUG
-        lprintf ("can't bind sock, retry while %i %s", rc, strerror(rc));
-#endif
-        sleep (5);
-    }
-    return 98;
-}
-
-int open_connection(void)
-{
-    int err;
-    int list;
-
-    memset_ex(&sock_in.sin_zero, 0, sizeof(sock_in.sin_zero));
-    sock_in.sin_family      = AF_INET;          // ip4
-    sock_in.sin_addr.s_addr = INADDR_ANY;       // incl localhost       #define INADDR_ANY ((in_addr_t) 0x00000000)
-    sock_in.sin_port        = htons(cfgPORT);   // 12.4.11   4.11.2012 standard
-
-    sin_addr = (struct sockaddr *) &sock_in;
-    sin_len  = (socklen_t) sizeof(sock_in);
-
-#ifdef connHS_DEBUG
-        lprintf ("open_connection -> sock");
-#endif // HS_DEBUG
-        if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        {
-            lprintf ("Error: create socket - %s", strerror(errno));
-            return 101;
-        }
-// hat so eine änderung ergeben
-#ifdef connHS_DEBUG
-        lprintf ("open_connection -> setsockopt");
-#endif // HS_DEBUG
-        int yes = 1;
-        if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
-        {
-            lprintf("Error: setsockopt ");
-            return 105;
-        }
-#ifdef connHS_DEBUG
-        lprintf ("open_connection -> bind %i", sock);
-#endif // HS_DEBUG
-        if ((bind(sock, (struct sockaddr *)&sock_in, sizeof(sock_in))) < 0)
-        {
-            err = errno;
-            if (err==98) return 98;
-            lprintf ("Error: bind socket errno: %i %s", errno, strerror(errno));
-            return 102;
-        }
-
-    list = listen(sock, MAX_BACKLOG); // MAX_BACKLOG = maximum length to which the queue
-#ifdef connHS_DEBUG
-    lprintf ("open_connection -> listen (%i) ", list);
-#endif // HS_DEBUG
-    if (list < 0)
-    {
-        lprintf ("Error: listen - %s", strerror(errno));
-        return 103;
-    }
-#ifdef connHS_DEBUG
-    lprintf ("open_connection -> FD_SET_DUO");
-#endif // HS_DEBUG
-    return EXIT_SUCCESS;
-}
-
-void close_connection(void)
-{
-#ifdef connHS_DEBUG
-    lprintf ("close_connection");
-#endif // HS_DEBUG
-    if (sock>=0)
-    {
-        close (sock);
-    }
-    sock = -1;
-}
-
-int hsIdFromPthreadid(pthread_t pID)
-{
-    for(int i=0; i<NUM_THREADS; i++)
-    {
-        if (pthread_field[i].thread == pID) return i;
-    }
-    return -1;
-}
-
-void hsIdsetStatus(int point, int state)
-{
-    pthread_mutex_lock(&mutex);
-    if (point>=0) pthread_field[point].status=state;
-    pthread_mutex_unlock(&mutex);
-}
-
-int hsGetPthreadNum(void)
-{
-    int rc;
-    rc = -1;
-    pthread_mutex_lock(&mutex);
-    for(int i=0; i<NUM_THREADS; i++)
-    {
-        //if ( (pthread_field[i].status==0) || (pthread_field[i].status==3) )
-        if (pthread_field[i].status==0)
-        {
-            pthread_field[i].status=1;
-            rc = i;
-            break;
-        }
-    }
-    pthread_mutex_unlock(&mutex);
-    return rc;
-}
-
-
-int hsGetFreePthread(void *(*sub_routine) (void *), void* data)
-{
-    int rc;
-    int t;
-    while (1)
-    {
-        t = hsGetPthreadNum();
-        if (t>=0)
-        {
-            rc = pthread_create(&pthread_field[t].thread,&attr,sub_routine,data);
-            if (rc)
-            {
-                fprintf (stderr, "Error:unable to create thread, %i\n", rc);
-                exit(-1);
-            }
-            pthread_detach(pthread_field[t].thread);
-            return t;
-        }
-        usleep(10);
-    }
-}
-
-void hsInitPthreads(int init)
-{
-    if (init) pthread_mutex_init(&mutex, NULL);
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    memset_ex(pthread_field,0,sizeof(pthread_field));
-//    for(t=0;t<NUM_THREADS;t++)
-//    {
-//        pthread_field[t].status = 0;
-//    }
-}
-
-void hsDestroyPthreads(int waitsteps)
-{
-    int j;
-    int t;
-    int rc;
-#ifdef HS_DEBUG
-    lprintf ("start wait");
-#endif
-    for(j=0;j<=waitsteps;j++)
-    {
-        rc=0;
-        for(t=0;t<NUM_THREADS;t++)
-        {
-            if (pthread_field[t].status!=0)
-            {
-                //pthread_join(pthread_field[t].thread, NULL);
-                rc++;
-            }
-        }
-        if (rc==0) break;
-#ifdef HS_DEBUG
-        printf ("wait for %i ptreads\n",rc);
-        //lprintf ("wait for %i ptreads",rc);
-#endif
-        usleep (100000);
-    }
-#ifdef HS_DEBUG
-    lprintf ("start destroy %i %i",j, rc);
-#endif
-    pthread_attr_destroy(&attr);
-#ifdef HS_DEBUG
-    lprintf ("done wait");
-#endif
-}
-
-// terminate the thread
-void *hsPthreadDone(int p)
-{
-        hsIdsetStatus(p,0);
-        pthread_exit(NULL);
-        return NULL;
-}
-
-void* WriteInfo(void* data)
+//
+// Schreibe ein File als Status, das passiert immer direkt nach dem Start
+// Infolge dessen ist es noch drin, ansonsten ist die HTML-Agfrage bequemer
+//-----------------------------------------------------------------------------
+void WriteInfo(void)
 {
     void    *LNXT;
     t_file  *DTA;
@@ -1004,28 +834,16 @@ void* WriteInfo(void* data)
     char da_modif[32];
     char da_check[32];
 
-    int p;
-    pthread_t pthread_id;
-    pthread_id = pthread_self();
-    p = hsIdFromPthreadid(pthread_id);
-    hsIdsetStatus(p,2);
-
-#ifdef HS_DEBUG
-    char *tx;
-    tx = (char*)data;
-    if (tx) lprintf ("data=%s",data);
-#endif
-
     if(!cfgInfoFile)
     {
         lprintf ("InfoFile (NULL) not set");
-        return hsPthreadDone(p);
+        return;
     }
 
     if(( cf = fopen(cfgInfoFile,"wt")) == NULL )
     {
         lprintf ("InfoFile not ready to write: %s", cfgInfoFile);
-        return hsPthreadDone(p);
+        return;
     }
 
     sz_file = 26;
@@ -1050,12 +868,26 @@ void* WriteInfo(void* data)
         //fprintf (cf, TIME_STR_LD ",%s\n",DTA->last_modif, DTA->file);
         strcpy (da_modif, strtime(DTA->last_modif,2));
         strcpy (da_check, strtime(DTA->last_check,2));
-        fprintf (cf, "%-*s |%4i | %s | %s |%5i | %s\n", sz_file, DTA->file, DTA->interval, da_modif, da_check, (int)(DTA->last_check+((time_t)DTA->interval)-now),  DTA->execute);
+        i = (int)(DTA->last_check+((time_t)DTA->interval)-now);
+        if (i<0) i=-1;
+        fprintf (cf, "%-*s |%4i | %s | %s |%5i | %s\n", sz_file, DTA->file, DTA->interval, da_modif, da_check, i, DTA->execute);
     }
     fclose (cf);
-    lprintf ("InfoFile ready: %s", cfgInfoFile);
-    return hsPthreadDone(p);
+    //lprintf ("InfoFile ready: %s", cfgInfoFile);
 }
+
+//char *strchange( char *destroyed_string, char *search, char *replace )
+//{
+//    char *newstr;
+////    lprintf ("strchang1 %s >>%s >>%s", destroyed_string, search, replace);
+//    if (!strstr(destroyed_string, search)) return destroyed_string;
+////    lprintf ("strchang2 %s >>%s >>%s", destroyed_string, search, replace);
+//    newstr = malloc0(strlen(destroyed_string)+strlen(replace)+16);
+//    strcpy_ex(newstr, destroyed_string);
+////    lprintf ("strchang3 %s >>%s >>%s >>%s", newstr, destroyed_string, search, replace);
+//    free(destroyed_string);
+//    return strstrreplace(newstr, search, replace);
+//}
 
 // Hier wird geprüft ob eine Datei geprüft werden soll
 // 1. prüfung ob der letzte check schon $interval her ist
@@ -1080,10 +912,10 @@ int mainProcess(void)
         //lprintf ("diff = %ld    %ld   %ld    %ld",diff,now,DTA->last_check,DTA->interval);
         if (diff < 0)
         {
-#ifdef mainHS_DEBUG
+#ifdef mainH_S_DEBUG
             //lprintf ("diff low %ld", diff);
             lprintf ("diff low = %ld   now= %ld  lastcheck= %ld  interval= %ld",diff,now,DTA->last_check,DTA->interval);
-#endif // HS_DEBUG
+#endif
             diff = -diff;
             tipwaittime =(long)diff;
             if (tipwaittime < cfgTime) tipwaittime = cfgTime;
@@ -1106,17 +938,23 @@ int mainProcess(void)
 #endif
                 if (DTA->last_modif != st.st_mtime)                                     // gemerkte mtime(modif) geandert, ja?
                 {
+//                    struct utsname utsbuf;
+//                    memset_ex( &utsbuf, 0, sizeof(struct utsname));
+//                    if (uname(&utsbuf)<0) memset_ex( &utsbuf, 0, sizeof(struct utsname));
 #ifdef HS_DEBUG
                     printConfig();
 #endif
                     lprintf ("Change modif detect: %s (%lld/%lld) ==> execute : %s", DTA->file, DTA->last_modif, st.st_mtime, DTA->execute);  // file changed detect
                     DTA->last_modif = st.st_mtime;                                      // mtime(modif) geandert merken
-#ifdef HS_DEBUG
-                    lprintf ("system execute : %s", DTA->execute);
-#else
-                    hsGetFreePthread(SystemExecute, (DTA->execute));
-                    //if (system (DTA->execute)) lprintf ("system failure %s", DTA->execute);   // kann auch schiefgehem
-#endif
+//                    char *myexec=strdup_ex(DTA->execute);
+//                    myexec = strchange( myexec, "$$HOST$$", utsbuf.nodename );
+//                    myexec = strchange( myexec, "$$FILE$$", DTA->file );
+//                    myexec = strchange( myexec, "$$FAVICON$$", strNotNULL(cfgFavIcon));
+//#ifdef HS_DEBUG
+//                    lprintf ("system wuerde executen : %s", DTA->execute);
+//#else
+                    if (system (DTA->execute)) lprintf ("system failure %s", DTA->execute);   // kann auch schiefgehem
+//#endif
                     if (cfgUseCache) WriteOutCache();                                       // cache noch schreiben
                 }
             }
@@ -1129,23 +967,6 @@ int mainProcess(void)
     }
     lprintf( "never reached code reached" );
     return EXIT_FAILURE;
-}
-
-void* SystemExecute(void* data)
-{
-    int p;
-    pthread_t pthread_id;
-    pthread_id = pthread_self();
-    p = hsIdFromPthreadid(pthread_id);
-    hsIdsetStatus(p,2);
-    if (data)
-    {
-        if (system((char *)data))
-        {
-            lprintf ("system failure %s", (char *)data);    // kann auch schiefgehem
-        }
-    }
-    return hsPthreadDone(p);
 }
 
 #ifdef HS_DEBUG
@@ -1188,6 +1009,113 @@ int WriteOutCache(void)
     return EXIT_SUCCESS;
 }
 
+/*=============================================================================
+
+  HTTP-Funktionen
+
+=============================================================================*/
+
+#ifdef HS_DEBUG
+#define connect_DEBUG
+#endif
+
+//
+// Einen connection schaffen für HTML-Anfragen
+//-----------------------------------------------------------------------------
+
+int open_connection_with_retry(void)
+{
+    int rc;
+    rc = open_connection();
+    if (rc != 98) return rc;                                            // 98 kann vorkommen, wenn der Socket noch nicht freigegeben ist
+    lprintf ("can't bind sock, retry while %i %s", rc, strerror(rc));   // merke Status
+    if (now < (retry98start + (time_t)cfgRetry98)) return rc;           // also 98
+    return 198;
+}
+
+//
+// Tatsächlicher Verbindungsaufbau, kommt wenn alles klappt mit 0 zurück
+//-----------------------------------------------------------------------------
+
+int open_connection(void)
+{
+    int err;
+    int list;
+
+    memset_ex(&sock_in.sin_zero, 0, sizeof(sock_in.sin_zero));
+    sock_in.sin_family      = AF_INET;          // ip4
+    sock_in.sin_addr.s_addr = INADDR_ANY;       // incl localhost       #define INADDR_ANY ((in_addr_t) 0x00000000)
+    sock_in.sin_port        = htons(cfgPORT);   // 12.4.11   4.11.2012 standard
+
+    sin_addr = (struct sockaddr *) &sock_in;
+    sin_len  = (socklen_t) sizeof(sock_in);
+
+#ifdef connect_DEBUG
+    lprintf ("open_connection -> sock");
+#endif
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        lprintf ("Error: create socket - %s", strerror(errno));
+        return 101;
+    }
+// hat so eine änderung ergeben
+#ifdef connect_DEBUG
+    lprintf ("open_connection -> setsockopt");
+#endif
+    int yes = 1;
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+    {
+        lprintf("Error: setsockopt ");
+        return 105;
+    }
+#ifdef connect_DEBUG
+    lprintf ("open_connection -> bind %i", sock);
+#endif
+    if ((bind(sock, (struct sockaddr *)&sock_in, sizeof(sock_in))) < 0)
+    {
+        err = errno;
+        if (err==98) return err;
+        lprintf ("Error: bind socket errno: %i %s", errno, strerror(errno));
+        return 102;
+    }
+
+    list = listen(sock, MAX_BACKLOG);           // MAX_BACKLOG = maximum length to which the queue
+#ifdef connect_DEBUG
+    lprintf ("open_connection -> listen (%i) ", list);
+#endif
+    if (list < 0)
+    {
+        lprintf ("Error: listen - %s", strerror(errno));
+        return 103;
+    }
+#ifdef connect_DEBUG
+    lprintf ("open_connection -> FD_SET_DUO");
+#endif
+    return EXIT_SUCCESS;
+}
+
+//
+// Ein Close ist eine Close
+//-----------------------------------------------------------------------------
+
+int close_connection(void)
+{
+#ifdef connect_DEBUG
+    lprintf ("close_connection");
+#endif
+    if (sock>=0)
+    {
+        close (sock);
+    }
+    sock = -1;
+    return 0;
+}
+
+//
+// Wenn eine Verbindung zustande gekommen ist (sock>0), dann wird hierher
+// verzweigt
+//-----------------------------------------------------------------------------
+
 int ConnectProcess(void)
 {
     int rc;
@@ -1196,20 +1124,17 @@ int ConnectProcess(void)
 
     FD_ZERO(&fdclnt);
     FD_SET(sock,&fdclnt);
-    tv.tv_sec = tipwaittime; //cfgTime; //10L; //(long)timeout;
+    tv.tv_sec = tipwaittime;        //cfgTime; //10L; //(long)timeout;
     tv.tv_usec = 0;
-#ifdef connHS_DEBUG
-    lprintf ("open_connection -> tv=%ld", tv.tv_sec);
-#endif // HS_DEBUG
     rc = select(sock+1, &fdclnt, NULL, NULL, &tv);
     if (rc <= 0) return EXIT_SUCCESS;
-#ifdef connHS_DEBUG
-    lprintf ("mainProcess -> accept %i", rc);
-#endif // HS_DEBUG
-    hsGetFreePthread(ConnectExecute, NULL);
-#ifdef connHS_DEBUG
-    lprintf ("ConnectProcess done");
-#endif // HS_DEBUG
+#ifdef connect_DEBUG
+    lprintf ("mainProcess -> accept %i -> tv=%ld", rc, tv.tv_sec);
+#endif
+    ConnectExecute();                                                           // ConnectExecute beantwortet schon den verbundenen sock
+#ifdef connect_DEBUG
+    lprintf ("ConnectExecute done");
+#endif
     return EXIT_SUCCESS;
 }
 
@@ -1219,125 +1144,134 @@ static char *HtmlBody="</head>\r\n<body>\r\n";
 static char *HtmlFooter="</body>\r\n</html>\r\n";
 static char *HtmlTextAnswer="HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
 
-char *GetHtmlHead(char* Title);
+char *GetHtmlHead(char* Title);         // Grundsätzliche Antwort, mit CSS usw.
+char *GetCSSLinks(char* begin);         // Farben für Links
+char *GetWatchInfoHtml(void);           // WatchInfo nicht als Text sondern als html
+char *GetDriveInfoText(char *req);      // ?drive.cgi  Laufwerksinformationen zurückgeben
+char *GetDateInfoText(char *req);       // ?date.cgi   gibt nur das Datum als Text zurück
+char *GetReload(void);                  // führt dazu, das das die Config neu gelesen wird. Das Gleiche wie sig (USR1)
+char *GetHtmlIndex(void);               // Ein einfacher Index
+char *GetWriteWatch(void);              // Watchinfo schreiben
+char *GetHtmlFavIcon(int clnt);         // favicon ...
 
-void* ConnectExecute(void* data)
+// Verteiler für
+enum CMD_NR{
+    CMD_NONE=0,
+    CMD_FAVICON,
+    CMD_INDEX,
+    CMD_DRIVE,
+    CMD_WATCHVIEW,
+    CMD_RELOAD,
+    CMD_WRITEWATCH,
+    CMD_DATE
+};
+// Damit kann eine Information nummerich werden
+struct s_cmd{
+        char *command;
+        int command_nr;
+};
+// und gleich dazu den Anfragen-Verteiler
+struct s_cmd db_cmd[]={
+        { "/", CMD_INDEX },
+        { "/favicon.ico", CMD_FAVICON },
+        { "/index.htm", CMD_INDEX },
+        { "/index.html", CMD_INDEX },
+        { "/date.cgi", CMD_DATE },
+        { "/nextwatch.html", CMD_WATCHVIEW },
+        { "/drive.cgi", CMD_DRIVE },
+        { "/reload.cgi", CMD_RELOAD },
+        { "/watchwrite.cgi", CMD_WRITEWATCH },
+        { NULL, 0 }
+};
+
+void ConnectExecute(void)
 {
     int rc;
     int clnt;
-    frall_t *rs;
+    int cmd_nr;
+    int index;
     char *answer;
     char *xp;
-
-    int p;
-    pthread_t pthread_id;
-
-    pthread_id = pthread_self();
-    p = hsIdFromPthreadid(pthread_id);
-    hsIdsetStatus(p,2);
+    char htmlbuffer[1024];
 
     clnt = accept(sock, sin_addr, &sin_len);
-#ifdef HS_DEBUG
+#ifdef connect_HS_DEBUG
     lprintf ("mainProcess -> clnt = %i", clnt);
-#endif // HS_DEBUG
-    if (clnt < 0) return hsPthreadDone(p);
+#endif
+    if (clnt < 0) return;
 
-    rs = malloc0(sizeof (frall_t));
-    rs->line     = 0;
-    rs->flags    = 0;
-    rs->sz       = 1024;
-    rs->file     = malloc0(rs->sz+1);
-    rs->nextline =NULL;
-    rs->pointer  =rs->file;
-
-    memset_ex (rs->file, 0, rs->sz);
-    rc = recv(clnt, rs->file, rs->sz-1, 0);
+    memset_ex (htmlbuffer, 0, _countof(htmlbuffer));
+    rc = recv (clnt, htmlbuffer, _countof(htmlbuffer)-1, 0);
     if (rc <= 0)
     {
-        lprintf ("mainProcess -> recv %i", rc);
+#ifdef connect_HS_DEBUG
+        lprintf ("mainProcess -> notworking recv %i", rc);
+#endif
         close (clnt);
-        fread_all_close(rs);
-        return hsPthreadDone(p);
+        return;
     }
     // accepted connection
     // buffer like : GET /anyadr.html and some other information
-#ifdef connHS_DEBUG
-    lprintf ("recv: buffer : %s", rs->file);
-#endif // HS_DEBUG
+    for (rc=0;;rc++)
+    {   // buffer nur bis zum ersten Leerzeichen
+        if (htmlbuffer[rc]<32)
+        {
+            htmlbuffer[rc]=0;
+            break;
+        }
+    }
+#ifdef connect_DEBUG
+//    lprintf ("recv: buffer : \'%s\'", strtohexstr(htmlbuffer,strlen(htmlbuffer),32,0x400+STRHEX_ASC));
+    lprintf ("recv: buffer : %s", htmlbuffer);
+#endif
     //execute buffer, clnt like sendfile
     //rc = executeBuffer(clnt, buffer);
-    for (answer=NULL;;)
-    {
-        if (fread_all_getline(rs))
-        {
-            answer = strdup_ex(misshttp);
-            break;
-        }
+
 #ifdef HS_DEBUG
-        lprintf ("exec-bufferline: %s",rs->nextline);
+    lprintf ("exec-bufferline: %s",htmlbuffer);
 #endif
-        if (rs->nextline[0]==0)
-        {
-            answer = strdup_ex(misshttp);
-            break;
-        }
-        if (strncasecmp(rs->nextline,"get ",4)) continue;
-        strdel(rs->nextline,0,4);
-        CL(rs->nextline);
-        xp = strchr(rs->nextline, ' ');
-        if (xp) *xp='\0';
-        if ( (!strcasecmp(rs->nextline,"/index.html"))    ||
-             (!strcasecmp(rs->nextline,"/index.htm"))     ||
-             (!strcasecmp(rs->nextline,"/"))
-           )
-        {
-            answer = GetHtmlHead("Uebersicht");
-
-            stradd (answer, HtmlBody);
-            stradd (answer, "nups<br>\r\n");
-            stradd (answer, HtmlFooter);
-            break;
-        }else if (!strcasecmp(rs->nextline,"/nextwatch.html"))
-        {
-            answer = GetWatchInfoHtml();
-            break;
-        }else if (!strncasecmp(rs->nextline,"/drive.cgi?",11))
-        {
-            strdel(rs->nextline,0,11);
-            answer = GetDriveInfoText(rs->nextline);
-            break ;
-        }else if (!strcasecmp(rs->nextline,"/date.cgi"))
-        {
-            answer = strprintf(
-                 "HTTP/1.1 200 OK\r\n"
-                 "Content-Type: text/plain\r\n"
-                 "\r\n"
-
-                 "date.cgi Found\r\n"
-                 "%s"
-                 "\r\n"
-                 "\r\n", strtime(now,2)
-                 );
-            break;
-        }else if (!strcasecmp(rs->nextline,"/reload.cgi"))
-        {
-            answer = strdup_ex(
-                 "HTTP/1.1 200 OK\r\n"
-                 "Content-Type: text/plain\r\n"
-                 "\r\n"
-
-                 "reload set"
-                 "\r\n"
-                               );
-            loopState = LOOP_RELOAD;
-            break;
-        }
-        lprintf("miss get from %s",rs->nextline);
+    if ( (strncasecmp(htmlbuffer,"get ",4)) || (htmlbuffer[0]==0) )
+    {
         answer = strdup_ex(misshttp);
-        break;
+        goto SendAnswer;
     }
 
-    //sleep(2);
+    strdel(htmlbuffer,0,3);                                                 // GET löschen
+    CL(htmlbuffer);                                                         // Leerzeichen weg am Ende und am Anfang
+    xp = strchr(htmlbuffer, ' ');                                           // Erstes Leerzeichen
+    if (xp) *xp='\0';                                                       // durch '\0' ersetzen
+    cmd_nr = CMD_NONE;
+    xp = strchr(htmlbuffer, '?');
+    if (xp)
+    {
+        *xp='\0';
+        xp++;
+    }
+    for (index=0;;index++)
+    {
+        if (!db_cmd[index].command) break;
+//            lprintf("check: %s", db_cmd[index].command);
+        if (!strcasecmp(htmlbuffer,db_cmd[index].command))
+        {
+            cmd_nr = db_cmd[index].command_nr;
+            break;
+        }
+    }
+//        lprintf ("switch cmd_nr=%i",cmd_nr);
+    switch(cmd_nr)
+    {
+        case CMD_FAVICON:   answer = GetHtmlFavIcon(clnt);          break;
+        case CMD_DATE:      answer = GetDateInfoText(xp);           break;
+        case CMD_DRIVE:     answer = GetDriveInfoText(xp);          break;
+        case CMD_WATCHVIEW: answer = GetWatchInfoHtml();            break;
+        case CMD_INDEX:     answer = GetHtmlIndex();                break;
+        case CMD_RELOAD:    answer = GetReload();                   break;
+        case CMD_WRITEWATCH:answer = GetWriteWatch();               break;
+        default:            answer = strdup_ex(misshttp);
+                            lprintf("miss get from %s",htmlbuffer); break;
+    }
+
+SendAnswer:
     if (answer)
     {
         send(clnt, answer, strlen(answer), 0);
@@ -1347,37 +1281,53 @@ void* ConnectExecute(void* data)
         free (answer);
     }
     close (clnt);
-    fread_all_close(rs);
-    return hsPthreadDone(p);
 }
+
+//=============================================================================
+//
+// Unterroutinen um Antworten auf die Anfrage zur erstellen
+//-----------------------------------------------------------------------------
 
 char *GetHtmlHead(char* Title)
 {
     char *r;
-    r= strdup_ex("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
-                 //"<html lang=\"en-US\">\r\n<head>\r\n"
-                 "<!DOCTYPE html>\r\n"
-                 "<html lang=\"en-US\">\r\n<head>\r\n"
-                 "<title>");
+    r = strdup_ex(
+             "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+             "<!DOCTYPE html>\r\n"
+             "<html lang=\"en-US\">\r\n<head>\r\n"
+             "<title>");
     stradd(r,Title);
-    stradd(r,"</title>\r\n<meta charset=\"utf-8\">\r\n"
-//                 "<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />\r\n"
-                 "<meta name=\"generator\" content=\"");
+    stradd(r,"</title>\r\n"
+             "<meta charset=\"utf-8\">\r\n"
+             "<meta name=\"generator\" content=\"");
     stradd(r,m_PRG_INFO);
     stradd(r,"\" />\r\n");
-
     stradd(r,"<style type=\"text/css\">\r\n"
-"body {"
-"            color: #ffffff;"
-" background-color: #000000;"
-"             link: #ff0000;"
-"            vlink: #ff0000;"
-"            alink: #ff0000;"
-" }\r\n"
-"</style>");
+             "body {"
+             "            color: #ffffff;"
+             " background-color: #000000;"
+             "             link: #ff0000;"
+             "            vlink: #ff0000;"
+             "            alink: #ff0000;"
+             " }\r\n"
+             "</style>");
     return r;
 }
 
+char *GetCSSLinks(char* begin)
+{
+    char *r;
+    r = begin;
+    stradd(r,"\r\n<style type=\"text/css\">;\r\n"
+             "a          {  color: #ffffff;  background-color: transparent;  text-decoration: none; }\r\n"
+             "a:link     {  color: #ffffff;  background-color: transparent;  text-decoration: none; }\r\n"
+             "a:visited  {  color: #ffffff;  background-color: transparent;  text-decoration: none; }\r\n"
+             "a:hover    {  color: #33ffff;  background-color: transparent;  text-decoration: underline; }\r\n"
+             "a:active   {  color: #33ffff;  background-color: transparent;  text-decoration: underline; }\r\n"
+             "</style>\r\n"
+    );
+    return r;
+}
 char *GetHtmlHeadTable(char *begin)
 {
     char *r;
@@ -1411,29 +1361,62 @@ char *GetWatchInfoHtml(void)
     char *r;
     void    *LNXT;
     t_file  *DTA;
-    char da_modif[32];
-    char da_check[32];
+//    char da_modif[32];
+//    char da_check[32];
     char tmpstr[512];
+
+    char hostnamestr[64];
+    if (gethostname (hostnamestr, sizeof(hostnamestr)-1)!=0) hostnamestr[0]=0;
 
     r = GetHtmlHead("Watch Info");
     r = GetHtmlHeadTable(r);
     stradd(r,HtmlBody);
     // r = GetTableStyle(r);
-
-    sprintf (tmpstr, "<br>tipwaittime=%ld<br><br>\r\n", tipwaittime);
+    sprintf (tmpstr, "<br>tipwaittime=%ld on %s<br><br>\r\n", tipwaittime, hostnamestr);
     stradd (r,tmpstr);
 
     // config dump
     stradd (r,"<table>\r\n");
-    sprintf (tmpstr, "<tr><td></td><td>StartTime</td><td>%s</td><td></td></tr>\r\n", strtime(starttime,2)); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>ReloadTime</td><td>%s</td><td></td></tr>\r\n", strtime(reloadtime,2)); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgPORT</td><td>%i</td><td></td></tr>\r\n", cfgPORT); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgTime</td><td>%ld</td><td></td></tr>\r\n", cfgTime); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgRetry98</td><td>%i</td><td></td></tr>\r\n", cfgRetry98); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgUseCache</td><td>%s</td><td></td></tr>\r\n", (cfgUseCache)?"true":"false"); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgCacheFile</td><td>%s</td><td></td></tr>\r\n", strNotNULL(cfgCacheFile)); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgInfoUpdate</td><td>%i</td><td></td></tr>\r\n", cfgInfoUpdate); stradd (r,tmpstr);
-    sprintf (tmpstr, "<tr><td></td><td>cfgInfoFile</td><td>%s</td><td></td></tr>\r\n", cfgInfoFile); stradd (r,tmpstr);
+
+#if 1
+    char *a;
+    for (int t=0;t<12;t++)
+    {
+      switch(t)
+      {
+        case 0: a="StartTime";      strcpy  (tmpstr, strtime(starttime,2));                 break;
+        case 1: a="ReloadTime";     strcpy  (tmpstr, strtime(reloadtime,2));                break;
+        case 2: a="cfgPORT";        sprintf (tmpstr, "%i", cfgPORT);                        break;
+        case 3: a="cfgTime";        sprintf (tmpstr, "%ld",cfgTime);                        break;
+        case 4: a="cfgRetry98";     sprintf (tmpstr, "%i", cfgRetry98);                     break;
+        case 5: a="cfgUseCache";    strcpy  (tmpstr, (cfgUseCache)?"true":"false");         break;
+        case 6: a="cfgCacheFile";   strcpy  (tmpstr, strNotNULL(cfgCacheFile));             break;
+        case 7: a="cfgInfoUpdate";  sprintf (tmpstr, "%i", cfgInfoUpdate);                  break;
+        case 8: a="cfgInfoFile";    strcpy  (tmpstr, cfgInfoFile);                          break;
+
+        case 9: a="cfgFavIcon";     strcpy  (tmpstr, strNotNULL(cfgFavIcon));               break;
+        case 10:a="FavIconTime";    strcpy  (tmpstr, strtime(FavIconTime,2));               break;
+        case 11:a="FavIconBufSz";   sprintf (tmpstr, "%ld",FavIconBufSz);                   break;
+
+        default: tmpstr[0]=0; a=tmpstr; break;
+      }
+      stradd (r, "<tr><td>&nbsp;</td><td>&nbsp;");
+      stradd (r, a);
+      stradd (r, "&nbsp;</td><td>&nbsp;");
+      stradd (r, tmpstr);
+      stradd (r, "&nbsp;</td><td>&nbsp;</td></tr>\r\n");
+    }
+#else
+    sprintf (tmpstr, "<tr><td></td><td>StartTime"     "</td><td>&nbsp;" "%s" "&nbsp;</td><td></td></tr>\r\n", strtime(starttime,2));          stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>ReloadTime"    "</td><td>&nbsp;" "%s" "&nbsp;</td><td></td></tr>\r\n", strtime(reloadtime,2));         stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgPORT"       "</td><td>&nbsp;" "%i" "&nbsp;</td><td></td></tr>\r\n", cfgPORT);                       stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgTime"       "</td><td>&nbsp;" "%ld""&nbsp;</td><td></td></tr>\r\n", cfgTime);                       stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgRetry98"    "</td><td>&nbsp;" "%i" "&nbsp;</td><td></td></tr>\r\n", cfgRetry98);                    stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgUseCache"   "</td><td>&nbsp;" "%s" "&nbsp;</td><td></td></tr>\r\n", (cfgUseCache)?"true":"false");  stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgCacheFile"  "</td><td>&nbsp;" "%s" "&nbsp;</td><td></td></tr>\r\n", strNotNULL(cfgCacheFile));      stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgInfoUpdate" "</td><td>&nbsp;" "%i" "&nbsp;</td><td></td></tr>\r\n", cfgInfoUpdate);                 stradd (r,tmpstr);
+    sprintf (tmpstr, "<tr><td></td><td>cfgInfoFile"   "</td><td>&nbsp;" "%s" "&nbsp;</td><td></td></tr>\r\n", cfgInfoFile);                   stradd (r,tmpstr);
+#endif
     stradd (r,"</table><br>\r\n");
 
     sprintf_ex (tmpstr, "LastCheck: %s &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;%s", strtime(now,2), m_PRG_INFO);
@@ -1444,17 +1427,47 @@ char *GetWatchInfoHtml(void)
 #endif
     stradd (r,"<br><br>\r\n");
 
-    stradd (r,"<table>\r\n");
-    stradd (r,"<tr><th> File </th><th> sec </th><th> Date:Modif </th><th> Date:checked </th><th> next </th><th> Execute</th></tr>\r\n");
+    stradd (r,"<table>\r\n"
+            "<tr>"
+            "<th>&nbsp;File&nbsp;</th>"
+            "<th>&nbsp;sec&nbsp;</th>"
+            "<th>&nbsp;Date:Modif&nbsp;</th>"
+            "<th>&nbsp;Date:checked&nbsp;</th>"
+            "<th>&nbsp;next&nbsp;</th>"
+            "<th>&nbsp;Execute</th>"
+            "</tr>\r\n");
+
     for (LNXT = LST;;LNXT=Node_GetNext(LNXT))
     {
         if (!LNXT) break;
         DTA = Node_GetData(LNXT);
-        //fprintf (cf, TIME_STR_LD ",%s\n",DTA->last_modif, DTA->file);
-        strcpy (da_modif, strtime(DTA->last_modif,2));
-        strcpy (da_check, strtime(DTA->last_check,2));
-        sprintf (tmpstr, "<tr><td> %s </td><td> %4i </td><td> %s </td><td> %s </td><td> %5i </td><td> %s </td></tr>\r\n", DTA->file, DTA->interval, da_modif, da_check, (int)(DTA->last_check+((time_t)DTA->interval)-now), DTA->execute);
+// File
+        stradd (r, "<tr>"
+                   "<td>&nbsp;");
+        stradd (r, DTA->file );
+// sec
+        stradd (r, "&nbsp;</td>"
+                   "<td>&nbsp;");
+        sprintf (tmpstr, "%4i", DTA->interval);
         stradd (r,tmpstr);
+// Date:Modif
+        stradd (r, "&nbsp;</td>"
+                   "<td>&nbsp;");
+        stradd (r, strtime(DTA->last_modif,2));
+// Date:checked
+        stradd (r, "&nbsp;</td>"
+                   "<td>&nbsp;");
+        stradd (r, strtime(DTA->last_check,2));
+// next
+        stradd (r, "&nbsp;</td>"
+                   "<td>&nbsp;");
+        sprintf (tmpstr, "%5i", (int)(DTA->last_check+((time_t)DTA->interval)-now));
+        stradd (r,tmpstr);
+// Execute
+        stradd (r, "&nbsp;</td>"
+                   "<td>&nbsp;");
+        stradd (r, DTA->execute );
+        stradd (r, "&nbsp;</td></tr>\r\n");
     }
     stradd (r,"</table>\r\n");
     stradd (r, HtmlFooter);
@@ -1473,6 +1486,41 @@ int local_fs(char *t)
     return EXIT_FAILURE;
 }
 
+char *GetDateInfoText(char *req)
+{
+    return strprintf(
+                 "HTTP/1.1 200 OK\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "\r\n"
+                 "date.cgi Found\r\n"
+                 "%s"
+                 "\r\n"
+                 "\r\n", strtime(now,2)
+    );
+}
+
+char *GetReload(void)
+{
+    loopState = LOOP_RELOAD;
+    return strdup_ex(
+                 "HTTP/1.1 200 OK\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "\r\n"
+                 "reload set"
+                 "\r\n");
+}
+
+char *GetWriteWatch(void)
+{
+    loopState = LOOP_INFOMODE;
+    return strdup_ex(
+                 "HTTP/1.1 200 OK\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "\r\n"
+                 "writewatch set"
+                 "\r\n");
+}
+
 char *GetDriveInfoText(char *req)
 {
     char *r;
@@ -1487,12 +1535,10 @@ char *GetDriveInfoText(char *req)
     char *mtabfile = _PATH_MOUNTED; // "/etc/mtab"
 //    char *ntypes[]={ "nfs", "cifs" }; // Netztypen
 //    int c_ntypes=_countof(ntypes);  // Anzahl Netztype
-
     r = strdup_ex(HtmlTextAnswer);
-
     REQLST = NULL;
 #ifdef HS_DEBUG
-    lprintf ("req =%s",req);
+    lprintf ("req = %s",req);
 #endif
     for (next = req;next;)
     {
@@ -1568,4 +1614,218 @@ char *GetDriveInfoText(char *req)
     fclose(F);
     for (;REQLST;REQLST=Node_DelFirstNode(REQLST));
     return r; //strdup_ex(misshttp);
+}
+
+// Index ausgeben
+//-----------------------------------------------------------------------------
+
+struct s_linkdb
+{
+    char *link;
+    char *desc;
+};
+
+char pathOnNas[1024];
+struct s_linkdb ln_db[]={
+    { "/", "Index only" },
+    { "/nextwatch.html", "Übersicht anzeigen" },
+
+    { "/date.cgi", "datum" },
+    { "/drive.cgi?backup&efi&xda", "Backup (Testdaten)" },
+
+    { "/reload.cgi", "Reload config" },
+    { "/watchwrite.cgi", "Rewrite watchIdx" },
+
+    { pathOnNas, "watch Index" },
+};
+
+char *GetHtmlIndex(void)
+{
+    struct sysinfo sysbuf;
+    struct utsname utsbuf;
+    char *r;
+    char tmp[1024];
+    long upmins,days,hours,mins;
+    int dt;
+
+    char *left="<tr><td></td><td>";
+    char *leftcol1="<tr><td>";
+    //char *leftcol2="<tr><td></td><td colspan=\"2\" style=\"text-align: left; font-size: 84%\">&nbsp;";
+    char *mid="</td><td>";
+    char *mid2="</td><td style=\"width: 49%; text-align: left; font-size: 84%\">";
+    char *right="&nbsp;</td><td></td></tr>\r\n";
+    //char *href="target=\"_top\" href";
+    char *href_start="&nbsp;<a target=\"_top\" href=\"";
+    char *href_mid1="\">";
+    char *href_out="</a>";
+    char *table="<table width=\"328px\">\r\n";
+
+    if (!strncmp(cfgInfoFile,"/srv/pub/www/data/",17))
+    {
+        sprintf_ex (pathOnNas, "http://pc-nas/data/%s", Cbasename(cfgInfoFile));
+    }else{
+        strcpy (pathOnNas,"");
+    }
+
+    memset_ex( &sysbuf, 0, sizeof(struct sysinfo));
+    memset_ex( &utsbuf, 0, sizeof(struct utsname));
+    if (uname(&utsbuf)<0)    memset_ex( &utsbuf, 0, sizeof(struct utsname));
+    if (sysinfo(&sysbuf)!=0) memset_ex( &sysbuf, 0, sizeof(struct sysinfo));
+    upmins = sysbuf.uptime / 60;
+    days = upmins   / (24*60);
+    upmins = upmins % (24*60);
+    hours  = upmins / 60;
+    mins   = upmins % 60;
+
+    r = GetHtmlHead("WatchD Index");
+    r = GetHtmlHeadTable(r);
+    r = GetCSSLinks(r);
+
+    stradd(r, HtmlBody);
+    stradd(r, table);
+
+//    sprintf_ex (tmp, "%s&nbsp;%s%s:%i%s", left, mid, utsbuf.nodename, cfgPORT, right);
+    sprintf_ex (tmp, "%s&nbsp;", left);
+    stradd(r, tmp);
+    if (cfgFavIcon)
+    {
+        if (FileOK(cfgFavIcon))
+        {
+            stradd(r, "<img src=\"/favicon.ico\" width=16 height=16 alt=\"SelfLogo\">");
+        }
+    }
+    sprintf_ex (tmp, "%s%s:%i%s", mid, utsbuf.nodename, cfgPORT, right);
+    stradd(r, tmp);
+    sprintf_ex (tmp, "%sPrg%s%s%s", left, mid, m_PRG_INFO, right);
+    stradd(r, tmp);
+    sprintf_ex (tmp, "%scomp%s%s %s%s", left, mid, strtime(ParseFmtTime("Mon Day yyyy", __DATE__, &dt),11) , __TIME__, right);
+    stradd(r, tmp);
+    sprintf_ex (tmp, "%swith%s%s V%i.%02i.%02i (%s)%s", left, mid ,
+                       __COMPILER__, __COMPILER_VERSION__ / 10000,
+                       (__COMPILER_VERSION__ / 100) % 100,
+                       __COMPILER_VERSION__ % 100, OS_VERSION, right );
+    stradd(r, tmp);
+    sprintf_ex (tmp, "%spid%s%i", left, mid, getpid());
+    stradd(r, tmp);
+//    sprintf_ex (tmp, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s/%s", Num2Human( sysbuf.freeram, 0), Num2Human( sysbuf.totalram, 0));
+    sprintf_ex (tmp, "<table border=0 align=right><tr><td style=\"border: 0px; padding: 0px;\">%s/%s</td></tr></table>", Num2Human( sysbuf.freeram, 0), Num2Human( sysbuf.totalram, 0));
+    stradd(r, tmp);
+//    for (int bb=0;bb<3;bb++)
+//    {
+//        sprintf_ex (tmp, " %.2f", (double)(sysbuf.loads[bb])/100000);
+//        stradd(r, tmp);
+//    }
+
+    stradd(r, right);
+    sprintf_ex (tmp, "%sSys%s%s %s%s", left, mid, utsbuf.sysname, utsbuf.release, right);
+    stradd(r, tmp);
+    sprintf_ex (tmp, "%sRun%s", left, mid);
+    stradd(r, tmp);
+#ifdef HS_DEBUG
+    days = 9999;
+#endif
+    if (days>0)
+    {
+        sprintf_ex (tmp, "%ld:", days);
+        stradd(r, tmp);
+    }
+    sprintf_ex (tmp, "%02ld:%02ld h   (%i)", hours, mins, sysbuf.procs);
+    stradd(r, tmp);
+    stradd(r, right);
+    stradd(r, "</table>\r\n");
+#ifdef xHS_DEBUG
+    sprintf_ex (tmp, "%i\r\n", _countof(ln_db));
+#else
+    sprintf_ex (tmp, "<p style=\"font-size: 1px\">&nbsp;</p>\r\n");
+#endif
+    stradd(r, tmp);
+// border-top: none; noch ungelöst
+    stradd(r, table);
+    for (dt=0;dt<999;dt++)  //999 nur zur Sicherheit
+    {
+        if ( (dt%2) == 0 )
+        {
+            if (dt>=_countof(ln_db)) break;
+            stradd(r, leftcol1);
+            stradd(r, mid2);
+        }else{
+            stradd(r, mid2);
+        }
+        if (dt<_countof(ln_db))
+        {
+            stradd(r, href_start);
+            stradd(r, ln_db[dt].link);
+            stradd(r, href_mid1);
+            stradd(r, ln_db[dt].desc);
+            stradd(r, href_out);
+            if ( (dt%2) == 0 ) continue;
+        }
+
+//        if (dt>=_countof(ln_db))
+//        {
+//            stradd(r, right);
+//            break;
+//        }
+//        stradd(r, href_start);
+//        stradd(r, ln_db[dt].link);
+//        stradd(r, href_mid1);
+//        stradd(r, ln_db[dt].desc);
+//        stradd(r, href_out);
+//        if ( (dt%2) == 0 ) continue;
+
+        stradd(r, right);
+    }
+    stradd(r, "</table>\r\n");
+    stradd (r, HtmlFooter);
+    return r;
+}
+
+int GetFavIconBuffer(void)
+{
+    FILE *IFILE;
+    struct   stat st;
+    size_t   s;
+
+    if (!cfgFavIcon) goto BadIcon;
+    if (stat (cfgFavIcon ,&st )!=0) goto BadIcon;
+//    lprintf ("S_ISREG");
+    if (!S_ISREG(st.st_mode)) goto BadIcon;
+//    lprintf ("mtime");
+    if ( (st.st_mtime != FavIconTime) || (FavIconBuffer == NULL) )
+    {
+//#ifdef HS_DEBUG
+        lprintf ("reload favicon into cache: %s", cfgFavIcon);
+//#endif
+        if(( IFILE = fopen(cfgFavIcon,"rb")) == NULL ) return EXIT_FAILURE;
+
+        FavIconBuffer = free0(FavIconBuffer);
+        FavIconBufSz  = st.st_size;
+        FavIconTime   = st.st_mtime;
+
+        FavIconBuffer = malloc0(FavIconBufSz+1);
+        s = fread(FavIconBuffer, 1, FavIconBufSz, IFILE);
+        fclose(IFILE);
+//        lprintf ("closed %ld = %ld",s,FavIconBufSz);
+        if (s!=FavIconBufSz) return EXIT_FAILURE;
+//        lprintf ("size OK");
+    }
+    return EXIT_SUCCESS;
+
+BadIcon:
+    FavIconBuffer = free0(FavIconBuffer);
+    FavIconBufSz  = 0;
+    FavIconTime   = 0;
+    return EXIT_FAILURE;
+}
+
+char *GetHtmlFavIcon(int clnt)
+{
+#ifdef HS_DEBUG
+    lprintf ("favicon");
+#endif
+    if (GetFavIconBuffer()) return strdup_ex(misshttp);
+    char *r="HTTP/1.0 200 OK\r\nContent-Type: image/x-icon\r\n\r\n";
+    send(clnt, r, strlen(r), 0);
+    send(clnt, FavIconBuffer, FavIconBufSz, 0);
+    return NULL;
 }

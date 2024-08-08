@@ -767,6 +767,7 @@ int arg_unused_print(int argc, char *argv[])
 {
     int i;
     int e;
+    if (!arg_used) return 0;
 	if (arg_GetNext(0,argc)==-1) return 0;
     for (i=0,e=0;;e++)
     {
@@ -776,6 +777,34 @@ int arg_unused_print(int argc, char *argv[])
     }
     return e;
 }
+
+
+/**
+ @brief Ersten ungenutzen Parameter finden
+ @return  0 nichts gefunden 1-x Fundtstelle
+
+___[ Revision ]______________________________________________________________
+
+ ** 26.06.24 HS Create
+___________________________________________________________________________*/
+
+int ChkParUnused (char *Find, int arguc, char *arguv[])
+{
+    int i,b;
+//    ARG=NULL; schon vorher fertig
+    if (!arg_used) return 0;
+    for (b=0;;b++)
+    {
+        i = arg_GetNext(0,arguc);
+        if (i<0) break;
+        if (Find[2]=='-') if (ChkPar(arguv[i][0])) continue;
+        ARG = arguv[i];
+        arg_used[i]=1;
+        return i+1;
+    }
+    return 0;
+}
+
 
 #ifdef old_pars_version
 #ifdef OS_WINDOWS
@@ -944,9 +973,9 @@ int ChkARGwStart(char *Find, int start, int arguc, char *arguv[])
     singlePar = 0;
     numPar = 0;
 
+    if ((Find[0]=='*')&&(Find[1]=='*')) return ChkParUnused(Find, arguc, arguv); // Mainparameter ** ersten unbenutzen finden wenn find[2]- dann auch slashparameter
     if (Find[0]=='#') return ChkParMain (Find, arguc, arguv);                   // Mainparameter #0 bis # #9999 sh. ohne ParameterSlashes
     if (Find[0]=='$') return ChkParWos  (Find, arguc, arguv);                   // Mainparameter $0 bis $9999 sh. ohne ParameterSlashes
-
     if (Find[0]=='.')
     {
         singlePar = 1;
@@ -6440,6 +6469,19 @@ time_t ParseAnyDate(char *ostr)
     if (*str < '0')  return PARSEANYDATE_ERROR;                                 // Fetch first arg from datestring
     if (*str > '9')
     {
+//        for (c1=0;;c1++<_countof(MON))
+//
+//
+//    for (c3=0;;c3++)                                                            // must be fit into the
+//    {
+//        if (MONNAMES[c3].mon==0) return PARSEANYDATE_ERROR;
+//        if (!strcasecmp(cpy, MONNAMES[c3].name))
+//        {
+//            tm.tm_mon = MONNAMES[c3].mon-1;
+//            break;
+//        }
+//    }
+//
 	    if ((!isupper ((int)str[0]) && !islower ((int)str[0])) ||               // Weekday names must be 3 chars
             (!isupper ((int)str[1]) && !islower ((int)str[1])) ||
             (!isupper ((int)str[2]) && !islower ((int)str[2])))
@@ -7247,6 +7289,24 @@ ___________________________________________________________________________*/
 
 int getach(void)
 {
+
+#ifdef OS_LINUX_WAIT_KEY_VARIANTE
+#include <termios.h>
+char get_key_noecho() {              /* Abfrage der Tastatur ohne Echo */
+    struct termios original, rawmodus;
+    char ein;
+    /* (STDIN_FILENO ist immer 0) */
+    tcgetattr(STDIN_FILENO, &original);
+    rawmodus = original;
+    rawmodus.c_lflag &= ~ICANON;
+    rawmodus.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO,TCSAFLUSH,&rawmodus);
+    ein = getc(stdin);
+    tcsetattr(STDIN_FILENO,TCSAFLUSH,&original);
+    return ein;
+}
+#endif // OS_LINUX
+
 #ifdef OS_LINUX
     fd_set      rfds;
     int         fd;
@@ -7256,7 +7316,6 @@ int getach(void)
     char        c[2];
 
     /* Watch stdin (fd 0) to see when it has input. */
-
     fd = fileno(stdin);
     FD_ZERO(&rfds);
     FD_SET(fd, &rfds);

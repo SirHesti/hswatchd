@@ -221,7 +221,7 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">hswatchd</h1>
-<p class="date">18.05.2024</p>
+<p class="date">08.08.2024</p>
 </header>
 <h1 id="name">NAME</h1>
 <p><strong>hswatchd</strong> - Ein Daemon zum Ueberwachen von
@@ -335,6 +335,12 @@ Der vollständige Pfad zur Datei. Es wird eine reine Textdatei
 geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein
 (oder besser auskommentiert) werden.
 </dd>
+<dt>favicon = /srv/pub/share/hswatchd/pc-hesti.png</dt>
+<dd>
+Pfad zu einem FAV-Icon für die html-funktion. Wer keines möchte läst es
+weg. Für jeden im eigenen Netz laufenden hswatchd lässt sich damit ein
+anderers ICON realisieren
+</dd>
 </dl>
 <p>Jeder Eintrag mit “file ….” in der hswatchd.rc wird in eine einfach
 verkettete Liste sortiert, nach naechster Bearbeitungszeit, aufgenommen.
@@ -355,10 +361,11 @@ class="sourceCode hswatchd.rc"><code class="sourceCode xml"><span id="cb3-1"><a 
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>cachepath   = /var/hswatchd/files.cache</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>infoupdate  = 3600</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>infofile    = /srv/pub/www/data/watch-debug-hesti.txt</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a># File - Section</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts /etc/hosts</span></code></pre></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>favicon     = /srv/pub/share/hswatchd/pc-hesti-debug.png</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a># File - Section</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>file /pub/share/network/admin_hosts     60  cp /pub/share/network/newfile_hosts /etc/hosts</span></code></pre></div>
 <h1 id="http-service">HTTP-Service</h1>
 <p>hswatchd verfügt eine rudimentäre html-Schnittstelle. Hier lassen
 sich ein paar Informationen abrufen. Der Port ist in der

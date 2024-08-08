@@ -8,6 +8,7 @@ cache       = true
 cachepath   = /var/hswatchd/files-debug.cache
 infoupdate  = 3600
 infofile    = /srv/pub/www/data/watch-debug-hesti.txt
+favicon     = /srv/pub/share/hswatchd/hswatchd.png
 #
 #
 # File - Section

@@ -1,10 +1,8 @@
-# 18.05.2024 11:07:01 Genrated by cbp2cmake V2.5.0 Finale X86 
+# 08.08.2024 12:05:55 Genrated by cbp2cmake V2.5.0 Finale X86 
 project(hswatchd LANGUAGES C)
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 set (CMAKE_INSTALL_PREFIX /usr )
 add_executable(hswatchd tools.c hswatchd.c)
-find_package(Threads REQUIRED)
-target_link_libraries(hswatchd ${CMAKE_THREAD_LIBS_INIT})
 install(TARGETS hswatchd RUNTIME DESTINATION sbin)
 add_custom_target(
 	hswatchd.man ALL

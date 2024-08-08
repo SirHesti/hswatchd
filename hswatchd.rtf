@@ -3,7 +3,7 @@
 \widowctrl\hyphauto
 
 {\pard \qc \f0 \sa180 \li0 \fi0 \b \fs36 hswatchd\par}
-{\pard \qc \f0 \sa180 \li0 \fi0  18.05.2024\par}
+{\pard \qc \f0 \sa180 \li0 \fi0  08.08.2024\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 NAME\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 {\b hswatchd} - Ein Daemon zum Ueberwachen von Dateien\par}
@@ -68,7 +68,9 @@ systemctl status hswatchd\par}
 {\pard \ql \f0 \sa0 \li0 \fi0 infoupdate = 3600\par}
 {\pard \ql \f0 \sa0 \li360 \fi0 In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.\par}
 {\pard \ql \f0 \sa0 \li0 \fi0 infofile = {\i File_fuer_InfoFile}\par}
-{\pard \ql \f0 \sa0 \li360 \fi0 Der vollst\u228?ndige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser auskommentiert) werden.\sa180\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Der vollst\u228?ndige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser auskommentiert) werden.\par}
+{\pard \ql \f0 \sa0 \li0 \fi0 favicon = /srv/pub/share/hswatchd/pc-hesti.png\par}
+{\pard \ql \f0 \sa0 \li360 \fi0 Pfad zu einem FAV-Icon f\u252?r die html-funktion. Wer keines m\u246?chte l\u228?st es weg. F\u252?r jeden im eigenen Netz laufenden hswatchd l\u228?sst sich damit ein anderers ICON realisieren\sa180\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Jeder Eintrag mit \u8220"file \u8230?.\u8221" in der hswatchd.rc wird in eine einfach verkettete Liste sortiert, nach naechster Bearbeitungszeit, aufgenommen. Dadurch wird erreicht das der naechste zu verarbeitende Datensatz ganz oben steht. Die Diff-Zeit wird auch genommen, um die naechste Wartezeit zu setzen. Ist so ein Datensatz abgearbeitet, wird neu entschieden, wo er in der Liste zu stehen hat. Und es wird eine neue Wartezeit bestimmt. Diese Informationen koennen auch \u252?ber http abgerufen werden !!\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 Konfigurations-Datei erstellen\line :/etc/hswatchd.rc\par}
 {\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Beispiel:\par}
@@ -80,6 +82,7 @@ cache       = true\line
 cachepath   = /var/hswatchd/files.cache\line
 infoupdate  = 3600\line
 infofile    = /srv/pub/www/data/watch-debug-hesti.txt\line
+favicon     = /srv/pub/share/hswatchd/pc-hesti-debug.png\line
 \line
 # File - Section\line
 file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff\line

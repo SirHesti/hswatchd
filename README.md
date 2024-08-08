@@ -18,8 +18,8 @@ Jedesmal wenn eine Datei geaendert wurde, dann wird die eingestellte Funktion, b
 title: hswatchd
 section: 8
 header: hswatchd - copyright Hesti
-footer: hswatchd 2.21.1 Beta
-date: 18.05.2024
+footer: hswatchd 2.50.2 Beta
+date: 08.08.2024
 ---
 
 ### NAME
@@ -117,8 +117,10 @@ infoupdate  = 3600
 : In diesem Fall wird alle 3600 Sekunden ein Infofile erstellt.
 
 infofile    = _File_fuer_InfoFile_
-: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser
-auskommentiert) werden.
+: Der vollständige Pfad zur Datei. Es wird eine reine Textdatei geschrieben. Ist Markdown formatierbar. Diese Angabe kann auch leer sein (oder besser auskommentiert) werden.
+
+favicon     = /srv/pub/share/hswatchd/pc-hesti.png
+: Pfad zu einem FAV-Icon für die html-funktion. Wer keines möchte läst es weg. Für jeden im eigenen Netz laufenden hswatchd lässt sich damit ein anderers ICON realisieren
 
 Jeder Eintrag mit "file ...." in der hswatchd.rc wird in eine einfach verkettete Liste
 sortiert, nach naechster Bearbeitungszeit, aufgenommen. Dadurch wird erreicht das der
@@ -141,6 +143,7 @@ cache       = true
 cachepath   = /var/hswatchd/files.cache
 infoupdate  = 3600
 infofile    = /srv/pub/www/data/watch-debug-hesti.txt
+favicon     = /srv/pub/share/hswatchd/pc-hesti-debug.png
 
 ### File - Section
 file /pub/share/network/stuff.txt       25  /bin/bash /root/bin/doany.sh inplement stuff

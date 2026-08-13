@@ -1,3 +1,5 @@
+**Project is moved** to   https://codeberg.org/Hesti/hswatchd
+
 # hswatchd
 
 ## English
